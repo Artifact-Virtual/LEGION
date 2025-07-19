@@ -1,1 +1,0 @@
-TEMPLATE = 'Formalize this: {hypothesis}'
