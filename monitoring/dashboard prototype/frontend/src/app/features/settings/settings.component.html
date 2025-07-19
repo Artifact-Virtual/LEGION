@@ -1,0 +1,141 @@
+<div class="settings-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Settings</mat-card-title>
+      <mat-card-subtitle>Configure dashboard preferences and system settings</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- General Settings -->
+      <div class="settings-section">
+        <h3>General Settings</h3>
+        <div class="settings-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Dashboard Title</mat-label>
+            <input matInput [(ngModel)]="settings.dashboardTitle" placeholder="Enterprise Monitoring Dashboard">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Refresh Interval (seconds)</mat-label>
+            <input matInput type="number" [(ngModel)]="settings.refreshInterval" min="5" max="300" placeholder="30">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Default Time Range</mat-label>
+            <mat-select [(value)]="settings.defaultTimeRange">
+              <mat-option value="5m">5 minutes</mat-option>
+              <mat-option value="15m">15 minutes</mat-option>
+              <mat-option value="1h">1 hour</mat-option>
+              <mat-option value="24h">24 hours</mat-option>
+              <mat-option value="7d">7 days</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Theme</mat-label>
+            <mat-select [(value)]="settings.theme">
+              <mat-option value="light">Light</mat-option>
+              <mat-option value="dark">Dark</mat-option>
+              <mat-option value="auto">Auto</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Notification Settings -->
+      <div class="settings-section">
+        <h3>Notification Settings</h3>
+        <div class="notification-settings">
+          <mat-slide-toggle [(ngModel)]="settings.enableNotifications">
+            Enable Notifications
+          </mat-slide-toggle>
+
+          <mat-slide-toggle [(ngModel)]="settings.enableEmailAlerts">
+            Email Alerts
+          </mat-slide-toggle>
+
+          <mat-slide-toggle [(ngModel)]="settings.enableSoundAlerts">
+            Sound Alerts
+          </mat-slide-toggle>
+
+          <mat-form-field appearance="outline" class="email-field">
+            <mat-label>Email Address</mat-label>
+            <input matInput type="email" [(ngModel)]="settings.emailAddress" placeholder="admin@company.com">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Display Settings -->
+      <div class="settings-section">
+        <h3>Display Settings</h3>
+        <div class="display-settings">
+          <mat-slide-toggle [(ngModel)]="settings.showGridLines">
+            Show Grid Lines on Charts
+          </mat-slide-toggle>
+
+          <mat-slide-toggle [(ngModel)]="settings.enableAnimations">
+            Enable Animations
+          </mat-slide-toggle>
+
+          <mat-slide-toggle [(ngModel)]="settings.compactMode">
+            Compact Mode
+          </mat-slide-toggle>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Chart Height (px)</mat-label>
+            <input matInput type="number" [(ngModel)]="settings.chartHeight" min="200" max="800" placeholder="400">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Advanced Settings -->
+      <div class="settings-section">
+        <h3>Advanced Settings</h3>
+        <div class="advanced-settings">
+          <mat-slide-toggle [(ngModel)]="settings.enableDebugMode">
+            Debug Mode
+          </mat-slide-toggle>
+
+          <mat-slide-toggle [(ngModel)]="settings.enableApiLogging">
+            API Request Logging
+          </mat-slide-toggle>
+
+          <mat-form-field appearance="outline">
+            <mat-label>API Timeout (ms)</mat-label>
+            <input matInput type="number" [(ngModel)]="settings.apiTimeout" min="1000" max="30000" placeholder="5000">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Max Log Entries</mat-label>
+            <input matInput type="number" [(ngModel)]="settings.maxLogEntries" min="100" max="10000" placeholder="1000">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button mat-raised-button color="primary" (click)="saveSettings()">
+          <mat-icon>save</mat-icon>
+          Save Settings
+        </button>
+        <button mat-raised-button (click)="resetSettings()">
+          <mat-icon>restore</mat-icon>
+          Reset to Defaults
+        </button>
+        <button mat-raised-button color="warn" (click)="exportSettings()">
+          <mat-icon>download</mat-icon>
+          Export Settings
+        </button>
+        <button mat-raised-button (click)="importSettings()">
+          <mat-icon>upload</mat-icon>
+          Import Settings
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

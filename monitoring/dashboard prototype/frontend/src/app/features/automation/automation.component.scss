@@ -1,0 +1,66 @@
+.automation-container {
+  padding: 20px;
+
+  .create-automation {
+    margin-bottom: 24px;
+
+    h3 {
+      margin-bottom: 16px;
+      color: #333;
+    }
+
+    .creation-controls {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+
+      mat-form-field {
+        min-width: 200px;
+      }
+
+      button {
+        height: 56px;
+      }
+    }
+  }
+
+  mat-divider {
+    margin: 24px 0;
+  }
+
+  .automations-list {
+    h3 {
+      margin-bottom: 16px;
+      color: #333;
+    }
+
+    .automations-table {
+      width: 100%;
+
+      mat-header-cell {
+        font-weight: 600;
+      }
+
+      .status-active {
+        background-color: #4caf50;
+        color: white;
+      }
+
+      .status-paused {
+        background-color: #ff9800;
+        color: white;
+      }
+
+      .status-error {
+        background-color: #f44336;
+        color: white;
+      }
+
+      .status-disabled {
+        background-color: #9e9e9e;
+        color: white;
+      }
+    }
+  }
+}

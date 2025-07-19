@@ -1,0 +1,12 @@
+# Dashboard Prototype Frontend Requirements
+
+- Node.js 20+
+- Angular CLI 20+
+- Angular Material, Tailwind CSS, Three.js, D3.js
+
+Install with:
+```sh
+npm install
+```
+
+See `ARCHITECTURE.md` for full frontend design.

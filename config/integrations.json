@@ -1,0 +1,30 @@
+{
+  "email": {
+    "smtp_host": "smtp.gmail.com",
+    "smtp_port": 587,
+    "username": "your_email@gmail.com",
+    "password": "your_app_password",
+    "from_email": "your_email@gmail.com"
+  },
+  "crm": {
+    "db_path": "data/crm.db",
+    "api_key": "",
+    "webhook_url": ""
+  },
+  "finance": {
+    "coingecko_api": "https://api.coingecko.com/api/v3",
+    "frankfurter_api": "https://api.frankfurter.app",
+    "marketstack_api": "http://api.marketstack.com/v1",
+    "marketstack_key": "free_tier"
+  },
+  "project_management": {
+    "db_path": "data/projects.db",
+    "webhook_url": ""
+  },
+  "public_apis": {
+    "spacex": "https://api.spacexdata.com/v4",
+    "weather": "https://wttr.in",
+    "news": "https://newsapi.org/v2",
+    "github": "https://api.github.com"
+  }
+}

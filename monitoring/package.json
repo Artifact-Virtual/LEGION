@@ -1,0 +1,47 @@
+{
+  "name": "legion-monitoring-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Next-gen Angular monitoring dashboard for Artifact XAI: Legion Enterprise System.",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --open",
+    "build": "ng build",
+    "test": "ng test",
+    "lint": "ng lint",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@angular/animations": "^20.0.0",
+    "@angular/cdk": "^20.0.0",
+    "@angular/common": "^20.0.0",
+    "@angular/compiler": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@angular/forms": "^20.0.0",
+    "@angular/material": "^20.0.0",
+    "@angular/platform-browser": "^20.0.0",
+    "@angular/platform-browser-dynamic": "^20.0.0",
+    "@angular/router": "^20.0.0",
+    "@ngx-translate/core": "^16.0.4",
+    "@ngx-translate/http-loader": "^16.0.1",
+    "@swimlane/ngx-charts": "^21.3.1",
+    "@types/marked": "^5.0.2",
+    "@types/three": "^0.160.0",
+    "chart.js": "^4.5.0",
+    "marked": "^15.0.0",
+    "ngx-markdown": "^20.0.0",
+    "rxjs": "^7.8.1",
+    "tailwindcss": "^3.4.1",
+    "three": "^0.160.1",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^20.0.0",
+    "@angular/cli": "^20.0.0",
+    "@angular/compiler-cli": "^20.0.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.38",
+    "prettier": "^3.2.5",
+    "typescript": "^5.8.0 <5.9.0"
+  }
+}

@@ -1,0 +1,88 @@
+<div class="reports-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Reports</mat-card-title>
+      <mat-card-subtitle>Generate and view system reports</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- Report generation section -->
+      <div class="report-generation">
+        <h3>Generate New Report</h3>
+        <div class="generation-controls">
+          <mat-form-field appearance="outline">
+            <mat-label>Report Type</mat-label>
+            <mat-select [(value)]="selectedReportType">
+              <mat-option value="system_health">System Health</mat-option>
+              <mat-option value="performance">Performance Analysis</mat-option>
+              <mat-option value="security">Security Audit</mat-option>
+              <mat-option value="custom">Custom Report</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Time Range</mat-label>
+            <mat-select [(value)]="selectedTimeRange">
+              <mat-option value="1h">Last Hour</mat-option>
+              <mat-option value="24h">Last 24 Hours</mat-option>
+              <mat-option value="7d">Last 7 Days</mat-option>
+              <mat-option value="30d">Last 30 Days</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" (click)="generateReport()">
+            <mat-icon>add</mat-icon>
+            Generate Report
+          </button>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Reports list -->
+      <div class="reports-list">
+        <h3>Recent Reports</h3>
+        <mat-table [dataSource]="reports" class="reports-table">
+          <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef>Report Name</mat-header-cell>
+            <mat-cell *matCellDef="let report">{{ report.name }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="type">
+            <mat-header-cell *matHeaderCellDef>Type</mat-header-cell>
+            <mat-cell *matCellDef="let report">{{ report.type }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="created">
+            <mat-header-cell *matHeaderCellDef>Created</mat-header-cell>
+            <mat-cell *matCellDef="let report">{{ report.created_at | date:'medium' }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let report">
+              <mat-chip [ngClass]="'status-' + report.status">{{ report.status }}</mat-chip>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+            <mat-cell *matCellDef="let report">
+              <button mat-icon-button (click)="viewReport(report)">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button (click)="downloadReport(report)">
+                <mat-icon>download</mat-icon>
+              </button>
+              <button mat-icon-button (click)="deleteReport(report)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

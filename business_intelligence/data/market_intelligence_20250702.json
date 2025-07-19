@@ -1,0 +1,37 @@
+{
+  "market_analysis": {
+    "market_size": "15.7B USD",
+    "growth_rate": "22.4% annually",
+    "target_segments": [
+      "SMB (2.1M companies)",
+      "Startups (500K companies)"
+    ],
+    "competitive_landscape": [
+      "Accenture AI",
+      "IBM Watson",
+      "Microsoft AI",
+      "Google AI"
+    ]
+  },
+  "opportunities": [
+    "Small business automation (underserved)",
+    "Zero-budget solutions niche",
+    "Industry-specific implementations",
+    "Local market penetration"
+  ],
+  "customer_insights": {
+    "primary_pain_points": [
+      "Manual processes",
+      "Scalability issues",
+      "Cost constraints"
+    ],
+    "decision_factors": [
+      "ROI",
+      "Implementation ease",
+      "Ongoing support"
+    ],
+    "budget_ranges": [
+      "$10K-$50K per project"
+    ]
+  }
+}

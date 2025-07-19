@@ -1,0 +1,155 @@
+<div class="registry-container">
+  <!-- Header -->
+  <div class="header">
+    <h1>API Registry</h1>
+    <div class="header-actions">
+      <button mat-icon-button (click)="refreshApis()" [disabled]="loading" matTooltip="Refresh">
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button mat-raised-button color="primary" (click)="addNewApi()">
+        <mat-icon>add</mat-icon>
+        Add API
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading API registry...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <mat-icon color="warn">error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="refreshApis()">
+      Retry
+    </button>
+  </div>
+
+  <!-- APIs Table -->
+  <mat-card *ngIf="!loading && !error" class="apis-card">
+    <mat-card-header>
+      <mat-card-title>Registered APIs</mat-card-title>
+      <mat-card-subtitle>{{ apis.length }} APIs registered</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="table-container">
+        <table mat-table [dataSource]="apis" class="apis-table">
+          
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let api">
+              <div class="api-name-cell">
+                <strong>{{ api.name }}</strong>
+                <div class="api-description">{{ api.description }}</div>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- URL Column -->
+          <ng-container matColumnDef="url">
+            <th mat-header-cell *matHeaderCellDef>URL</th>
+            <td mat-cell *matCellDef="let api">
+              <span class="api-method">{{ api.method }}</span>
+              <span class="api-url">{{ api.url }}</span>
+            </td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let api">
+              <div class="status-cell">
+                <mat-icon [style.color]="getStatusColor(api.status)">
+                  {{ getStatusIcon(api.status) }}
+                </mat-icon>
+                <span>{{ api.status | titlecase }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Response Time Column -->
+          <ng-container matColumnDef="responseTime">
+            <th mat-header-cell *matHeaderCellDef>Response Time</th>
+            <td mat-cell *matCellDef="let api">
+              <span *ngIf="api.responseTime; else noResponse">
+                {{ api.responseTime }}ms
+              </span>
+              <ng-template #noResponse>
+                <span class="no-data">—</span>
+              </ng-template>
+            </td>
+          </ng-container>
+
+          <!-- Last Tested Column -->
+          <ng-container matColumnDef="lastTested">
+            <th mat-header-cell *matHeaderCellDef>Last Tested</th>
+            <td mat-cell *matCellDef="let api">
+              <span *ngIf="api.lastTested; else notTested">
+                {{ api.lastTested | date:'short' }}
+              </span>
+              <ng-template #notTested>
+                <span class="no-data">Never</span>
+              </ng-template>
+            </td>
+          </ng-container>
+
+          <!-- Tags Column -->
+          <ng-container matColumnDef="tags">
+            <th mat-header-cell *matHeaderCellDef>Tags</th>
+            <td mat-cell *matCellDef="let api">
+              <mat-chip-listbox *ngIf="api.tags && api.tags.length > 0">
+                <mat-chip *ngFor="let tag of api.tags">{{ tag }}</mat-chip>
+              </mat-chip-listbox>
+              <span *ngIf="!api.tags || api.tags.length === 0" class="no-data">—</span>
+            </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let api">
+              <div class="actions-cell">
+                <button mat-icon-button (click)="testApi(api)" matTooltip="Test API">
+                  <mat-icon>play_arrow</mat-icon>
+                </button>
+                <button mat-icon-button (click)="editApi(api)" matTooltip="Edit">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button (click)="deleteApi(api)" matTooltip="Delete" color="warn">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['name', 'url', 'status', 'responseTime', 'lastTested', 'tags', 'actions']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['name', 'url', 'status', 'responseTime', 'lastTested', 'tags', 'actions'];"></tr>
+        </table>
+
+        <mat-paginator [pageSizeOptions]="[10, 25, 50]" 
+                       [pageSize]="10"
+                       showFirstLastButtons>
+        </mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- No Data State -->
+  <mat-card *ngIf="!loading && !error && apis.length === 0" class="no-data-card">
+    <mat-card-content>
+      <div class="no-data-content">
+        <mat-icon>api</mat-icon>
+        <h3>No APIs Registered</h3>
+        <p>Get started by adding your first API endpoint to the registry.</p>
+        <button mat-raised-button color="primary" (click)="addNewApi()">
+          <mat-icon>add</mat-icon>
+          Add Your First API
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
