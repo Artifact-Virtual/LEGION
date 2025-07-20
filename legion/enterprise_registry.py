@@ -116,133 +116,68 @@ class EnterpriseAgentRegistry:
         """Register all available agents with their configurations"""
         
         # Accounts, Finance, Reporting Department
-        self._register_agent(
-            agent_id="financial_analysis_agent",
-            agent_class=FinancialAnalysisAgent,
-            department="accounts_finance_reporting",
-            dependencies=[],
-            priority=1
-        )
-        
-        self._register_agent(
-            agent_id="financial_modeling_agent",
-            agent_class=FinancialModelingAgent,
-            department="accounts_finance_reporting",
-            dependencies=["financial_analysis_agent"],
-            priority=2
-        )
-        
-        self._register_agent(
-            agent_id="quality_assurance_agent",
-            agent_class=QualityAssuranceAgent,
-            department="accounts_finance_reporting",
-            dependencies=["financial_analysis_agent"],
-            priority=2
-        )
-        
-        self._register_agent(
-            agent_id="report_generation_agent",
-            agent_class=ReportGenerationAgent,
-            department="accounts_finance_reporting",
-            dependencies=["financial_analysis_agent",
-                          "financial_modeling_agent"],
-            priority=3
-        )
-        
-        # Automation & Operations Department
-        self._register_agent(
-            agent_id="resource_optimization_agent",
-            agent_class=ResourceOptimizationAgent,
-            department="automation_operations",
-            dependencies=[],
-            priority=1
-        )
-        
-        self._register_agent(
-            agent_id="task_scheduling_agent",
-            agent_class=TaskSchedulingAgent,
-            department="automation_operations",
-            dependencies=["resource_optimization_agent"],
-            priority=2
-        )
-        
-        self._register_agent(
-            agent_id="workflow_orchestration_agent",
-            agent_class=WorkflowOrchestrationAgent,
-            department="automation_operations",
-            dependencies=["task_scheduling_agent", "resource_optimization_agent"],
-            priority=3
-        )
-        
-        # Business Intelligence & Strategy Department
-        self._register_agent(
-            agent_id="market_analysis_agent",
-            agent_class=MarketAnalysisAgent,
-            department="business_intelligence_strategy",
-            dependencies=[],
-            priority=1
-        )
-        
-        self._register_agent(
-            agent_id="analytics_agent",
-            agent_class=AnalyticsAgent,
-            department="business_intelligence_strategy",
-            dependencies=[],
-            priority=1
-        )
-        
-        self._register_agent(
-            agent_id="research_agent",
-            agent_class=ResearchAgent,
-            department="business_intelligence_strategy",
-            dependencies=[],
-            priority=1
-        )
-        
-        self._register_agent(
-            agent_id="strategic_planning_agent",
-            agent_class=StrategicPlanningAgent,
-            department="business_intelligence_strategy",
-            dependencies=["market_analysis_agent", "analytics_agent", "research_agent"],
-            priority=2
-        )
-        
-        # Communication & Marketing Department
-        self._register_agent(
-            agent_id="social_media_monitoring_agent",
-            agent_class=SocialMediaMonitoringAgent,
-            department="communication_marketing",
-            dependencies=[],
-            priority=1
-        )
-        
-        self._register_agent(
-            agent_id="content_writing_agent",
-            agent_class=ContentWritingAgent,
-            department="communication_marketing",
-            dependencies=["social_media_monitoring_agent"],
-            priority=2
-        )
-        
-        # Legal Department
-        self._register_agent(
-            agent_id="compliance_checker_agent",
-            agent_class=ComplianceCheckerAgent,
-            department="legal",
-            dependencies=[],
-            priority=1
-        )
-        
-        # Org Structure Department
-        self._register_agent(
-            agent_id="calendar_management_agent",
-            agent_class=CalendarManagementAgent,
-            department="org_structure",
-            dependencies=[],
-            priority=1
-        )
-        
-        self.logger.info(f"Registered {len(self.agent_registrations)} agents")
+        explicit_agents = {
+            "financial_analysis_agent": FinancialAnalysisAgent,
+            "financial_modeling_agent": FinancialModelingAgent,
+            "report_generation_agent": ReportGenerationAgent,
+            "quality_assurance_agent": QualityAssuranceAgent,
+            "workflow_orchestration_agent": WorkflowOrchestrationAgent,
+            "resource_optimization_agent": ResourceOptimizationAgent,
+            "task_scheduling_agent": TaskSchedulingAgent,
+            "market_analysis_agent": MarketAnalysisAgent,
+            "analytics_agent": AnalyticsAgent,
+            "research_agent": ResearchAgent,
+            "strategic_planning_agent": StrategicPlanningAgent,
+            "social_media_monitoring_agent": SocialMediaMonitoringAgent,
+            "content_writing_agent": ContentWritingAgent,
+            "compliance_checker_agent": ComplianceCheckerAgent,
+            "calendar_management_agent": CalendarManagementAgent,
+        }
+
+        # Register explicit agents (preserve config/deps)
+        for agent_id, agent_class in explicit_agents.items():
+            if agent_id not in self.agent_registrations:
+                self._register_agent(
+                    agent_id=agent_id,
+                    agent_class=agent_class,
+                    department=getattr(agent_class, 'department', 'unknown'),
+                    dependencies=[],
+                    priority=1
+                )
+
+        # --- AUTO-DISCOVERY OF ALL AGENTS ---
+        # Scan all submodules for subclasses of BaseAgent/EnterpriseAgent
+        import sys, os
+        from pathlib import Path
+        agent_base_classes = (BaseAgent, EnterpriseAgent)
+        project_root = Path(__file__).parent.parent
+        agent_dirs = [
+            'automation', 'business_intelligence', 'communication', 'finance', 'legal', 'org_structure', 'operations', 'monitoring', 'global_markets', 'nerve_centre', 'legion/agents'
+        ]
+        for agent_dir in agent_dirs:
+            abs_dir = project_root / agent_dir
+            if not abs_dir.exists():
+                continue
+            for finder, name, ispkg in pkgutil.iter_modules([str(abs_dir)]):
+                try:
+                    modname = f"{agent_dir.replace('/', '.')}.{name}"
+                    module = importlib.import_module(modname)
+                    for obj_name, obj in inspect.getmembers(module, inspect.isclass):
+                        if issubclass(obj, agent_base_classes) and obj not in agent_base_classes:
+                            # Use class name as agent_id if not already registered
+                            agent_id = getattr(obj, 'agent_id', obj_name.lower())
+                            if agent_id not in self.agent_registrations:
+                                self._register_agent(
+                                    agent_id=agent_id,
+                                    agent_class=obj,
+                                    department=getattr(obj, 'department', agent_dir),
+                                    dependencies=[],
+                                    priority=1
+                                )
+                except Exception as e:
+                    self.logger.warning(f"Auto-discovery failed for {modname}: {e}")
+
+        self.logger.info(f"Registered {len(self.agent_registrations)} agents (explicit + auto-discovered)")
         
     def _register_agent(self, agent_id: str, agent_class: type, department: str,
                        dependencies: List[str], priority: int):
