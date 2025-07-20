@@ -1,3 +1,18 @@
+import os
+import json
+
+# --- API Registry Endpoint ---
+
+@app.route('/api/registry')
+def api_registry():
+    registry_path = os.path.join(
+        os.path.dirname(__file__), 'config', 'api_registry.json')
+    try:
+        with open(registry_path, 'r', encoding='utf-8') as f:
+            registry = json.load(f)
+        return jsonify({'apis': registry})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 # Backend API for Dashboard Live Data
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
