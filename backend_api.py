@@ -1,5 +1,7 @@
+
 import os
 import json
+from datetime import datetime
 
 
 from flask import Flask, jsonify, request, abort
@@ -30,161 +32,109 @@ def require_role(roles):
 
 @app.route('/api/metrics/summary')
 def metrics_summary():
-    return jsonify({
-        'summary': {
-            'revenue': random.randint(10000, 20000),
-            'expenses': random.randint(7000, 12000),
-            'profit': random.randint(3000, 8000)
-        },
-        'trend': {
-            'labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            'revenue': [random.randint(10000, 20000) for _ in range(6)],
-            'expenses': [random.randint(7000, 12000) for _ in range(6)]
-        }
-    })
+    return jsonify({'error': 'No real data source connected for summary metrics.'}), 501
 
+
+
+
+# Agent Activities endpoint for AgentActivityTable (REAL DATA)
+@app.route('/api/agent-activities')
+def agent_activities():
+    import sqlite3
+    db_path = os.path.join(os.path.dirname(__file__), 'data', 'enterprise_operations.db')
+    activities = []
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT id, department, operation_type, description, data, timestamp
+            FROM business_operations
+            ORDER BY timestamp DESC
+            LIMIT 50
+        ''')
+        rows = cursor.fetchall()
+        for row in rows:
+            # Try to extract agent/activity info from data JSON if available
+            try:
+                data_json = json.loads(row[4]) if row[4] else {}
+            except Exception:
+                data_json = {}
+            activities.append({
+                'id': row[0],
+                'agentName': data_json.get('agent_name') or row[1],
+                'activity': data_json.get('activity') or row[2],
+                'status': data_json.get('status') or 'Completed',
+                'timestamp': row[5],
+                'duration': data_json.get('duration') or ''
+            })
+        conn.close()
+    except Exception as e:
+        return jsonify({'error': f'Failed to fetch activities: {e}'}), 500
+    return jsonify(activities)
 
 # Agent Health endpoint for AgentHealthDashboard
 @app.route('/api/metrics/agent-health')
 def agent_health():
-    return jsonify({
-        'summary': {
-            'healthy': random.randint(15, 20),
-            'warnings': random.randint(0, 3),
-            'errors': random.randint(0, 2)
-        },
-        'trend': [random.randint(15, 20) for _ in range(7)]
-    })
+    return jsonify({'error': 'No real data source connected for agent health.'}), 501
 
 # Executive Dashboard endpoint
 @app.route('/api/metrics/executive')
 def executive_metrics():
-    return jsonify({
-        'kpis': {
-            'growth': random.uniform(2.0, 8.0),
-            'customer_satisfaction': random.uniform(80, 100),
-            'market_share': random.uniform(10, 30)
-        }
-    })
+    return jsonify({'error': 'No real data source connected for executive metrics.'}), 501
 
 # Financial Dashboard endpoint
 @app.route('/api/metrics/financial')
 def financial_metrics():
-    return jsonify({
-        'summary': {
-            'revenue': random.randint(10000, 20000),
-            'expenses': random.randint(7000, 12000),
-            'profit': random.randint(3000, 8000)
-        },
-        'trend': {
-            'labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            'revenue': [random.randint(10000, 20000) for _ in range(6)],
-            'expenses': [random.randint(7000, 12000) for _ in range(6)]
-        }
-    })
+    return jsonify({'error': 'No real data source connected for financial metrics.'}), 501
 
 # Operations Dashboard endpoint
 @app.route('/api/metrics/operations')
 def operations_metrics():
-    return jsonify({
-        'tasks_completed': random.randint(80, 120),
-        'tasks_pending': random.randint(5, 20),
-        'efficiency': random.uniform(85, 99)
-    })
+    return jsonify({'error': 'No real data source connected for operations metrics.'}), 501
 
 # Marketing Dashboard endpoint
 @app.route('/api/metrics/marketing')
 def marketing_metrics():
-    return jsonify({
-        'campaigns': random.randint(2, 8),
-        'leads': random.randint(100, 300),
-        'conversion_rate': random.uniform(2.0, 7.0)
-    })
+    return jsonify({'error': 'No real data source connected for marketing metrics.'}), 501
 
 # Compliance Dashboard endpoint
 @app.route('/api/metrics/compliance')
 def compliance_metrics():
-    return jsonify({
-        'audits_passed': random.randint(5, 10),
-        'audits_failed': random.randint(0, 2),
-        'compliance_score': random.uniform(90, 100)
-    })
+    return jsonify({'error': 'No real data source connected for compliance metrics.'}), 501
 
 
 @app.route('/api/metrics/executive')
 def metrics_executive():
-    return jsonify({
-        'summary': {
-            'revenue': random.randint(4000, 5000),
-            'agents': random.randint(15, 22),
-            'status': 'Operational'
-        },
-        'trend': [random.randint(4000, 5000) for _ in range(7)]
-    })
+    return jsonify({'error': 'No real data source connected for executive summary.'}), 501
 
 
 @app.route('/api/metrics/financial')
 def metrics_financial():
-    return jsonify({
-        'summary': {
-            'y1': random.randint(40000, 60000),
-            'margin': random.randint(70, 95),
-            'pipeline': random.randint(60000, 90000)
-        },
-        'pipeline': [random.randint(60000, 90000) for _ in range(4)]
-    })
+    return jsonify({'error': 'No real data source connected for financial summary.'}), 501
 
 
 @app.route('/api/metrics/operations')
 @require_role(['admin', 'manager'])
 def metrics_operations():
-    return jsonify({
-        'summary': {
-            'workflows': random.randint(5, 10),
-            'bi_reports': random.randint(10, 20),
-            'agent_health': random.choice(['Healthy', 'Degraded', 'Critical'])
-        },
-        'trend': [random.randint(5, 10) for _ in range(7)]
-    })
+    return jsonify({'error': 'No real data source connected for operations summary.'}), 501
 
 
 @app.route('/api/metrics/marketing')
 @require_role(['admin', 'manager', 'viewer'])
 def metrics_marketing():
-    return jsonify({
-        'summary': {
-            'leads': random.randint(100, 200),
-            'campaigns': random.randint(3, 8),
-            'conversion': round(random.uniform(5, 10), 2)
-        },
-        'trend': [random.randint(80, 200) for _ in range(7)]
-    })
+    return jsonify({'error': 'No real data source connected for marketing summary.'}), 501
 
 
 @app.route('/api/metrics/agent-health')
 @require_role(['admin', 'manager'])
 def metrics_agent_health():
-    return jsonify({
-        'summary': {
-            'healthy': random.randint(15, 20),
-            'errors': random.randint(0, 2),
-            'warnings': random.randint(0, 5)
-        },
-        'trend': [random.randint(15, 20) for _ in range(7)]
-    })
+    return jsonify({'error': 'No real data source connected for agent health summary.'}), 501
 
 
 @app.route('/api/metrics/compliance')
 @require_role(['admin', 'manager', 'viewer'])
 def metrics_compliance():
-    return jsonify({
-        'summary': {
-            'status': random.choice(['Compliant', 'Non-Compliant']),
-            'audit_findings': random.randint(0, 2),
-            'risk_level': random.choice(['Low', 'Medium', 'High'])
-        },
-        'trend': [random.choice(['Low', 'Medium', 'High']) for _ in range(7)]
-    })
+    return jsonify({'error': 'No real data source connected for compliance summary.'}), 501
 
 
 # --- API Registry Endpoint ---
