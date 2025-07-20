@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Enterprise Legion Installation Script
-Automated setup and configuration for the Enterprise Legion system
+Enterprise Legion Installation & Setup Script
+Unified setup for the AI-powered enterprise management platform.
+Handles all Python and Node dependencies, environment prep, DBs, and config.
 """
 
 import os
@@ -26,34 +27,31 @@ def check_python_version():
     return True
 
 def install_dependencies():
-    """Install required dependencies"""
-    print("📦 Installing dependencies...")
+    """Install required Python dependencies from requirements.txt"""
+    print("📦 Installing Python dependencies...")
+    req_path = os.path.join(os.path.dirname(__file__), "requirements.txt")
     try:
-        # Always install from enterprise/requirements.txt
-        req_path = os.path.join(os.path.dirname(__file__), "requirements.txt")
         subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", req_path])
-        print("✅ Dependencies installed successfully")
+        print("✅ Python dependencies installed successfully")
         return True
     except subprocess.CalledProcessError as e:
-        print(f"❌ Failed to install dependencies: {e}")
+        print(f"❌ Failed to install Python dependencies: {e}")
         return False
 
 def install_dashboard_dependencies():
     """Install Node dependencies for the React dashboard."""
     dashboard_dir = os.path.join(os.path.dirname(__file__), 'reporting', 'dashboards')
-    if not os.path.exists(os.path.join(dashboard_dir, 'package.json')):
+    pkg_path = os.path.join(dashboard_dir, 'package.json')
+    if not os.path.exists(pkg_path):
         print(f"❌ Dashboard package.json not found in {dashboard_dir}")
         return False
-    print(f"📦 Installing dashboard dependencies in {dashboard_dir} ...")
+    print(f"📦 Installing dashboard (Node) dependencies in {dashboard_dir} ...")
     try:
         subprocess.check_call(['npm', 'install'], cwd=dashboard_dir)
-        print("✅ Dashboard dependencies installed successfully")
-        # Automatically start the dashboard after install
-        subprocess.check_call(['npm', 'start'], cwd=dashboard_dir)
-        print("✅ Dashboard started successfully")
+        print("✅ Dashboard Node dependencies installed successfully")
         return True
     except subprocess.CalledProcessError as e:
-        print(f"❌ Failed to install/start dashboard: {e}")
+        print(f"❌ Failed to install dashboard Node dependencies: {e}")
         return False
 
 def create_directories():
@@ -449,39 +447,31 @@ def install_ollama_and_start():
         return False
 
 def main():
-    """Main installation process"""
-    print("🚀 Enterprise Legion Installation")
+    """Main installation and setup process"""
+    print("🚀 Enterprise Legion Installation & Setup")
     print("=" * 40)
-    
     # Check Python version
     if not check_python_version():
         sys.exit(1)
-    
-    # Install dependencies
+    # Install Python dependencies
     if not install_dependencies():
         sys.exit(1)
-    
-    # Install dashboard dependencies
-    install_dashboard_dependencies()
-    
+    # Install dashboard (Node) dependencies
+    if not install_dashboard_dependencies():
+        sys.exit(1)
     # Create directories (updated version with LLM directories)
     update_create_directories()
-    
     # Set up LLM providers (Ollama, llama.cpp, etc.)
     setup_llm_providers()
-    
     # Initialize databases
     initialize_databases()
-    
     # Create config files
     create_config_files()
-    
     # Run system check
     if not run_system_check():
         sys.exit(1)
-    
     print("\n" + "=" * 40)
-    print("✅ Installation completed successfully!")
+    print("✅ Installation & setup completed successfully!")
     print("\nNext steps:")
     print("1. Configure LLM API keys in config/.env (optional)")
     print("2. Configure email settings in config/integrations.json (optional)")

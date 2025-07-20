@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Activity, AlertTriangle, CheckCircle, Zap, Server, Database, Wifi } from 'lucide-react';
+import { FiShield, FiActivity, FiAlertTriangle, FiCheckCircle, FiZap, FiServer, FiDatabase, FiWifi } from 'react-icons/fi';
 
 // Real-time metric component
 function MetricCard({ icon: Icon, title, value, status, trend, unit = '' }) {

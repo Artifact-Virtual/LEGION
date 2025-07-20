@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { FileText, Download, RefreshCw, Calendar, TrendingUp, BarChart3 } from 'lucide-react';
+import { FiFileText, FiDownload, FiRefreshCw, FiCalendar, FiTrendingUp, FiBarChart3 } from 'react-icons/fi';
 
 // Sample executive reports data
 const sampleReports = {
