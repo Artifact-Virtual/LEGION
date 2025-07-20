@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { FiFileText, FiDownload, FiRefreshCw, FiCalendar, FiTrendingUp, FiBarChart3 } from 'react-icons/fi';
+import { FiFileText, FiDownload, FiRefreshCw, FiCalendar, FiTrendingUp, FiBarChart } from 'react-icons/fi';
 
 const FileText = FiFileText;
 const TrendingUp = FiTrendingUp;
-const BarChart3 = FiBarChart3;
+const BarChart3 = FiBarChart;
 const Calendar = FiCalendar;
 const RefreshCw = FiRefreshCw;
 const Download = FiDownload;
