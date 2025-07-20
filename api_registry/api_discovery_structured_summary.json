@@ -1,138 +1,42 @@
 {
-  "directory": "L:\\devops\\artifactvirtual\\core\\admin\\api_registry",
-  "api_count": 16,
+  "directory": "/home/adam/repos/enterprise/api_registry",
+  "api_count": 11,
   "apis": [
     {
-      "name": "Running Service (Port 5040)",
+      "name": "Running Service (Port 3000)",
       "file_path": "Unknown",
-      "port": 5040,
+      "port": 3000,
       "technology": "Unknown",
       "framework": "Running Process",
       "host": "localhost",
       "endpoints": [],
-      "description": "Active service on port 5040",
+      "description": "Active service on port 3000",
       "is_running": true,
-      "process_id": 10532
+      "process_id": 2886271
     },
     {
-      "name": "Running Service (Port 7680)",
+      "name": "Running Service (Port 37635)",
       "file_path": "Unknown",
-      "port": 7680,
+      "port": 37635,
       "technology": "Unknown",
       "framework": "Running Process",
       "host": "localhost",
       "endpoints": [],
-      "description": "Active service on port 7680",
+      "description": "Active service on port 37635",
       "is_running": true,
-      "process_id": 20592
+      "process_id": 3293197
     },
     {
-      "name": "Running Service (Port 49664)",
+      "name": "Running Service (Port 1883)",
       "file_path": "Unknown",
-      "port": 49664,
+      "port": 1883,
       "technology": "Unknown",
       "framework": "Running Process",
       "host": "localhost",
       "endpoints": [],
-      "description": "Active service on port 49664",
+      "description": "Active service on port 1883",
       "is_running": true,
-      "process_id": 1692
-    },
-    {
-      "name": "Running Service (Port 49665)",
-      "file_path": "Unknown",
-      "port": 49665,
-      "technology": "Unknown",
-      "framework": "Running Process",
-      "host": "localhost",
-      "endpoints": [],
-      "description": "Active service on port 49665",
-      "is_running": true,
-      "process_id": 1524
-    },
-    {
-      "name": "Running Service (Port 49666)",
-      "file_path": "Unknown",
-      "port": 49666,
-      "technology": "Unknown",
-      "framework": "Running Process",
-      "host": "localhost",
-      "endpoints": [],
-      "description": "Active service on port 49666",
-      "is_running": true,
-      "process_id": 2272
-    },
-    {
-      "name": "Running Service (Port 49667)",
-      "file_path": "Unknown",
-      "port": 49667,
-      "technology": "Unknown",
-      "framework": "Running Process",
-      "host": "localhost",
-      "endpoints": [],
-      "description": "Active service on port 49667",
-      "is_running": true,
-      "process_id": 3376
-    },
-    {
-      "name": "Running Service (Port 49668)",
-      "file_path": "Unknown",
-      "port": 49668,
-      "technology": "Unknown",
-      "framework": "Running Process",
-      "host": "localhost",
-      "endpoints": [],
-      "description": "Active service on port 49668",
-      "is_running": true,
-      "process_id": 5768
-    },
-    {
-      "name": "Running Service (Port 49669)",
-      "file_path": "Unknown",
-      "port": 49669,
-      "technology": "Unknown",
-      "framework": "Running Process",
-      "host": "localhost",
-      "endpoints": [],
-      "description": "Active service on port 49669",
-      "is_running": true,
-      "process_id": 1664
-    },
-    {
-      "name": "Running Service (Port 50080)",
-      "file_path": "Unknown",
-      "port": 50080,
-      "technology": "Unknown",
-      "framework": "Running Process",
-      "host": "localhost",
-      "endpoints": [],
-      "description": "Active service on port 50080",
-      "is_running": true,
-      "process_id": 4
-    },
-    {
-      "name": "Running Service (Port 50443)",
-      "file_path": "Unknown",
-      "port": 50443,
-      "technology": "Unknown",
-      "framework": "Running Process",
-      "host": "localhost",
-      "endpoints": [],
-      "description": "Active service on port 50443",
-      "is_running": true,
-      "process_id": 4
-    },
-    {
-      "name": "Running Service (Port 52239)",
-      "file_path": "Unknown",
-      "port": 52239,
-      "technology": "Unknown",
-      "framework": "Running Process",
-      "host": "localhost",
-      "endpoints": [],
-      "description": "Active service on port 52239",
-      "is_running": true,
-      "process_id": 16956
+      "process_id": null
     },
     {
       "name": "Running Service (Port 11434)",
@@ -144,62 +48,98 @@
       "endpoints": [],
       "description": "Active service on port 11434",
       "is_running": true,
-      "process_id": 10360
+      "process_id": null
     },
     {
-      "name": "Running Service (Port 58458)",
+      "name": "Running Service (Port 5001)",
       "file_path": "Unknown",
-      "port": 58458,
+      "port": 5001,
       "technology": "Unknown",
       "framework": "Running Process",
       "host": "localhost",
       "endpoints": [],
-      "description": "Active service on port 58458",
+      "description": "Active service on port 5001",
       "is_running": true,
-      "process_id": 16956
+      "process_id": 3363184
     },
     {
-      "name": "Running Service (Port 63756)",
+      "name": "Running Service (Port 61209)",
       "file_path": "Unknown",
-      "port": 63756,
+      "port": 61209,
       "technology": "Unknown",
       "framework": "Running Process",
       "host": "localhost",
       "endpoints": [],
-      "description": "Active service on port 63756",
+      "description": "Active service on port 61209",
       "is_running": true,
-      "process_id": 10464
+      "process_id": null
     },
     {
-      "name": "Running Service (Port 63767)",
+      "name": "Running Service (Port 20241)",
       "file_path": "Unknown",
-      "port": 63767,
+      "port": 20241,
       "technology": "Unknown",
       "framework": "Running Process",
       "host": "localhost",
       "endpoints": [],
-      "description": "Active service on port 63767",
+      "description": "Active service on port 20241",
       "is_running": true,
-      "process_id": 10464
+      "process_id": 2823394
     },
     {
-      "name": "Running Service (Port 63783)",
+      "name": "Running Service (Port 20242)",
       "file_path": "Unknown",
-      "port": 63783,
+      "port": 20242,
       "technology": "Unknown",
       "framework": "Running Process",
       "host": "localhost",
       "endpoints": [],
-      "description": "Active service on port 63783",
+      "description": "Active service on port 20242",
       "is_running": true,
-      "process_id": 10464
+      "process_id": 3100179
+    },
+    {
+      "name": "Running Service (Port 34849)",
+      "file_path": "Unknown",
+      "port": 34849,
+      "technology": "Unknown",
+      "framework": "Running Process",
+      "host": "localhost",
+      "endpoints": [],
+      "description": "Active service on port 34849",
+      "is_running": true,
+      "process_id": null
+    },
+    {
+      "name": "Running Service (Port 9090)",
+      "file_path": "Unknown",
+      "port": 9090,
+      "technology": "Unknown",
+      "framework": "Running Process",
+      "host": "localhost",
+      "endpoints": [],
+      "description": "Active service on port 9090",
+      "is_running": true,
+      "process_id": null
+    },
+    {
+      "name": "Running Service (Port 8080)",
+      "file_path": "Unknown",
+      "port": 8080,
+      "technology": "Unknown",
+      "framework": "Running Process",
+      "host": "localhost",
+      "endpoints": [],
+      "description": "Active service on port 8080",
+      "is_running": true,
+      "process_id": 3100102
     }
   ],
   "metrics_files": [],
   "log_files": [],
   "report_files": [
-    "api_discovery_report.md",
-    "README.md"
+    "README.md",
+    "api_discovery_report.md"
   ],
   "agent_scripts": [],
   "databases": [],

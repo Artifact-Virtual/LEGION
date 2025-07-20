@@ -60,23 +60,14 @@ Write-Host "🔍 Starting API Discovery..." -ForegroundColor Green
 
 try {
     if ($UpdateRegistry) {
-        # Update the registry document
-        $UpdateScript = Join-Path $ScriptDir "update_api_registry.py"
-        
-        if (Test-Path $UpdateScript) {
-            $UpdateArgs = @("--root", $Root)
-            if ($Verbose) { $UpdateArgs += "--verbose" }
-            
-            Write-Host "📝 Updating API registry..." -ForegroundColor Yellow
-            & python $UpdateScript @UpdateArgs
-            
-            if ($LASTEXITCODE -eq 0) {
-                Write-Host "✅ API registry updated successfully!" -ForegroundColor Green
-            } else {
-                Write-Error "Failed to update API registry"
-            }
+        $UpdateArgs = @("--root", $Root, "--update-registry")
+        if ($Verbose) { $UpdateArgs += "--verbose" }
+        Write-Host "📝 Updating API registry..." -ForegroundColor Yellow
+        & python $DiscoveryScript @UpdateArgs
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "✅ API registry updated successfully!" -ForegroundColor Green
         } else {
-            Write-Warning "Update script not found: $UpdateScript"
+            Write-Error "Failed to update API registry"
         }
     }
     
@@ -84,17 +75,12 @@ try {
     $DiscoveryArgs = @("--root", $Root, "--format", $Format)
     if ($Output) { $DiscoveryArgs += @("--output", $Output) }
     if ($Verbose) { $DiscoveryArgs += "--verbose" }
-    
     Write-Host "🚀 Running API discovery..." -ForegroundColor Yellow
     & python $DiscoveryScript @DiscoveryArgs
-    
     if ($LASTEXITCODE -eq 0) {
         Write-Host "✅ API discovery completed successfully!" -ForegroundColor Green
-        
         if ($Output) {
             Write-Host "📄 Report saved to: $Output" -ForegroundColor Cyan
-            
-            # Open the report if it's HTML
             if ($Format -eq "html" -and (Test-Path $Output)) {
                 $OpenReport = Read-Host "Open HTML report in browser? (y/N)"
                 if ($OpenReport -match "^[Yy]") {

@@ -5,7 +5,7 @@ This directory contains tools for automatically discovering and documenting APIs
 ## Files
 
 - **`api_discovery.py`** - Core API discovery engine that scans for APIs across multiple technologies
-- **`update_api_registry.py`** - Updates the API registry markdown document with discovered APIs
+<!-- update_api_registry.py removed: registry update is now handled by api_discovery.py -->
 - **`discover_apis.ps1`** - PowerShell wrapper script for easy Windows automation
 - **`README.md`** - This documentation file
 
@@ -23,14 +23,16 @@ python api_discovery.py --format json --output api_report.json
 python api_discovery.py --format html --output api_report.html
 ```
 
+
 ### Update Registry Document
 ```bash
 # Update the main API registry document
-python update_api_registry.py
+python api_discovery.py --update-registry
 
 # Update with custom paths
-python update_api_registry.py --registry "path/to/registry.md" --root "/scan/path"
+python api_discovery.py --update-registry --registry "path/to/registry.md" --root "/scan/path"
 ```
+
 
 ### PowerShell (Windows)
 ```powershell
@@ -91,7 +93,7 @@ This tool is designed to integrate with:
 
 ### Common Issues
 
-1. **Import Errors**: Ensure both `api_discovery.py` and `update_api_registry.py` are in the same directory
+1. **Import Errors**: Ensure `api_discovery.py` is in the correct directory
 2. **Permission Errors**: Check write permissions for output files
 3. **Missing Dependencies**: Install required Python packages (`pyyaml` for Docker Compose parsing)
 

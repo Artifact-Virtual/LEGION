@@ -1,14 +1,14 @@
 # Artifact Virtual - API Discovery Report
 
-Generated on: 2025-07-03 05:32:04
-Discovery Root: L:\devops\artifactvirtual\core\admin\api_registry
-Total APIs Found: 16
+Generated on: 2025-07-20 11:14:19
+Discovery Root: /home/adam/repos/enterprise/api_registry
+Total APIs Found: 11
 
 ---
 
 ## Summary by Technology
 
-- **Unknown**: 16 APIs (16 running)
+- **Unknown**: 11 APIs (11 running)
 
 ---
 
@@ -17,64 +17,49 @@ Total APIs Found: 16
 | Name | File Path | Port | Technology | Framework | Status | Endpoints |
 |------|-----------|------|------------|-----------|--------|----------|
 | Running Service (Port 11434) | `Unknown` | 11434 | Unknown | Running Process | 🟢 Running |  |
-| Running Service (Port 49664) | `Unknown` | 49664 | Unknown | Running Process | 🟢 Running |  |
-| Running Service (Port 49665) | `Unknown` | 49665 | Unknown | Running Process | 🟢 Running |  |
-| Running Service (Port 49666) | `Unknown` | 49666 | Unknown | Running Process | 🟢 Running |  |
-| Running Service (Port 49667) | `Unknown` | 49667 | Unknown | Running Process | 🟢 Running |  |
-| Running Service (Port 49668) | `Unknown` | 49668 | Unknown | Running Process | 🟢 Running |  |
-| Running Service (Port 49669) | `Unknown` | 49669 | Unknown | Running Process | 🟢 Running |  |
-| Running Service (Port 50080) | `Unknown` | 50080 | Unknown | Running Process | 🟢 Running |  |
-| Running Service (Port 5040) | `Unknown` | 5040 | Unknown | Running Process | 🟢 Running |  |
-| Running Service (Port 50443) | `Unknown` | 50443 | Unknown | Running Process | 🟢 Running |  |
-| Running Service (Port 52239) | `Unknown` | 52239 | Unknown | Running Process | 🟢 Running |  |
-| Running Service (Port 58458) | `Unknown` | 58458 | Unknown | Running Process | 🟢 Running |  |
-| Running Service (Port 63756) | `Unknown` | 63756 | Unknown | Running Process | 🟢 Running |  |
-| Running Service (Port 63767) | `Unknown` | 63767 | Unknown | Running Process | 🟢 Running |  |
-| Running Service (Port 63783) | `Unknown` | 63783 | Unknown | Running Process | 🟢 Running |  |
-| Running Service (Port 7680) | `Unknown` | 7680 | Unknown | Running Process | 🟢 Running |  |
+| Running Service (Port 1883) | `Unknown` | 1883 | Unknown | Running Process | 🟢 Running |  |
+| Running Service (Port 20241) | `Unknown` | 20241 | Unknown | Running Process | 🟢 Running |  |
+| Running Service (Port 20242) | `Unknown` | 20242 | Unknown | Running Process | 🟢 Running |  |
+| Running Service (Port 3000) | `Unknown` | 3000 | Unknown | Running Process | 🟢 Running |  |
+| Running Service (Port 34849) | `Unknown` | 34849 | Unknown | Running Process | 🟢 Running |  |
+| Running Service (Port 37635) | `Unknown` | 37635 | Unknown | Running Process | 🟢 Running |  |
+| Running Service (Port 5001) | `Unknown` | 5001 | Unknown | Running Process | 🟢 Running |  |
+| Running Service (Port 61209) | `Unknown` | 61209 | Unknown | Running Process | 🟢 Running |  |
+| Running Service (Port 8080) | `Unknown` | 8080 | Unknown | Running Process | 🟢 Running |  |
+| Running Service (Port 9090) | `Unknown` | 9090 | Unknown | Running Process | 🟢 Running |  |
 
 ---
 
 ## Port Usage Summary
 
-✅ **Port 5040**: Running Service (Port 5040)
-✅ **Port 7680**: Running Service (Port 7680)
+✅ **Port 1883**: Running Service (Port 1883)
+✅ **Port 3000**: Running Service (Port 3000)
+✅ **Port 5001**: Running Service (Port 5001)
+✅ **Port 8080**: Running Service (Port 8080)
+✅ **Port 9090**: Running Service (Port 9090)
 ✅ **Port 11434**: Running Service (Port 11434)
-✅ **Port 49664**: Running Service (Port 49664)
-✅ **Port 49665**: Running Service (Port 49665)
-✅ **Port 49666**: Running Service (Port 49666)
-✅ **Port 49667**: Running Service (Port 49667)
-✅ **Port 49668**: Running Service (Port 49668)
-✅ **Port 49669**: Running Service (Port 49669)
-✅ **Port 50080**: Running Service (Port 50080)
-✅ **Port 50443**: Running Service (Port 50443)
-✅ **Port 52239**: Running Service (Port 52239)
-✅ **Port 58458**: Running Service (Port 58458)
-✅ **Port 63756**: Running Service (Port 63756)
-✅ **Port 63767**: Running Service (Port 63767)
-✅ **Port 63783**: Running Service (Port 63783)
+✅ **Port 20241**: Running Service (Port 20241)
+✅ **Port 20242**: Running Service (Port 20242)
+✅ **Port 34849**: Running Service (Port 34849)
+✅ **Port 37635**: Running Service (Port 37635)
+✅ **Port 61209**: Running Service (Port 61209)
 
 ---
 
 ## Running Services
 
-- **Running Service (Port 5040)** (Port 5040) - PID: 10532
-- **Running Service (Port 7680)** (Port 7680) - PID: 20592
-- **Running Service (Port 49664)** (Port 49664) - PID: 1692
-- **Running Service (Port 49665)** (Port 49665) - PID: 1524
-- **Running Service (Port 49666)** (Port 49666) - PID: 2272
-- **Running Service (Port 49667)** (Port 49667) - PID: 3376
-- **Running Service (Port 49668)** (Port 49668) - PID: 5768
-- **Running Service (Port 49669)** (Port 49669) - PID: 1664
-- **Running Service (Port 50080)** (Port 50080) - PID: 4
-- **Running Service (Port 50443)** (Port 50443) - PID: 4
-- **Running Service (Port 52239)** (Port 52239) - PID: 16956
-- **Running Service (Port 11434)** (Port 11434) - PID: 10360
-- **Running Service (Port 58458)** (Port 58458) - PID: 16956
-- **Running Service (Port 63756)** (Port 63756) - PID: 10464
-- **Running Service (Port 63767)** (Port 63767) - PID: 10464
-- **Running Service (Port 63783)** (Port 63783) - PID: 10464
+- **Running Service (Port 3000)** (Port 3000) - PID: 2886271
+- **Running Service (Port 37635)** (Port 37635) - PID: 3293197
+- **Running Service (Port 1883)** (Port 1883)
+- **Running Service (Port 11434)** (Port 11434)
+- **Running Service (Port 5001)** (Port 5001) - PID: 3363184
+- **Running Service (Port 61209)** (Port 61209)
+- **Running Service (Port 20241)** (Port 20241) - PID: 2823394
+- **Running Service (Port 20242)** (Port 20242) - PID: 3100179
+- **Running Service (Port 34849)** (Port 34849)
+- **Running Service (Port 9090)** (Port 9090)
+- **Running Service (Port 8080)** (Port 8080) - PID: 3100102
 
 ---
 
-*Report generated by API Discovery Tool at 2025-07-03 05:32:04.143362*
+*Report generated by API Discovery Tool at 2025-07-20 11:14:19.154681*
