@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import './chartConfig'; // Import chart configuration
 import App from './App';
 import './index.css';
 
