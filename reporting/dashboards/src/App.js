@@ -4,6 +4,7 @@ import MarkdownReportViewer from './MarkdownReportViewer';
 import AgentHealthDashboard from './AgentHealthDashboard';
 import SecurityHealthPanel from './SecurityHealthPanel';
 import ThreeDVisualization from './ThreeDVisualization';
+import ApiRegistryPanel from './ApiRegistryPanel';
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <div className="space-y-8">
           <MarkdownReportViewer />
           <ThreeDVisualization />
+          <ApiRegistryPanel />
         </div>
       </div>
     </div>
