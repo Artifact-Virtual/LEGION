@@ -15,7 +15,7 @@ export default function AgentHealthDashboard() {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch('/api/metrics/agent-health', {
+        const res = await fetch('http://localhost:5001/api/metrics/agent-health', {
           headers: { Authorization: 'Bearer admin-token-123' },
         });
         if (!res.ok) throw new Error('Failed to fetch agent health metrics');
@@ -26,6 +26,11 @@ export default function AgentHealthDashboard() {
         }
       } catch (err) {
         if (isMounted) setError(err.message);
+        // Use empty data instead of mock data
+        if (isMounted) {
+          setHealth({ healthy: 0, errors: 0, warnings: 0 });
+          setTrend([]);
+        }
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -40,37 +45,56 @@ export default function AgentHealthDashboard() {
     datasets: [
       {
         label: 'Healthy Agents',
-        data: trend.length ? trend : [18, 18, 19, 20, 19, 18, 17],
-        borderColor: '#fff',
-        backgroundColor: 'rgba(255,255,255,0.1)',
+        data: trend.length ? trend : [0, 0, 0, 0, 0, 0, 0],
+        borderColor: '#10b981',
+        backgroundColor: 'rgba(16, 185, 129, 0.1)',
         tension: 0.4,
         pointRadius: 4,
-        pointBackgroundColor: '#fff',
+        pointBackgroundColor: '#10b981',
       },
     ],
   };
 
-  if (loading) return <div className="loading">Loading agent health data...</div>;
-  if (error) return <div className="error">Error: {error}</div>;
+  if (loading) return (
+    <div className="bg-black border border-gray-800 rounded-lg shadow-2xl p-6">
+      <div className="text-white">Loading agent health data...</div>
+    </div>
+  );
+  
+  if (error) return (
+    <div className="bg-black border border-gray-800 rounded-lg shadow-2xl p-6">
+      <div className="text-red-400">No real data source connected for agent health: {error}</div>
+    </div>
+  );
 
   return (
-    <Dashboard title="Agent Health Dashboard" className="bg-gradient-to-br from-green-600 to-green-800">
+    <div className="bg-black border border-gray-800 rounded-lg shadow-2xl p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-bold text-white">Agent Health Dashboard</h2>
+        {error && (
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+            <span className="text-xs text-red-400">Data Unavailable</span>
+          </div>
+        )}
+      </div>
+      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-white mb-2">Healthy Agents</h3>
-          <p className="text-3xl font-bold text-white">{health.healthy}</p>
+          <p className="text-3xl font-bold text-green-400">{health.healthy}</p>
         </div>
-        <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-white mb-2">Warnings</h3>
-          <p className="text-3xl font-bold text-yellow-300">{health.warnings}</p>
+          <p className="text-3xl font-bold text-yellow-400">{health.warnings}</p>
         </div>
-        <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-white mb-2">Errors</h3>
-          <p className="text-3xl font-bold text-red-300">{health.errors}</p>
+          <p className="text-3xl font-bold text-red-400">{health.errors}</p>
         </div>
       </div>
       
-      <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
+      <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-white mb-4">Agent Health Trend</h3>
         <div className="h-64">
           <Line data={chartData} options={{
@@ -78,22 +102,22 @@ export default function AgentHealthDashboard() {
             maintainAspectRatio: false,
             plugins: {
               legend: {
-                labels: { color: 'white' }
+                labels: { color: '#ffffff' }
               }
             },
             scales: {
               x: {
-                ticks: { color: 'white' },
-                grid: { color: 'rgba(255,255,255,0.1)' }
+                ticks: { color: '#9ca3af' },
+                grid: { color: '#1f2937' }
               },
               y: {
-                ticks: { color: 'white' },
-                grid: { color: 'rgba(255,255,255,0.1)' }
+                ticks: { color: '#9ca3af' },
+                grid: { color: '#1f2937' }
               }
             }
           }} />
         </div>
       </div>
-    </Dashboard>
+    </div>
   );
 }
