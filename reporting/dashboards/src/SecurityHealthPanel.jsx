@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { FiShield, FiActivity, FiAlertTriangle, FiCheckCircle, FiZap, FiServer, FiDatabase, FiWifi } from 'react-icons/fi';
 
+const Shield = FiShield;
+const Zap = FiZap;
+const Activity = FiActivity;
+const Server = FiServer;
+const Database = FiDatabase;
+const Wifi = FiWifi;
+const CheckCircle = FiCheckCircle;
+const AlertTriangle = FiAlertTriangle;
+
 // Real-time metric component
 function MetricCard({ icon: Icon, title, value, status, trend, unit = '' }) {
   const statusColors = {

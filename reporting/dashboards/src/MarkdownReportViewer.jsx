@@ -3,6 +3,13 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { FiFileText, FiDownload, FiRefreshCw, FiCalendar, FiTrendingUp, FiBarChart3 } from 'react-icons/fi';
 
+const FileText = FiFileText;
+const TrendingUp = FiTrendingUp;
+const BarChart3 = FiBarChart3;
+const Calendar = FiCalendar;
+const RefreshCw = FiRefreshCw;
+const Download = FiDownload;
+
 // Sample executive reports data
 const sampleReports = {
   executive: {
