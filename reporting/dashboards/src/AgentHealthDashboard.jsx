@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Dashboard from './Dashboard';
 import { Line } from 'react-chartjs-2';
-import 'chart.js/auto';
+
 
 export default function AgentHealthDashboard() {
   const [health, setHealth] = useState({ healthy: 0, errors: 0, warnings: 0 });

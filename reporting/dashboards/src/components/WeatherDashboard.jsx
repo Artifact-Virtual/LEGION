@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
-import { FiCloud, FiSun, FiWind, FiDroplet, FiThermometer, FiEye } from 'react-icons/fi';
+import { FiCloud, FiSun, FiWind, FiDroplet, FiThermometer, FiEye, FiCloudRain } from 'react-icons/fi';
 
 const WeatherDashboard = () => {
   const [weatherData, setWeatherData] = useState(null);

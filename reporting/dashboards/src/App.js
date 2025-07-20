@@ -1,4 +1,5 @@
 import React from 'react';
+import './chartConfig.js';
 import AgentActivityTable from './AgentActivityTable';
 import MarkdownReportViewer from './MarkdownReportViewer';
 import AgentHealthDashboard from './AgentHealthDashboard';
@@ -8,18 +9,16 @@ import ApiRegistryPanel from './ApiRegistryPanel';
 
 // Import new comprehensive components
 
-import {
-  CryptoMarketWidget,
-  WeatherDashboard,
-  AstronomyWidget,
-  StockMarketWidget,
-  CybersecurityDashboard,
-  NewsAndEventsWidget,
-  EarthquakeMonitor,
-  BusinessIntelligenceWidget,
-  HealthTechWidget,
-  EnergyEnvironmentWidget
-} from './components';
+import CryptoMarketWidget from './components/CryptoMarketWidget';
+import WeatherDashboard from './components/WeatherDashboard';
+import AstronomyWidget from './components/AstronomyWidget';
+import StockMarketWidget from './components/StockMarketWidget';
+import CybersecurityDashboard from './components/CybersecurityDashboard';
+import NewsAndEventsWidget from './components/NewsAndEventsWidget';
+import EarthquakeMonitor from './components/EarthquakeMonitor';
+import BusinessIntelligenceWidget from './components/BusinessIntelligenceWidget';
+import HealthTechWidget from './components/HealthTechWidget';
+import EnergyEnvironmentWidget from './components/EnergyEnvironmentWidget';
 
 export default function App() {
   return (
