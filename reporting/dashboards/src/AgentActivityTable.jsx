@@ -1,4 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { DataGrid } from '@mui/x-data-grid';
+
+const columns = [
+  { field: 'agentName', headerName: 'Agent', flex: 1, minWidth: 150 },
+  { field: 'activity', headerName: 'Activity', flex: 1, minWidth: 150 },
+  { field: 'status', headerName: 'Status', flex: 1, minWidth: 120, renderCell: (params) => {
+      const status = params.value || '';
+      let color = '#6b7280';
+      let bg = '#f3f4f6';
+      if (status.toLowerCase() === 'completed') { color = '#16a34a'; bg = '#dcfce7'; }
+      else if (status.toLowerCase() === 'active' || status.toLowerCase() === 'in progress') { color = '#2563eb'; bg = '#dbeafe'; }
+      else if (status.toLowerCase() === 'pending') { color = '#f59e0b'; bg = '#fef9c3'; }
+      else if (status.toLowerCase() === 'error') { color = '#dc2626'; bg = '#fee2e2'; }
+      return (
+        <span style={{ color, background: bg, borderRadius: 8, padding: '2px 8px', fontWeight: 600, fontSize: 12 }}>
+          {status}
+        </span>
+      );
+    }
+  },
+  { field: 'duration', headerName: 'Duration', flex: 1, minWidth: 100 },
+  { field: 'timestamp', headerName: 'Time', flex: 1, minWidth: 120, valueFormatter: (params) => new Date(params.value).toLocaleTimeString() },
+];
 
 const AgentActivityTable = () => {
   const [activities, setActivities] = useState([]);
@@ -65,37 +88,9 @@ const AgentActivityTable = () => {
     };
 
     fetchActivities();
-    const interval = setInterval(fetchActivities, 30000); // Refresh every 30 seconds
+    const interval = setInterval(fetchActivities, 30000);
     return () => clearInterval(interval);
   }, []);
-
-  const getStatusColor = (status) => {
-    switch (status.toLowerCase()) {
-      case 'completed': return 'text-green-600 bg-green-100';
-      case 'active': 
-      case 'in progress': return 'text-blue-600 bg-blue-100';
-      case 'pending': return 'text-yellow-600 bg-yellow-100';
-      case 'error': return 'text-red-600 bg-red-100';
-      default: return 'text-gray-600 bg-gray-100';
-    }
-  };
-
-  const formatTimestamp = (timestamp) => {
-    return new Date(timestamp).toLocaleTimeString();
-  };
-
-  if (loading) {
-    return (
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold mb-4">Agent Activity</h3>
-        <div className="animate-pulse">
-          <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-          <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -107,61 +102,22 @@ const AgentActivityTable = () => {
           </p>
         )}
       </div>
-      
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Agent
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Activity
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Duration
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Time
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {activities.map((activity) => (
-              <tr key={activity.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
-                    {activity.agentName}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{activity.activity}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(activity.status)}`}>
-                    {activity.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {activity.duration}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {formatTimestamp(activity.timestamp)}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div style={{ height: 400, width: '100%' }} className="px-6 py-4">
+        <DataGrid
+          rows={activities}
+          columns={columns}
+          loading={loading}
+          disableRowSelectionOnClick
+          getRowId={(row) => row.id}
+          sx={{
+            fontFamily: 'inherit',
+            border: 0,
+            '& .MuiDataGrid-columnHeaders': { background: '#f3f4f6', color: '#374151', fontWeight: 700 },
+            '& .MuiDataGrid-cell': { color: '#374151' },
+            '& .MuiDataGrid-row:hover': { background: '#f9fafb' },
+          }}
+        />
       </div>
-      
-      {activities.length === 0 && !loading && (
-        <div className="px-6 py-12 text-center">
-          <p className="text-gray-500">No agent activities found</p>
-        </div>
-      )}
     </div>
   );
 };
