@@ -14,6 +14,7 @@ const EnterpriseCommandCenter = () => {
   const [apiData, setApiData] = useState({}); // Supporting data
   const [viewMode, setViewMode] = useState('3d'); // 3d, overview, agents
   const [selectedAgent, setSelectedAgent] = useState(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Agent departments and their 26 agents
   const agentDepartments = {
@@ -177,9 +178,23 @@ const EnterpriseCommandCenter = () => {
           </div>
         )}
 
-        {/* Supporting Data Sidebar (Compact) */}
-        <div className="w-80 bg-gray-900/50 backdrop-blur-md">
-          <SupportingDataPanel apiData={apiData} />
+        {/* Supporting Data Sidebar (Collapsible) */}
+        <div className={`transition-all duration-300 bg-gray-900/50 backdrop-blur-md ${
+          sidebarCollapsed ? 'w-0 overflow-hidden' : 'w-80'
+        }`}>
+          <div className="relative h-full">
+            {/* Collapse Toggle Button */}
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="absolute -left-6 top-4 w-6 h-12 bg-gray-800/90 hover:bg-gray-700/90 border border-gray-600 rounded-l-md flex items-center justify-center text-gray-400 hover:text-white transition-colors z-10"
+            >
+              <span className={`transform transition-transform ${sidebarCollapsed ? 'rotate-180' : ''}`}>
+                ◀
+              </span>
+            </button>
+            
+            {!sidebarCollapsed && <SupportingDataPanel apiData={apiData} />}
+          </div>
         </div>
       </div>
 

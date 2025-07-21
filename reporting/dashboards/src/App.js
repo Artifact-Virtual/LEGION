@@ -151,104 +151,119 @@ export default function App() {
                   </div>
                   <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
                     <div className="text-white text-sm font-light mb-4">TRENDING ANALYSIS</div>
-                  <TrendingTopicsTable />
+                    <TrendingTopicsTable />
+                  </div>
                 </div>
-              </div>
-              <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                <div className="text-white text-lg font-thin mb-2">Live News Stream</div>
-                <NewsStream />
+                <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                  <div className="text-white text-sm font-light mb-4">LIVE NEWS STREAM</div>
+                  <NewsStream />
+                </div>
               </div>
             </div>
           )}
           
           {activeTab === 'security' && (
-            <div className="space-y-8">
-              <h2 className="text-2xl font-thin tracking-wide border-b-2 border-white pb-2 mb-4">Cybersecurity Intelligence</h2>
-              <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                <div className="text-white text-lg font-thin mb-2">Comprehensive Security Dashboard</div>
-                <CybersecurityDashboard />
-              </div>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                  <div className="text-white text-lg font-thin mb-2">AbuseIPDB Threat Intelligence</div>
-                  <AbuseIPDBThreatMap />
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="space-y-6">
+                <h2 className="text-xl font-light text-gray-300 mb-6">CYBERSECURITY INTELLIGENCE</h2>
+                <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                  <div className="text-white text-sm font-light mb-4">COMPREHENSIVE SECURITY DASHBOARD</div>
+                  <CybersecurityDashboard />
                 </div>
-                <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                  <div className="text-white text-lg font-thin mb-2">VirusTotal IOC Analysis</div>
-                  <VirusTotalIOCFeed />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                    <div className="text-white text-sm font-light mb-4">ABUSEIPDB THREAT INTELLIGENCE</div>
+                    <AbuseIPDBThreatMap />
+                  </div>
+                  <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                    <div className="text-white text-sm font-light mb-4">VIRUSTOTAL IOC ANALYSIS</div>
+                    <VirusTotalIOCFeed />
+                  </div>
                 </div>
               </div>
             </div>
           )}
           
           {activeTab === 'economy' && (
-            <div className="space-y-8">
-              <h2 className="text-2xl font-thin tracking-wide border-b-2 border-white pb-2 mb-4">Global Economic Intelligence</h2>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                  <div className="text-white text-lg font-thin mb-2">World Bank Economic Indicators</div>
-                  <WorldBankEconomicIndicators />
-                </div>
-                <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                  <div className="text-white text-lg font-thin mb-2">IMF World Economic Outlook</div>
-                  <IMFWorldEconomicOutlook />
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="space-y-6">
+                <h2 className="text-xl font-light text-gray-300 mb-6">GLOBAL ECONOMIC INTELLIGENCE</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                    <div className="text-white text-sm font-light mb-4">WORLD BANK ECONOMIC INDICATORS</div>
+                    <WorldBankEconomicIndicators />
+                  </div>
+                  <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                    <div className="text-white text-sm font-light mb-4">IMF WORLD ECONOMIC OUTLOOK</div>
+                    <IMFWorldEconomicOutlook />
+                  </div>
                 </div>
               </div>
             </div>
           )}
           
           {activeTab === 'science' && (
-            <div className="space-y-8">
-              <h2 className="text-2xl font-thin tracking-wide border-b-2 border-white pb-2 mb-4">Science & Space Intelligence</h2>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                  <div className="text-white text-lg font-thin mb-2">NASA & Space Data</div>
-                  <AstronomyWidget />
-                </div>
-                <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                  <div className="text-white text-lg font-thin mb-2">USGS Earthquake Monitoring</div>
-                  <EarthquakeMonitor />
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="space-y-6">
+                <h2 className="text-xl font-light text-gray-300 mb-6">SCIENCE & SPACE INTELLIGENCE</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                    <div className="text-white text-sm font-light mb-4">NASA & SPACE DATA</div>
+                    <AstronomyWidget />
+                  </div>
+                  <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                    <div className="text-white text-sm font-light mb-4">USGS EARTHQUAKE MONITORING</div>
+                    <EarthquakeMonitor />
+                  </div>
                 </div>
               </div>
             </div>
           )}
           
           {activeTab === 'weather' && (
-            <div className="space-y-8">
-              <h2 className="text-2xl font-thin tracking-wide border-b-2 border-white pb-2 mb-4">Weather & Climate Intelligence</h2>
-              <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                <div className="text-white text-lg font-thin mb-2">Global Weather Dashboard</div>
-                <WeatherDashboard />
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="space-y-6">
+                <h2 className="text-xl font-light text-gray-300 mb-6">WEATHER & CLIMATE INTELLIGENCE</h2>
+                <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                  <div className="text-white text-sm font-light mb-4">GLOBAL WEATHER DASHBOARD</div>
+                  <WeatherDashboard />
+                </div>
               </div>
             </div>
           )}
           
           {activeTab === 'health' && (
-            <div className="space-y-8">
-              <h2 className="text-2xl font-thin tracking-wide border-b-2 border-white pb-2 mb-4">Health & Medical Technology Intelligence</h2>
-              <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                <div className="text-white text-lg font-thin mb-2">Global Health Monitoring & Medical Tech</div>
-                <HealthTechWidget />
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="space-y-6">
+                <h2 className="text-xl font-light text-gray-300 mb-6">HEALTH & MEDICAL TECHNOLOGY INTELLIGENCE</h2>
+                <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                  <div className="text-white text-sm font-light mb-4">GLOBAL HEALTH MONITORING & MEDICAL TECH</div>
+                  <HealthTechWidget />
+                </div>
               </div>
             </div>
           )}
           
           {activeTab === 'energy' && (
-            <div className="space-y-8">
-              <h2 className="text-2xl font-thin tracking-wide border-b-2 border-white pb-2 mb-4">Energy & Environmental Intelligence</h2>
-              <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                <div className="text-white text-lg font-thin mb-2">Global Energy & Environmental Analytics</div>
-                <EnergyEnvironmentWidget />
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="space-y-6">
+                <h2 className="text-xl font-light text-gray-300 mb-6">ENERGY & ENVIRONMENTAL INTELLIGENCE</h2>
+                <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                  <div className="text-white text-sm font-light mb-4">GLOBAL ENERGY & ENVIRONMENTAL ANALYTICS</div>
+                  <EnergyEnvironmentWidget />
+                </div>
               </div>
             </div>
           )}
           
           {activeTab === 'business' && (
-            <div className="space-y-8">
-              <h2 className="text-2xl font-thin tracking-wide border-b-2 border-white pb-2 mb-4">Business Intelligence & Corporate Analytics</h2>
-              <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                <div className="text-white text-lg font-thin mb-2">Corporate & Economic Intelligence Platform</div>
-                <BusinessIntelligenceWidget />
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="space-y-6">
+                <h2 className="text-xl font-light text-gray-300 mb-6">BUSINESS INTELLIGENCE & CORPORATE ANALYTICS</h2>
+                <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                  <div className="text-white text-sm font-light mb-4">CORPORATE & ECONOMIC INTELLIGENCE PLATFORM</div>
+                  <BusinessIntelligenceWidget />
+                </div>
               </div>
             </div>
           )}
