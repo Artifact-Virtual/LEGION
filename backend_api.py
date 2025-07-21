@@ -26,17 +26,26 @@ def api_agents():
             })
     return jsonify({"agents": agents})
 
+
 import os
+from dotenv import load_dotenv
 import json
 from datetime import datetime
-
 
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 import random
 
+# Initialize Flask app and CORS before any route decorators
 app = Flask(__name__)
 CORS(app)
+
+# Load environment variables from .env file
+load_dotenv('/home/adam/repos/enterprise/config/.env')
+
+# Access API keys for Marketstack and Polygon.io
+MARKETSTACK_API_KEY = os.getenv('MARKETSTACK_API_KEY')
+POLYGON_API_KEY = os.getenv('POLYGON_API_KEY')
 
 
 API_TOKENS = {
