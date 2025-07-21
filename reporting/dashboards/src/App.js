@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import EnterpriseCommandCenter from './components/EnterpriseCommandCenterNew';
 import AdvancedPriceChart from './components/AdvancedPriceChart';
 import MarketSummaryTable from './components/MarketSummaryTable';
 import NewsStream from './components/NewsStream';
@@ -7,171 +8,247 @@ import AbuseIPDBThreatMap from './components/AbuseIPDBThreatMap';
 import VirusTotalIOCFeed from './components/VirusTotalIOCFeed';
 import WorldBankEconomicIndicators from './components/WorldBankEconomicIndicators';
 import IMFWorldEconomicOutlook from './components/IMFWorldEconomicOutlook';
+import WeatherDashboard from './components/WeatherDashboard';
+import AstronomyWidget from './components/AstronomyWidget';
+import EarthquakeMonitor from './components/EarthquakeMonitor';
+import CryptoMarketWidget from './components/CryptoMarketWidget';
+import StockMarketWidget from './components/StockMarketWidget';
+import CybersecurityDashboard from './components/CybersecurityDashboard';
+import BusinessIntelligenceWidget from './components/BusinessIntelligenceWidget';
+import HealthTechWidget from './components/HealthTechWidget';
+import EnergyEnvironmentWidget from './components/EnergyEnvironmentWidget';
+import NewsAndEventsWidget from './components/NewsAndEventsWidget';
 import avBlackLogo from './assets/logo/av-black-logo.png';
-import avWhiteLogo from './assets/logo/av-white-logo.png';
 
 const TABS = [
-  { key: 'markets', label: 'Markets' },
-  { key: 'news', label: 'News' },
-  { key: 'security', label: 'Security' },
-  { key: 'economy', label: 'Economy' },
-  { key: 'science', label: 'Science' },
-  { key: 'weather', label: 'Weather' }
+  { key: 'enterprise', label: 'ENTERPRISE' },
+  { key: 'markets', label: 'MARKETS' },
+  { key: 'news', label: 'NEWS' },
+  { key: 'security', label: 'SECURITY' },
+  { key: 'economy', label: 'ECONOMY' },
+  { key: 'science', label: 'SCIENCE' },
+  { key: 'weather', label: 'WEATHER' },
+  { key: 'health', label: 'HEALTH' },
+  { key: 'energy', label: 'ENERGY' },
+  { key: 'business', label: 'BUSINESS' }
 ];
 
 export default function App() {
-  const [theme, setTheme] = useState('dark');
-  const [activeTab, setActiveTab] = useState('markets');
-
-  const logoSrc = theme === 'dark' ? avBlackLogo : avWhiteLogo;
+  const [activeTab, setActiveTab] = useState('enterprise');
 
   return (
-    <div className={
-      `min-h-screen w-full flex bg-black text-white font-sans transition-colors duration-500 ${theme === 'dark' ? 'bg-black text-white' : 'bg-white text-black'}`
-    }>
+    <div className="min-h-screen w-full bg-black text-white font-mono">
       {/* Sidebar */}
-      <aside
-        className={`fixed left-0 top-0 h-screen z-30 flex flex-col items-center py-8 px-2 transition-all duration-500 ${theme === 'dark' ? 'bg-black' : 'bg-white'} border-r-4 ${theme === 'dark' ? 'border-white' : 'border-black'} shadow-xl md:w-20 w-16 sm:w-12`}
-        style={{ width: '5rem' }}
-        aria-label="Sidebar navigation"
-      >
-        <img src={logoSrc} alt="Logo" className="w-10 h-10 mb-8 transition-all duration-500" />
-        <nav className="flex flex-col gap-6 mt-4" aria-label="Main dashboard tabs">
+      <aside className="fixed left-0 top-0 h-screen z-30 w-16 bg-black flex flex-col items-center py-6">
+        {/* Logo */}
+        <img src={avBlackLogo} alt="AV" className="w-10 h-10 mb-8" />
+        
+        {/* Navigation */}
+        <nav className="flex flex-col gap-2 flex-1">
           {TABS.map(tab => (
             <button
               key={tab.key}
-              className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 border-2 ${activeTab === tab.key ? (theme === 'dark' ? 'border-white' : 'border-black') : 'border-transparent'} hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400`}
+              className={`w-12 h-12 flex items-center justify-center text-xs font-light tracking-wider transition-all duration-200 ${
+                activeTab === tab.key 
+                  ? 'bg-gray-900 text-white border-l-2 border-blue-400' 
+                  : 'text-gray-500 hover:text-gray-300 hover:bg-gray-950'
+              }`}
               onClick={() => setActiveTab(tab.key)}
               title={tab.label}
-              aria-label={tab.label}
-              tabIndex={0}
-              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setActiveTab(tab.key); }}
             >
-              <span className="text-xs font-thin tracking-wide" aria-hidden="true">{tab.label[0]}</span>
+              <span className="transform -rotate-90 whitespace-nowrap text-[10px]">
+                {tab.label}
+              </span>
             </button>
           ))}
         </nav>
-        <div className="mt-auto mb-2 flex flex-col items-center w-full">
-          <button
-            className={`w-10 h-10 rounded-full border-2 ${theme === 'dark' ? 'border-white' : 'border-black'} flex items-center justify-center transition-all duration-300 hover:border-blue-400 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-400`}
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            title="Toggle theme"
-            aria-label="Toggle theme"
-            tabIndex={0}
-            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setTheme(theme === 'dark' ? 'light' : 'dark'); }}
+
+        {/* AbuseIPDB Badge */}
+        <div className="mt-auto">
+          <a 
+            href="https://www.abuseipdb.com/user/224927" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="block w-10 h-10"
           >
-            {theme === 'dark' ? (
-              <svg width="24" height="24" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-            ) : (
-              <svg width="24" height="24" fill="none" stroke="black" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/></svg>
-            )}
-          </button>
-          <a href="https://www.abuseipdb.com/user/224927" target="_blank" rel="noopener noreferrer" title="AbuseIPDB Contributor Badge" className="w-full flex items-center justify-center" aria-label="AbuseIPDB Contributor Badge">
-            <img src="https://www.abuseipdb.com/contributor/224927.svg" alt="AbuseIPDB Contributor Badge" className="w-8 h-8" style={{ minWidth: '2rem', minHeight: '2rem' }} />
+            <img 
+              src="https://www.abuseipdb.com/contributor/224927.svg" 
+              alt="AbuseIPDB" 
+              className="w-full h-full opacity-80 hover:opacity-100 transition-opacity"
+            />
           </a>
         </div>
       </aside>
 
       {/* Main Content */}
-      <div className={`flex-1 min-h-screen md:ml-20 ml-16 sm:ml-12 transition-all duration-500 ${theme === 'dark' ? 'bg-black' : 'bg-white'}`}> 
-        {/* Topbar */}
-        <header className={`sticky top-0 z-20 flex flex-col md:flex-row items-center justify-between px-4 md:px-8 py-4 border-b-4 ${theme === 'dark' ? 'border-white' : 'border-black'} bg-opacity-90 backdrop-blur-lg transition-all duration-500`}>
-          <div className="flex items-center gap-2 md:gap-4 w-full md:w-auto">
-            <img src={logoSrc} alt="Logo" className="w-8 h-8" />
-            <span className="text-xl font-thin tracking-wide">LEGION Enterprise Dashboard</span>
+      <div className="ml-16 min-h-screen bg-black">
+        {/* Header */}
+        <header className="bg-black px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span className="text-sm font-light text-gray-300 tracking-wide">
+              ARTIFACT VIRTUAL • LEGION ENTERPRISE
+            </span>
           </div>
-          <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto justify-end">
-            <span className="text-xs font-thin tracking-wide">{new Date().toLocaleString()}</span>
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" title="Live" aria-label="Live status" />
+          <div className="text-xs text-gray-500 font-mono">
+            {new Date().toLocaleString('en-US', { 
+              year: 'numeric', 
+              month: '2-digit', 
+              day: '2-digit', 
+              hour: '2-digit', 
+              minute: '2-digit', 
+              second: '2-digit' 
+            })}
           </div>
         </header>
 
         {/* Tab Content */}
-        <main className="p-4 md:p-8">
-          {/* Render tab content here. Start with Markets tab. */}
+        <main className="h-full">
+          {activeTab === 'enterprise' && (
+            <div className="h-full">
+              <EnterpriseCommandCenter />
+            </div>
+          )}
+          
           {activeTab === 'markets' && (
-            <div className="space-y-8">
-              <h2 className="text-2xl font-thin tracking-wide border-b-2 border-white pb-2 mb-4">Financial Markets</h2>
-              {/* TODO: Add operational candlestick chart and summary table here */}
-              <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                <div className="text-white text-lg font-thin mb-2">Candlestick Chart</div>
-                <div className="w-full h-96 flex items-center justify-center">
-                  {/* Responsive chart container */}
-                  <div className="w-full h-full">
-                    <AdvancedPriceChart />
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="space-y-6">
+                <h2 className="text-xl font-light text-gray-300 mb-6">FINANCIAL MARKETS</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                    <div className="text-white text-sm font-light mb-4">ADVANCED PRICE CHART</div>
+                    <div className="w-full h-96">
+                      <AdvancedPriceChart />
+                    </div>
+                  </div>
+                  <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                    <div className="text-white text-sm font-light mb-4">MARKET SUMMARY</div>
+                    <MarketSummaryTable />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                    <div className="text-white text-sm font-light mb-4">STOCK MARKETS</div>
+                    <StockMarketWidget />
+                  </div>
+                  <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                    <div className="text-white text-sm font-light mb-4">CRYPTOCURRENCY</div>
+                    <CryptoMarketWidget />
                   </div>
                 </div>
               </div>
-              <MarketSummaryTable />
             </div>
           )}
+          
           {activeTab === 'news' && (
-            <div className="space-y-8">
-              <h2 className="text-2xl font-thin tracking-wide border-b-2 border-white pb-2 mb-4">News & Current Affairs</h2>
-              <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                <div className="text-white text-lg font-thin mb-2">Trending Topics</div>
-                <TrendingTopicsTable />
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="space-y-6">
+                <h2 className="text-xl font-light text-gray-300 mb-6">NEWS & INTELLIGENCE</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                    <div className="text-white text-sm font-light mb-4">GLOBAL NEWS</div>
+                    <NewsAndEventsWidget />
+                  </div>
+                  <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                    <div className="text-white text-sm font-light mb-4">TRENDING ANALYSIS</div>
+                  <TrendingTopicsTable />
+                </div>
               </div>
               <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                <div className="text-white text-lg font-thin mb-2">News Stream</div>
+                <div className="text-white text-lg font-thin mb-2">Live News Stream</div>
                 <NewsStream />
               </div>
             </div>
           )}
+          
           {activeTab === 'security' && (
             <div className="space-y-8">
               <h2 className="text-2xl font-thin tracking-wide border-b-2 border-white pb-2 mb-4">Cybersecurity Intelligence</h2>
               <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                <div className="text-white text-lg font-thin mb-2">Threat Map</div>
-                <AbuseIPDBThreatMap />
+                <div className="text-white text-lg font-thin mb-2">Comprehensive Security Dashboard</div>
+                <CybersecurityDashboard />
               </div>
-              <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                <div className="text-white text-lg font-thin mb-2">Risk Score Gauge</div>
-                {/* TODO: Integrate real risk score gauge */}
-                <div className="w-full h-32 flex items-center justify-center text-gray-500">[Risk Score Gauge]</div>
-              </div>
-              <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                <div className="text-white text-lg font-thin mb-2">IOC Feed</div>
-                <VirusTotalIOCFeed />
-              </div>
-              <div className="bg-black border border-white rounded-lg p-6 shadow-lg overflow-x-auto">
-                <div className="text-white text-lg font-thin mb-2">Security Health Matrix</div>
-                {/* TODO: Integrate real security posture matrix */}
-                <table className="min-w-full text-xs text-left">
-                  <thead>
-                    <tr className="border-b border-white">
-                      <th className="px-2 py-1 font-thin text-white">Domain</th>
-                      <th className="px-2 py-1 font-thin text-white">Status</th>
-                      <th className="px-2 py-1 font-thin text-white">Last Threat</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {/* Example row, replace with real data */}
-                    <tr className="border-b border-gray-700">
-                      <td className="px-2 py-1 text-white">Network</td>
-                      <td className="px-2 py-1 text-green-400">Secure</td>
-                      <td className="px-2 py-1 text-white">2h ago</td>
-                    </tr>
-                    <tr className="border-b border-gray-700">
-                      <td className="px-2 py-1 text-white">Web</td>
-                      <td className="px-2 py-1 text-red-400">Threat Detected</td>
-                      <td className="px-2 py-1 text-white">10m ago</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
+                  <div className="text-white text-lg font-thin mb-2">AbuseIPDB Threat Intelligence</div>
+                  <AbuseIPDBThreatMap />
+                </div>
+                <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
+                  <div className="text-white text-lg font-thin mb-2">VirusTotal IOC Analysis</div>
+                  <VirusTotalIOCFeed />
+                </div>
               </div>
             </div>
           )}
+          
           {activeTab === 'economy' && (
             <div className="space-y-8">
-              <h2 className="text-2xl font-thin tracking-wide border-b-2 border-white pb-2 mb-4">Global Economic Indicators</h2>
-              <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                <div className="text-white text-lg font-thin mb-2">World Bank Key Indicators</div>
-                <WorldBankEconomicIndicators />
+              <h2 className="text-2xl font-thin tracking-wide border-b-2 border-white pb-2 mb-4">Global Economic Intelligence</h2>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
+                  <div className="text-white text-lg font-thin mb-2">World Bank Economic Indicators</div>
+                  <WorldBankEconomicIndicators />
+                </div>
+                <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
+                  <div className="text-white text-lg font-thin mb-2">IMF World Economic Outlook</div>
+                  <IMFWorldEconomicOutlook />
+                </div>
               </div>
+            </div>
+          )}
+          
+          {activeTab === 'science' && (
+            <div className="space-y-8">
+              <h2 className="text-2xl font-thin tracking-wide border-b-2 border-white pb-2 mb-4">Science & Space Intelligence</h2>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
+                  <div className="text-white text-lg font-thin mb-2">NASA & Space Data</div>
+                  <AstronomyWidget />
+                </div>
+                <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
+                  <div className="text-white text-lg font-thin mb-2">USGS Earthquake Monitoring</div>
+                  <EarthquakeMonitor />
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {activeTab === 'weather' && (
+            <div className="space-y-8">
+              <h2 className="text-2xl font-thin tracking-wide border-b-2 border-white pb-2 mb-4">Weather & Climate Intelligence</h2>
               <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
-                <div className="text-white text-lg font-thin mb-2">IMF World Economic Outlook</div>
-                <IMFWorldEconomicOutlook />
+                <div className="text-white text-lg font-thin mb-2">Global Weather Dashboard</div>
+                <WeatherDashboard />
+              </div>
+            </div>
+          )}
+          
+          {activeTab === 'health' && (
+            <div className="space-y-8">
+              <h2 className="text-2xl font-thin tracking-wide border-b-2 border-white pb-2 mb-4">Health & Medical Technology Intelligence</h2>
+              <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
+                <div className="text-white text-lg font-thin mb-2">Global Health Monitoring & Medical Tech</div>
+                <HealthTechWidget />
+              </div>
+            </div>
+          )}
+          
+          {activeTab === 'energy' && (
+            <div className="space-y-8">
+              <h2 className="text-2xl font-thin tracking-wide border-b-2 border-white pb-2 mb-4">Energy & Environmental Intelligence</h2>
+              <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
+                <div className="text-white text-lg font-thin mb-2">Global Energy & Environmental Analytics</div>
+                <EnergyEnvironmentWidget />
+              </div>
+            </div>
+          )}
+          
+          {activeTab === 'business' && (
+            <div className="space-y-8">
+              <h2 className="text-2xl font-thin tracking-wide border-b-2 border-white pb-2 mb-4">Business Intelligence & Corporate Analytics</h2>
+              <div className="bg-black border border-white rounded-lg p-6 shadow-lg">
+                <div className="text-white text-lg font-thin mb-2">Corporate & Economic Intelligence Platform</div>
+                <BusinessIntelligenceWidget />
               </div>
             </div>
           )}

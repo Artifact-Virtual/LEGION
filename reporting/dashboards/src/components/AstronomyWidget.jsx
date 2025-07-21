@@ -7,58 +7,85 @@ const AstronomyWidget = () => {
   const [astronomyEvents, setAstronomyEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Use environment variable or your NASA API key
+  const NASA_API_KEY = process.env.REACT_APP_NASA_API_KEY || 'rvY5tUwSR0tLxGqiuo15hLaySFZZ6FlIFyUG3uRS';
+
   useEffect(() => {
-    // Mock data since we don't have real API keys
-    const mockApodData = {
-      title: "The Heart and Soul Nebulae",
-      explanation: "Beautiful star-forming regions in the constellation Cassiopeia, captured by the Hubble Space Telescope. These nebulae showcase the birth of new stars in stunning detail.",
-      url: "https://apod.nasa.gov/apod/image/2407/heart_soul_nebulae.jpg",
-      hdurl: "https://apod.nasa.gov/apod/image/2407/heart_soul_nebulae_hd.jpg",
-      date: new Date().toISOString().split('T')[0],
-      media_type: "image"
-    };
-
-    const mockSpaceXData = {
-      name: "Starlink Group 6-8",
-      date_utc: "2025-07-22T10:30:00.000Z",
-      rocket: "Falcon 9",
-      launchpad: "Kennedy Space Center LC-39A",
-      success: null,
-      details: "Deployment of 23 Starlink satellites to low Earth orbit."
-    };
-
-    const mockAstronomyEvents = [
-      {
-        date: "2025-07-25",
-        event: "New Moon",
-        description: "Perfect time for deep-sky observation",
-        type: "lunar"
-      },
-      {
-        date: "2025-07-28",
-        event: "Delta Aquarids Meteor Shower Peak",
-        description: "Up to 20 meteors per hour visible",
-        type: "meteor"
-      },
-      {
-        date: "2025-08-02",
-        event: "Saturn at Opposition",
-        description: "Best time to observe Saturn's rings",
-        type: "planetary"
-      },
-      {
-        date: "2025-08-12",
-        event: "Perseid Meteor Shower Peak",
-        description: "One of the best meteor showers of the year",
-        type: "meteor"
-      }
-    ];
-
-    setApodData(mockApodData);
-    setSpaceXData(mockSpaceXData);
-    setAstronomyEvents(mockAstronomyEvents);
-    setLoading(false);
+    fetchAstronomyData();
   }, []);
+
+  const fetchAstronomyData = async () => {
+    setLoading(true);
+    try {
+      // Fetch NASA Astronomy Picture of the Day
+      const apodResponse = await fetch(
+        `https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}`
+      );
+      const apodResult = await apodResponse.json();
+
+      // Fetch SpaceX next launch
+      const spaceXResponse = await fetch('https://api.spacexdata.com/v4/launches/next');
+      const spaceXResult = await spaceXResponse.json();
+
+      if (apodResponse.ok) {
+        setApodData(apodResult);
+      }
+
+      if (spaceXResponse.ok) {
+        setSpaceXData(spaceXResult);
+      }
+
+      // Mock astronomy events data
+      setAstronomyEvents([
+        {
+          id: 1,
+          name: 'Perseid Meteor Shower Peak',
+          date: '2025-08-12',
+          type: 'Meteor Shower',
+          visibility: 'Global',
+          description: 'Annual meteor shower producing up to 60 meteors per hour.'
+        },
+        {
+          id: 2,
+          name: 'Jupiter Opposition',
+          date: '2025-09-26',
+          type: 'Planetary Event',
+          visibility: 'Global',
+          description: 'Jupiter at its closest approach to Earth, appearing brightest.'
+        },
+        {
+          id: 3,
+          name: 'Total Lunar Eclipse',
+          date: '2025-09-07',
+          type: 'Eclipse',
+          visibility: 'Americas, Europe, Africa',
+          description: 'Total lunar eclipse visible across multiple continents.'
+        }
+      ]);
+
+    } catch (error) {
+      console.error('Astronomy fetch error:', error);
+      // Fallback to demo data if APIs fail
+      setApodData({
+        title: "The Heart and Soul Nebulae",
+        explanation: "Beautiful star-forming regions in the constellation Cassiopeia, captured by the Hubble Space Telescope. These nebulae showcase the birth of new stars in stunning detail.",
+        url: "https://apod.nasa.gov/apod/image/2407/heart_soul_nebulae.jpg",
+        hdurl: "https://apod.nasa.gov/apod/image/2407/heart_soul_nebulae_hd.jpg",
+        date: new Date().toISOString().split('T')[0],
+        media_type: "image"
+      });
+
+      setSpaceXData({
+        name: "Starlink Group 6-8",
+        date_utc: "2025-07-22T10:30:00.000Z",
+        rocket: "Falcon 9",
+        launchpad: "Kennedy Space Center LC-39A",
+        success: null,
+        details: "Deployment of 23 Starlink satellites to low Earth orbit."
+      });
+    }
+    setLoading(false);
+  };
 
   const getEventIcon = (type) => {
     switch (type) {
