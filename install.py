@@ -130,7 +130,7 @@ def initialize_databases():
     print("✅ Projects database initialized")
     
     # Enterprise Operations Database
-    enterprise_db_path = "enterprise_operations.db"
+    enterprise_db_path = "data/enterprise_operations.db"
     with sqlite3.connect(enterprise_db_path) as conn:
         conn.execute("""
             CREATE TABLE IF NOT EXISTS business_metrics (
@@ -141,7 +141,6 @@ def initialize_databases():
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
-        
         conn.execute("""
             CREATE TABLE IF NOT EXISTS agent_activities (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -198,7 +197,7 @@ def run_system_check():
         print("✅ All core modules available")
         
         # Test database connections
-        for db_path in ["data/crm.db", "data/projects.db", "enterprise_operations.db"]:
+        for db_path in ["data/crm.db", "data/projects.db", "data/enterprise_operations.db"]:
             with sqlite3.connect(db_path) as conn:
                 conn.execute("SELECT 1")
         print("✅ Database connections working")

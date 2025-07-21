@@ -1,54 +1,31 @@
-# Business Intelligence Dashboards
+# LEGION Enterprise Dashboards
 
-This directory contains executive and operational dashboards for comprehensive business intelligence and performance monitoring.
+This directory contains advanced, real-time dashboards for executive, operational, financial, security, and economic intelligence.
 
-## Dashboard Categories
+## Dashboard Modules
 
-### Executive Dashboards
-- CEO/Executive Summary Dashboard
-- Financial Performance Overview
-- Strategic KPI Tracking
-- Risk Management Dashboard
+- Markets: Live financial market data, candlestick charts, and summary tables (stocks, crypto, forex)
+- News: Real-time news stream and trending topics (NewsAPI)
+- Security: Cybersecurity threat map (AbuseIPDB), IOC feed (VirusTotal), posture matrix
+- Economy: Global indicators (World Bank, IMF), GDP, inflation, unemployment
+- Science & Weather: Data integration ready
 
-### Operational Dashboards
-- Sales and Marketing Performance
-- Operations and Supply Chain Metrics
-- Human Resources and Team Performance
-- Technology and Infrastructure Monitoring
+## Technology Stack
 
-### Financial Dashboards
-- Revenue and Profitability Analysis
-- Cash Flow and Treasury Management
-- Budget vs. Actual Performance
-- Cost Center Analysis
-
-### Compliance Dashboards
-- Regulatory Compliance Status
-- Audit Findings and Resolution
-- Policy Adherence Monitoring
-- Risk Assessment and Mitigation
-
-## Dashboard Technology Stack
-
-### Frontend Technologies
-- React/TypeScript for interactive dashboards
-- D3.js for advanced data visualizations
-- Chart.js for standard chart components
-- Responsive design for mobile and desktop access
-
-### Backend Integration
-- API connections to all enterprise systems
-- Real-time data streaming and updates
-- Data aggregation and transformation
-- Caching for optimal performance
+- React (JS/TS), Tailwind CSS for UI/UX
+- Lightweight-Charts for financial charts
+- Direct API integration: Marketstack, CoinGecko, Frankfurter, NewsAPI, AbuseIPDB, VirusTotal, World Bank, IMF
+- No placeholder data; all sources are live
+- Modular, tab-based layout with sidebar/topbar, responsive design
 
 ## Implementation Status
 
-🚧 **Under Development** - Dashboard configurations and visualizations will be implemented as enterprise data sources are established.
+- Markets, News, Security, Economy tabs fully operational with live data
+- Science and Weather tabs scaffolded, ready for integration
+- All components fetch and display real data
 
-## Access Control
+## Access & Security
 
-- Role-based dashboard access
-- Data sensitivity filtering
-- Executive-level restricted views
-- Audit trails for dashboard access
+- Role-based access, data sensitivity filtering
+- Audit trails for dashboard usage
+- No public endpoints; all API keys managed securely

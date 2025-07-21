@@ -87,6 +87,8 @@ htmlcov/
 *.temp
 .cache/
 .parcel-cache/
+.archive/*
+./archive
 
 # Operating System files
 .DS_Store
