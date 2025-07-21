@@ -1,3 +1,30 @@
+# --- Agent Registry Endpoint ---
+@app.route('/api/agents')
+def api_agents():
+    # Simulate agent registry (replace with real registry if available)
+    departments = [
+        "strategy", "marketing", "finance", "operations",
+        "business_intelligence", "communication"
+    ]
+    agent_types = {
+        "strategy": ["strategic_planner", "business_analyst", "market_researcher"],
+        "marketing": ["content_creator", "social_media_manager", "lead_generator"],
+        "finance": ["financial_analyst", "budget_manager", "revenue_tracker"],
+        "operations": ["workflow_orchestrator", "resource_optimizer", "task_scheduler"],
+        "business_intelligence": ["data_analyst", "market_analyst", "competitive_researcher"],
+        "communication": ["content_writer", "social_media_monitor", "brand_manager"]
+    }
+    agents = []
+    for dept in departments:
+        for agent_type in agent_types[dept]:
+            agents.append({
+                "agent_id": f"{dept}_{agent_type}",
+                "agent_type": agent_type,
+                "department": dept,
+                "status": "standby",  # Default status; update with real status if available
+                "current_task": None
+            })
+    return jsonify({"agents": agents})
 
 import os
 import json

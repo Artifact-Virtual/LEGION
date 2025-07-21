@@ -4,7 +4,6 @@
 
 The Neural Processor subsystem represents the cognitive computing core of the Nerve Centre, implementing advanced node-edge architecture for neural processing, machine learning orchestration, and cognitive intelligence augmentation. It provides the enterprise platform with human-like reasoning capabilities and autonomous learning systems.
 
-## Node-Edge Architecture Implementation
 
 ### Neural Node Types
 
