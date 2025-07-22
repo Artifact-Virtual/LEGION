@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import EnterpriseCommandCenter from './components/EnterpriseCommandCenterNew';
+import CommandCenter from './components/CommandCenter';
 import AdvancedPriceChart from './components/AdvancedPriceChart';
 import MarketSummaryTable from './components/MarketSummaryTable';
 import NewsStream from './components/NewsStream';
@@ -106,7 +106,7 @@ export default function App() {
         <main className="h-full">
           {activeTab === 'enterprise' && (
             <div className="h-full">
-              <EnterpriseCommandCenter />
+              <CommandCenter />
             </div>
           )}
           
