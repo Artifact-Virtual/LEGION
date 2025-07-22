@@ -23,9 +23,9 @@ NEWSAPI_KEY = os.getenv('NEWSAPI_KEY')
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 
 API_TOKENS = {
-    'admin': os.getenv('API_ADMIN_TOKEN', 'admin-token-default'),
-    'manager': os.getenv('API_MANAGER_TOKEN', 'manager-token-default'),
-    'viewer': os.getenv('API_VIEWER_TOKEN', 'viewer-token-default'),
+    'admin': os.getenv('API_ADMIN_TOKEN'),
+    'manager': os.getenv('API_MANAGER_TOKEN'),
+    'viewer': os.getenv('API_VIEWER_TOKEN'),
 }
 
 # Database paths
