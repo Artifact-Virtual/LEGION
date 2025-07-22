@@ -1,7 +1,7 @@
 // NASA API utilities for space and science data
 import axios from 'axios';
 
-const NASA_API_KEY = 'rvY5tUwSR0tLxGqiuo15hLaySFZZ6FlIFyUG3uRS';
+const NASA_API_KEY = process.env.REACT_APP_NASA_API_KEY;
 const NASA_BASE_URL = 'https://api.nasa.gov';
 
 // Fetch Astronomy Picture of the Day

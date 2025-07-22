@@ -18,19 +18,39 @@ import BusinessIntelligenceWidget from './components/BusinessIntelligenceWidget'
 import HealthTechWidget from './components/HealthTechWidget';
 import EnergyEnvironmentWidget from './components/EnergyEnvironmentWidget';
 import NewsAndEventsWidget from './components/NewsAndEventsWidget';
+import SpaceScienceDashboard from './components/SpaceScienceDashboard';
+// Import existing dashboard components
+import MarkdownReportViewer from './MarkdownReportViewer';
+import AgentActivityTable from './AgentActivityTable';
+import AgentDirectory from './AgentDirectory';
+import AgentHealthDashboard from './AgentHealthDashboard';
+import ThreeDVisualization from './ThreeDVisualization';
+import ComplianceDashboard from './ComplianceDashboard';
+import FinancialDashboard from './FinancialDashboard';
+import MarketingDashboard from './MarketingDashboard';
+import OperationsDashboard from './OperationsDashboard';
+import ExecutiveDashboard from './ExecutiveDashboard';
+import SystemMessageFeed from './components/SystemMessageFeed';
+import RealTimeAlertsFeed from './components/RealTimeAlertsFeed';
+import ApiHealthMonitor from './components/ApiHealthMonitor';
+import DatabaseHealthMonitor from './components/DatabaseHealthMonitor';
 import avBlackLogo from './assets/logo/av-black-logo.png';
 
 const TABS = [
   { key: 'enterprise', label: 'ENTERPRISE' },
-  { key: 'markets', label: 'MARKETS' },
-  { key: 'news', label: 'NEWS' },
-  { key: 'security', label: 'SECURITY' },
-  { key: 'economy', label: 'ECONOMY' },
-  { key: 'science', label: 'SCIENCE' },
+  { key: 'executive', label: 'EXECUTIVE' },
+  { key: 'operations', label: 'OPERATIONS' },
+  { key: 'agents', label: 'AGENTS' },
+  { key: 'reports', label: 'REPORTS' },
+  { key: 'analytics', label: 'ANALYTICS' },
   { key: 'weather', label: 'WEATHER' },
   { key: 'health', label: 'HEALTH' },
   { key: 'energy', label: 'ENERGY' },
-  { key: 'business', label: 'BUSINESS' }
+  { key: 'business', label: 'BUSINESS' },
+  { key: 'compliance', label: 'COMPLIANCE' },
+  { key: 'finance', label: 'FINANCE' },
+  { key: 'marketing', label: 'MARKETING' },
+  { key: 'infrastructure', label: 'INFRASTRUCTURE' }
 ];
 
 export default function App() {
@@ -105,8 +125,13 @@ export default function App() {
         {/* Tab Content */}
         <main className="h-full">
           {activeTab === 'enterprise' && (
-            <div className="h-full">
-              <CommandCenter />
+            <div className="h-full flex">
+              <div className="flex-1">
+                <CommandCenter />
+              </div>
+              <div className="w-1/3 p-4 border-l border-gray-800">
+                <SystemMessageFeed />
+              </div>
             </div>
           )}
           
@@ -206,6 +231,10 @@ export default function App() {
             <div className="p-6 h-full overflow-y-auto">
               <div className="space-y-6">
                 <h2 className="text-xl font-light text-gray-300 mb-6">SCIENCE & SPACE INTELLIGENCE</h2>
+                
+                {/* Space Science Dashboard */}
+                <SpaceScienceDashboard />
+                
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
                     <div className="text-white text-sm font-light mb-4">NASA & SPACE DATA</div>
@@ -263,6 +292,108 @@ export default function App() {
                 <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
                   <div className="text-white text-sm font-light mb-4">CORPORATE & ECONOMIC INTELLIGENCE PLATFORM</div>
                   <BusinessIntelligenceWidget />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'executive' && (
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="space-y-6">
+                <h2 className="text-xl font-light text-gray-300 mb-6">EXECUTIVE DASHBOARD</h2>
+                <ExecutiveDashboard />
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'operations' && (
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="space-y-6">
+                <h2 className="text-xl font-light text-gray-300 mb-6">OPERATIONS MANAGEMENT</h2>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <OperationsDashboard />
+                  <RealTimeAlertsFeed />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'agents' && (
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="space-y-6">
+                <h2 className="text-xl font-light text-gray-300 mb-6">AGENT MONITORING & MANAGEMENT</h2>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                  <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                    <div className="text-white text-sm font-light mb-4">AGENT HEALTH MONITORING</div>
+                    <AgentHealthDashboard />
+                  </div>
+                  <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                    <div className="text-white text-sm font-light mb-4">AGENT DIRECTORY</div>
+                    <AgentDirectory />
+                  </div>
+                </div>
+                
+                <div className="bg-gray-900/50 border border-gray-800 rounded p-6 mb-6">
+                  <div className="text-white text-sm font-light mb-4">AGENT ACTIVITY LOG</div>
+                  <AgentActivityTable />
+                </div>
+                
+                <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                  <div className="text-white text-sm font-light mb-4">3D AGENT NETWORK VISUALIZATION</div>
+                  <ThreeDVisualization />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'reports' && (
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="space-y-6">
+                <h2 className="text-xl font-light text-gray-300 mb-6">EXECUTIVE REPORTS & DOCUMENTATION</h2>
+                <div className="bg-gray-900/50 border border-gray-800 rounded p-6">
+                  <div className="text-white text-sm font-light mb-4">MARKDOWN REPORT VIEWER</div>
+                  <MarkdownReportViewer />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'compliance' && (
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="space-y-6">
+                <h2 className="text-xl font-light text-gray-300 mb-6">COMPLIANCE & REGULATORY MONITORING</h2>
+                <ComplianceDashboard />
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'finance' && (
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="space-y-6">
+                <h2 className="text-xl font-light text-gray-300 mb-6">FINANCIAL ANALYTICS & REPORTING</h2>
+                <FinancialDashboard />
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'marketing' && (
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="space-y-6">
+                <h2 className="text-xl font-light text-gray-300 mb-6">MARKETING ANALYTICS & AUTOMATION</h2>
+                <MarketingDashboard />
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'infrastructure' && (
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="space-y-6">
+                <h2 className="text-xl font-light text-gray-300 mb-6">INFRASTRUCTURE MONITORING</h2>
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                  <ApiHealthMonitor />
+                  <DatabaseHealthMonitor />
                 </div>
               </div>
             </div>

@@ -1,7 +1,7 @@
 // Utility to fetch candlestick data from Polygon.io API
 import axios from 'axios';
 
-const POLYGON_API_KEY = process.env.REACT_APP_POLYGON_API_KEY || 'ZphyLFjWxLfIzhTptoaqOpfEqdOfkL_p';
+const POLYGON_API_KEY = process.env.REACT_APP_POLYGON_API_KEY;
 const BASE_URL = 'https://api.polygon.io';
 
 // Fetch stock candlestick data

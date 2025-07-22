@@ -183,26 +183,4 @@ export default function MarketSummaryTable() {
       )}
     </div>
   );
-          <thead className="sticky top-0 bg-black z-10">
-            <tr className="border-b border-white">
-              <th className="px-2 py-1 font-thin text-white">Symbol</th>
-              <th className="px-2 py-1 font-thin text-white">Price</th>
-              <th className="px-2 py-1 font-thin text-white">Change (%)</th>
-              <th className="px-2 py-1 font-thin text-white">Volume</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map(row => (
-              <tr key={row.symbol} className="border-b border-gray-700 hover:bg-gray-900 transition-colors duration-150">
-                <td className="px-2 py-1 text-white">{row.symbol}</td>
-                <td className="px-2 py-1 text-white">${row.price.toLocaleString()}</td>
-                <td className={`px-2 py-1 ${parseFloat(row.change) > 0 ? 'text-green-400 font-semibold' : 'text-red-400 font-semibold'}`}>{row.change}</td>
-                <td className="px-2 py-1 text-white">{row.volume}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </div>
-  );
 }

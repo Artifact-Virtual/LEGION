@@ -1,8 +1,8 @@
 // Cybersecurity threat intelligence utilities
 import axios from 'axios';
 
-const VIRUSTOTAL_API_KEY = '61877803ba660a509d5acb953b296d896a0253fd4212676b3f206f021481477d';
-const ABUSEIPDB_API_KEY = 'bf4bb41e81bfc8ca5706a58e9a3541d8389e6ae41ae178ca306a784ffeee860926b227c537dec88f';
+const VIRUSTOTAL_API_KEY = process.env.REACT_APP_VIRUSTOTAL_API_KEY;
+const ABUSEIPDB_API_KEY = process.env.REACT_APP_ABUSEIPDB_API_KEY;
 
 // VirusTotal API functions
 export async function fetchVirusTotalReport(hash) {

@@ -1,31 +1,57 @@
 # LEGION Enterprise Dashboards
 
-This directory contains advanced, real-time dashboards for executive, operational, financial, security, and economic intelligence.
+Advanced, real-time dashboards for executive, operational, financial, security, and economic intelligence. Includes system monitoring and agent management.
 
-## Dashboard Modules
+## Features
 
-- Markets: Live financial market data, candlestick charts, and summary tables (stocks, crypto, forex)
-- News: Real-time news stream and trending topics (NewsAPI)
-- Security: Cybersecurity threat map (AbuseIPDB), IOC feed (VirusTotal), posture matrix
-- Economy: Global indicators (World Bank, IMF), GDP, inflation, unemployment
-- Science & Weather: Data integration ready
+- **14 Specialized Views:** Enterprise, Executive, Operations, Agents, Reports, Analytics, Infrastructure, Compliance, Finance, Marketing, Weather, Health, Energy, Business
+- **System Monitoring:** Real-time messages, alerts, API/database health
+- **Financial Intelligence:** Live market data, news, weather, advanced charting
+- **Agent Management:** Directory, health, compliance, financial, marketing dashboards
 
-## Technology Stack
+## Technology
 
-- React (JS/TS), Tailwind CSS for UI/UX
-- Lightweight-Charts for financial charts
-- Direct API integration: Marketstack, CoinGecko, Frankfurter, NewsAPI, AbuseIPDB, VirusTotal, World Bank, IMF
-- No placeholder data; all sources are live
-- Modular, tab-based layout with sidebar/topbar, responsive design
+- **Frontend:** React 18, Tailwind CSS, React Icons, Lightweight-Charts
+- **Data:** Real-time streaming, auto-refresh
+- **API Integrations:** Polygon, Alpha Vantage, CoinGecko, Frankfurter, NewsAPI, AbuseIPDB, VirusTotal, NASA, OpenWeatherMap, custom endpoints
+- **Security:** Environment variables, token-based authentication, CORS proxy, no client-side secrets
 
-## Implementation Status
+## Setup
 
-- Markets, News, Security, Economy tabs fully operational with live data
-- Science and Weather tabs scaffolded, ready for integration
-- All components fetch and display real data
+### Environment Variables
 
-## Access & Security
+```bash
+REACT_APP_POLYGON_API_KEY=your_polygon_key
+REACT_APP_ALPHAVANTAGE_API_KEY=your_alphavantage_key
+REACT_APP_NEWSAPI_KEY=your_newsapi_key
+REACT_APP_NASA_API_KEY=your_nasa_key
+REACT_APP_ABUSEIPDB_API_KEY=your_abuseipdb_key
+REACT_APP_VIRUSTOTAL_API_KEY=your_virustotal_key
+REACT_APP_OPENWEATHERMAP_API_KEY=your_openweather_key
+REACT_APP_API_ADMIN_TOKEN=secure_admin_token
+REACT_APP_API_MANAGER_TOKEN=secure_manager_token
+REACT_APP_API_VIEWER_TOKEN=secure_viewer_token
+```
 
-- Role-based access, data sensitivity filtering
-- Audit trails for dashboard usage
-- No public endpoints; all API keys managed securely
+### Commands
+
+```bash
+npm install      # Install dependencies
+npm start        # Start development server
+npm run build    # Build for production
+npm test         # Run tests
+```
+
+## Security & Access
+
+- Role-based tokens: admin, manager, viewer
+- Contextual data filtering
+- Audit logging
+- No public endpoints; all keys via environment variables
+
+## Compliance
+
+- Built-in compliance and regulatory tools
+- Secure authentication and monitoring
+- No hardcoded secrets
+

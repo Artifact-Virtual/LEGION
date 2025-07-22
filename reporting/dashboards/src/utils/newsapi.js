@@ -1,7 +1,7 @@
 // NewsAPI utility with CORS handling
 import axios from 'axios';
 
-const NEWS_API_KEY = '851adc1011504ceca5da0cc132cbd4ef';
+const NEWS_API_KEY = process.env.REACT_APP_NEWSAPI_KEY;
 
 // Using CORS proxy to avoid CORS issues
 const CORS_PROXY = 'https://api.allorigins.win/get?url=';
