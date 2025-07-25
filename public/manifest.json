@@ -1,15 +1,20 @@
 {
   "short_name": "Legion Enterprise",
-  "name": "Legion Enterprise Dashboard",
+  "name": "Legion Enterprise Dashboard - Artifact Virtual",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "av-white-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "av-black-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#00d4ff",
   "background_color": "#0f1419"
 }

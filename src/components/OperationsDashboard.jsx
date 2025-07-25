@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import BusinessObjectivesPanel from './BusinessObjectivesPanel';
 import './OperationsDashboard.css';
 
 // Import Phase 2 Enterprise Backend Services
@@ -9,14 +8,14 @@ import DepartmentActivitiesMonitoringService from '../services/DepartmentActivit
 import WorkflowExecutionHistoryService from '../services/WorkflowExecutionHistoryService';
 import AgentPerformanceMonitoringService from '../services/AgentPerformanceMonitoringService';
 
-// Import shared components (to be created)
-import BusinessObjectivesPanel from './shared/BusinessObjectivesPanel';
-import RevenueTrackingPanel from './shared/RevenueTrackingPanel';
-import DepartmentStatusBoard from './shared/DepartmentStatusBoard';
-import LeadPipelinePanel from './shared/LeadPipelinePanel';
-import ProjectStatusPanel from './shared/ProjectStatusPanel';
-import FinancialMetricsPanel from './shared/FinancialMetricsPanel';
-import BusinessTimelinePanel from './shared/BusinessTimelinePanel';
+// Import shared components
+import BusinessObjectivesPanel from './BusinessObjectivesPanel.jsx';
+import RevenueTrackingPanel from './RevenueVisualizationPanel.jsx';
+import DepartmentStatusBoard from './DepartmentStatusBoard.jsx';
+import LeadPipelinePanel from './LeadPipelinePanel.jsx';
+import ProjectStatusPanel from './ProjectStatusTracking.jsx';
+import FinancialMetricsPanel from './FinancialMetricsDashboard.jsx';
+import BusinessTimelinePanel from './BusinessTimelineCalendar.jsx';
 
 /**
  * OPERATIONS Dashboard - Business Operations Center

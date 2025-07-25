@@ -4530,7 +4530,7 @@ def get_agent_metrics():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/enterprise/metrics/business')
-def get_business_metrics():
+def get_business_performance_metrics():
     """Get business performance metrics from database"""
     try:
         conn = sqlite3.connect(ENTERPRISE_DB)
@@ -5902,8 +5902,8 @@ def get_emergency_overview():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/enterprise/emergency/shutdown', methods=['POST'])
-def emergency_shutdown():
+@app.route('/api/enterprise/emergency/system-shutdown', methods=['POST'])
+def emergency_system_shutdown():
     """Execute emergency system shutdown"""
     try:
         data = request.get_json()

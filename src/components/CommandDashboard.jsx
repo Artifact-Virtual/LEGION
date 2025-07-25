@@ -10,13 +10,13 @@ import WorkflowTriggerStatusTrackingService from '../services/WorkflowTriggerSta
 import EnterpriseDatabase from '../services/EnterpriseDatabase';
 
 // Import shared components
-import SystemStatusPanel from './shared/SystemStatusPanel';
-import AgentHealthMatrix from './shared/AgentHealthMatrix';
-import WorkflowExecutionStatus from './shared/WorkflowExecutionStatus';
-import SystemAlertsPanel from './shared/SystemAlertsPanel';
-import DatabaseConnectionStatus from './shared/DatabaseConnectionStatus';
-import SystemPerformanceMetrics from './shared/SystemPerformanceMetrics';
-import EmergencyControls from './shared/EmergencyControls';
+import SystemStatusPanel from './shared/SystemStatusPanel.jsx';
+import AgentHealthMatrix from './shared/AgentHealthMatrix.jsx';
+import WorkflowExecutionStatus from './shared/WorkflowExecutionStatus.jsx';
+import SystemAlertsPanel from './shared/SystemAlertsPanel.jsx';
+import DatabaseConnectionStatus from './shared/DatabaseConnectionStatus.jsx';
+import SystemPerformanceMetrics from './shared/SystemPerformanceMetrics.jsx';
+import EmergencyControls from './shared/EmergencyControls.jsx';
 
 /**
  * COMMAND Dashboard - System Command Center

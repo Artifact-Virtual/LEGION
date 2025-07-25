@@ -6,7 +6,7 @@
  */
 
 class EnterpriseDatabase {
-  constructor(baseUrl = 'http://localhost:8000') {
+  constructor(baseUrl = 'http://localhost:5001') {
     this.baseUrl = baseUrl;
     this.apiEndpoint = `${baseUrl}/api/enterprise`;
   }
@@ -144,7 +144,7 @@ class EnterpriseDatabase {
   // Real-time data subscriptions
   async subscribeToUpdates(callback) {
     // WebSocket connection for real-time updates
-    const wsUrl = `ws://localhost:8000/ws/enterprise`;
+    const wsUrl = `ws://localhost:5001/ws/enterprise`;
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
