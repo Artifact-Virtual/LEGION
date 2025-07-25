@@ -1,0 +1,456 @@
+/* src/components/shared/ConnectionStatusIndicator.css */
+
+.connection-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+/* Size Variations */
+.size-small {
+  gap: 6px;
+  font-size: 11px;
+}
+
+.size-medium {
+  gap: 8px;
+  font-size: 12px;
+}
+
+.size-large {
+  gap: 10px;
+  font-size: 14px;
+}
+
+/* Variant Styles */
+.variant-minimal {
+  gap: 4px;
+}
+
+.variant-detailed {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.variant-badge {
+  position: relative;
+}
+
+/* Clickable States */
+.clickable {
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.clickable:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Status Dot */
+.status-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.size-small .status-dot {
+  width: 12px;
+  height: 12px;
+  font-size: 8px;
+}
+
+.size-medium .status-dot {
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+}
+
+.size-large .status-dot {
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+}
+
+.status-dot i {
+  transition: all 0.3s ease;
+}
+
+/* Pulse Animation */
+.status-dot.pulse {
+  animation: status-pulse 2s infinite;
+}
+
+@keyframes status-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+/* Status Colors */
+.status-connected .status-dot {
+  color: #28a745;
+}
+
+.status-connecting .status-dot {
+  color: #17a2b8;
+}
+
+.status-disconnected .status-dot {
+  color: #6c757d;
+}
+
+.status-error .status-dot {
+  color: #dc3545;
+}
+
+.status-reconnecting .status-dot {
+  color: #ffc107;
+}
+
+.status-offline .status-dot {
+  color: #6c757d;
+}
+
+/* Status Info */
+.status-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.variant-minimal .status-info {
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-label {
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.size-small .status-label {
+  font-size: 10px;
+}
+
+.size-medium .status-label {
+  font-size: 11px;
+}
+
+.size-large .status-label {
+  font-size: 13px;
+}
+
+/* Status Details */
+.status-details {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.variant-detailed .status-details {
+  flex-direction: column;
+  gap: 2px;
+}
+
+.status-detail {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+.status-detail i {
+  font-size: 7px;
+  opacity: 0.7;
+}
+
+.size-large .status-detail {
+  font-size: 10px;
+}
+
+.size-large .status-detail i {
+  font-size: 8px;
+}
+
+/* Latency specific styling */
+.status-detail.latency {
+  color: #17a2b8;
+}
+
+/* Last update styling */
+.status-detail.last-update {
+  color: #6c757d;
+}
+
+/* Retry count styling */
+.status-detail.retry-count {
+  color: #ffc107;
+}
+
+/* Badge Variant */
+.variant-badge .retry-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #dc3545;
+  color: white;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.size-small .variant-badge .retry-badge {
+  width: 12px;
+  height: 12px;
+  font-size: 7px;
+  top: -3px;
+  right: -3px;
+}
+
+.size-large .variant-badge .retry-badge {
+  width: 16px;
+  height: 16px;
+  font-size: 9px;
+  top: -5px;
+  right: -5px;
+}
+
+/* Tooltip */
+.status-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  line-height: 1.3;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-bottom: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.9);
+}
+
+/* Connection Status Manager */
+.connection-status-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.connection-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.summary-stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.connected-count {
+  color: #28a745;
+}
+
+.health-percentage {
+  color: #17a2b8;
+}
+
+.health-bar {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.health-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #dc3545 0%, #ffc107 50%, #28a745 100%);
+  transition: width 0.3s ease;
+}
+
+.connections-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.more-connections {
+  font-size: 10px;
+  opacity: 0.7;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+/* Animation for status changes */
+.animated .status-dot {
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+}
+
+.animated.status-connected .status-dot {
+  animation-name: status-change-success;
+}
+
+.animated.status-error .status-dot {
+  animation-name: status-change-error;
+}
+
+@keyframes status-change-success {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes status-change-error {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.1) rotate(-5deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(5deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .connection-status-indicator {
+    gap: 6px;
+  }
+  
+  .status-details {
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .variant-detailed .status-details {
+    gap: 1px;
+  }
+  
+  .connection-status-manager {
+    padding: 8px;
+  }
+  
+  .connections-list {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .connection-status-indicator {
+    gap: 4px;
+  }
+  
+  .status-label {
+    font-size: 10px;
+  }
+  
+  .status-detail {
+    font-size: 8px;
+  }
+  
+  .connection-summary {
+    gap: 8px;
+  }
+  
+  .summary-stats {
+    gap: 6px;
+    font-size: 10px;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .connection-status-indicator {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    padding: 2px 4px;
+  }
+  
+  .status-dot {
+    border: 1px solid currentColor;
+    border-radius: 50%;
+  }
+  
+  .status-tooltip {
+    border-width: 2px;
+    background: black;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .status-dot.pulse {
+    animation: none;
+  }
+  
+  .animated .status-dot {
+    animation: none;
+  }
+  
+  .connection-status-indicator,
+  .status-dot,
+  .status-dot i,
+  .health-fill {
+    transition: none;
+  }
+}

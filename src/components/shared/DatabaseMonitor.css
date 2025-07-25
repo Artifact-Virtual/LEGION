@@ -1,0 +1,1086 @@
+/* DatabaseMonitor.css - Comprehensive styling for enterprise database monitoring interface */
+
+.database-monitor {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border-radius: 12px;
+  border: 1px solid #333;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.database-monitor.emergency {
+  border-color: #dc3545;
+  box-shadow: 0 0 20px rgba(220, 53, 69, 0.3);
+  animation: emergencyPulse 2s infinite;
+}
+
+@keyframes emergencyPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(220, 53, 69, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(220, 53, 69, 0.5); }
+}
+
+/* Header Section */
+.monitor-header {
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid #333;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.monitor-title {
+  color: #fff;
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.title-icon {
+  font-size: 1.2rem;
+}
+
+.system-health-summary {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.health-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  min-width: 60px;
+  transition: all 0.3s ease;
+}
+
+.health-stat.connected {
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid #28a745;
+}
+
+.health-stat.warning {
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid #ffc107;
+}
+
+.health-stat.error {
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid #dc3545;
+}
+
+.health-stat.connections {
+  background: rgba(23, 162, 184, 0.1);
+  border: 1px solid #17a2b8;
+}
+
+.health-stat.latency {
+  background: rgba(108, 117, 125, 0.1);
+  border: 1px solid #6c757d;
+}
+
+.stat-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.header-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+  min-width: 200px;
+}
+
+.view-controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.action-controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.view-select,
+.sort-select,
+.refresh-select {
+  background: #2d2d2d;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  min-width: 120px;
+  transition: all 0.3s ease;
+}
+
+.view-select:hover,
+.sort-select:hover,
+.refresh-select:hover {
+  border-color: #555;
+  background: #333;
+}
+
+.view-select:focus,
+.sort-select:focus,
+.refresh-select:focus {
+  outline: none;
+  border-color: #007acc;
+  box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+}
+
+.action-btn {
+  background: #444;
+  border: 1px solid #555;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.action-btn:hover:not(:disabled) {
+  background: #555;
+  border-color: #666;
+}
+
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.action-btn.optimize-all {
+  background: rgba(255, 193, 7, 0.2);
+  border-color: #ffc107;
+}
+
+.action-btn.optimize-all:hover:not(:disabled) {
+  background: rgba(255, 193, 7, 0.3);
+}
+
+.action-btn.backup-all {
+  background: rgba(23, 162, 184, 0.2);
+  border-color: #17a2b8;
+}
+
+.action-btn.backup-all:hover:not(:disabled) {
+  background: rgba(23, 162, 184, 0.3);
+}
+
+/* Monitor Content */
+.monitor-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Overview - Database Grid */
+.databases-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 16px;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.databases-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.databases-grid::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.databases-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+.databases-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.database-card {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #444;
+  border-left: 4px solid;
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.database-card:hover {
+  background: rgba(0, 0, 0, 0.4);
+  border-color: #555;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.database-card.connected {
+  border-left-color: #28a745;
+}
+
+.database-card.warning {
+  border-left-color: #ffc107;
+}
+
+.database-card.disconnected {
+  border-left-color: #6c757d;
+}
+
+.database-card.error {
+  border-left-color: #dc3545;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.database-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.type-icon {
+  font-size: 1.5rem;
+}
+
+.identity-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.database-name {
+  color: #fff;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.database-type {
+  color: #aaa;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-icon {
+  font-size: 1rem;
+}
+
+.status-text {
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.card-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.metric-row {
+  display: flex;
+  gap: 12px;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.metric.full-width {
+  flex: 2;
+}
+
+.metric-label {
+  color: #aaa;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metric-value {
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.storage-bar {
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  height: 16px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.storage-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.storage-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.card-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.card-action-btn {
+  background: #444;
+  border: 1px solid #555;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.card-action-btn:hover:not(:disabled) {
+  background: #555;
+  border-color: #666;
+}
+
+.card-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.card-action-btn.connect {
+  background: rgba(40, 167, 69, 0.2);
+  border-color: #28a745;
+}
+
+.card-action-btn.connect:hover {
+  background: rgba(40, 167, 69, 0.3);
+}
+
+.card-action-btn.disconnect {
+  background: rgba(220, 53, 69, 0.2);
+  border-color: #dc3545;
+}
+
+.card-action-btn.disconnect:hover {
+  background: rgba(220, 53, 69, 0.3);
+}
+
+.card-action-btn.reconnect {
+  background: rgba(23, 162, 184, 0.2);
+  border-color: #17a2b8;
+}
+
+.card-action-btn.reconnect:hover {
+  background: rgba(23, 162, 184, 0.3);
+}
+
+.card-action-btn.optimize {
+  background: rgba(255, 193, 7, 0.2);
+  border-color: #ffc107;
+}
+
+.card-action-btn.optimize:hover:not(:disabled) {
+  background: rgba(255, 193, 7, 0.3);
+}
+
+.card-error {
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid #dc3545;
+  border-radius: 4px;
+  padding: 8px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.error-icon {
+  font-size: 0.9rem;
+}
+
+.error-text {
+  color: #ff6b7a;
+  font-size: 0.8rem;
+  flex: 1;
+}
+
+/* Connections View */
+.connections-view {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.connections-header {
+  margin-bottom: 20px;
+}
+
+.connections-header h4 {
+  color: #fff;
+  margin: 0 0 8px 0;
+  font-size: 1.2rem;
+}
+
+.connection-summary {
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.connections-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.connection-group {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #444;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.group-header {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #333;
+}
+
+.db-icon {
+  font-size: 1.2rem;
+}
+
+.db-name {
+  color: #fff;
+  font-weight: 600;
+  flex: 1;
+}
+
+.connection-count {
+  color: #17a2b8;
+  font-size: 0.9rem;
+  font-family: 'Courier New', monospace;
+}
+
+.connection-details {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.connection-item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.conn-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.conn-id {
+  color: #17a2b8;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+}
+
+.conn-client {
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+.conn-duration {
+  color: #aaa;
+  font-size: 0.8rem;
+}
+
+.conn-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.conn-state {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.conn-state.active {
+  background: rgba(40, 167, 69, 0.3);
+  color: #7ee88f;
+}
+
+.conn-state.idle {
+  background: rgba(108, 117, 125, 0.3);
+  color: #adb5bd;
+}
+
+.conn-state.busy {
+  background: rgba(255, 193, 7, 0.3);
+  color: #ffd93d;
+}
+
+.conn-query {
+  color: #ccc;
+  font-size: 0.75rem;
+  font-family: 'Courier New', monospace;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Performance View */
+.performance-view {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.performance-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.performance-card {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.perf-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.status-badge {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.connected {
+  background: rgba(40, 167, 69, 0.3);
+  color: #7ee88f;
+}
+
+.status-badge.warning {
+  background: rgba(255, 193, 7, 0.3);
+  color: #ffd93d;
+}
+
+.status-badge.disconnected {
+  background: rgba(108, 117, 125, 0.3);
+  color: #adb5bd;
+}
+
+.status-badge.error {
+  background: rgba(220, 53, 69, 0.3);
+  color: #ff6b7a;
+}
+
+.perf-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.perf-metric {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 8px;
+  text-align: center;
+}
+
+.metric-name {
+  color: #aaa;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.slow-queries {
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  padding: 8px;
+  text-align: center;
+}
+
+.slow-queries-label {
+  color: #ffd93d;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Queries View */
+.queries-view {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.queries-header {
+  margin-bottom: 20px;
+}
+
+.queries-header h4 {
+  color: #fff;
+  margin: 0 0 8px 0;
+  font-size: 1.2rem;
+}
+
+.query-summary {
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.queries-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.query-group {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #444;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.query-details {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.query-item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 12px;
+}
+
+.query-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.query-id {
+  color: #17a2b8;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+}
+
+.query-duration {
+  color: #aaa;
+  font-size: 0.8rem;
+}
+
+.query-type {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.query-type.select {
+  background: rgba(40, 167, 69, 0.3);
+  color: #7ee88f;
+}
+
+.query-type.insert {
+  background: rgba(23, 162, 184, 0.3);
+  color: #5bc0de;
+}
+
+.query-type.update {
+  background: rgba(255, 193, 7, 0.3);
+  color: #ffd93d;
+}
+
+.query-type.delete {
+  background: rgba(220, 53, 69, 0.3);
+  color: #ff6b7a;
+}
+
+.query-sql {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.query-sql code {
+  color: #f8f8f2;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.query-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progress-bar {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745, #20c997);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  min-width: 40px;
+  text-align: right;
+}
+
+.no-queries {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: #aaa;
+  padding: 40px 20px;
+}
+
+.no-queries-icon {
+  font-size: 3rem;
+}
+
+.no-queries h4 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #ccc;
+}
+
+.no-queries p {
+  margin: 0;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* Real-time Indicator */
+.monitor-realtime-indicator {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  color: #aaa;
+  z-index: 5;
+}
+
+.indicator-dot {
+  width: 8px;
+  height: 8px;
+  background: #28a745;
+  border-radius: 50%;
+  animation: indicatorPulse 2s infinite;
+}
+
+@keyframes indicatorPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+.indicator-text {
+  white-space: nowrap;
+}
+
+.refresh-rate {
+  color: #666;
+  font-size: 0.7rem;
+}
+
+/* Emergency Database Banner */
+.emergency-db-banner {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(90deg, #dc3545, #c82333);
+  border-top: 1px solid #b21e2f;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: emergencySlideUp 0.5s ease-out;
+  z-index: 10;
+}
+
+@keyframes emergencySlideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.emergency-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.emergency-icon {
+  font-size: 1.2rem;
+  animation: emergencyShake 0.5s infinite;
+}
+
+@keyframes emergencyShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.emergency-text {
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.emergency-action {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.emergency-action:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .monitor-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .header-controls {
+    width: 100%;
+    align-items: stretch;
+  }
+  
+  .view-controls,
+  .action-controls {
+    justify-content: stretch;
+  }
+  
+  .view-select,
+  .sort-select,
+  .refresh-select,
+  .action-btn {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .system-health-summary {
+    justify-content: center;
+  }
+  
+  .databases-grid {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+  
+  .card-actions {
+    flex-direction: column;
+  }
+  
+  .metric-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .monitor-header {
+    padding: 12px 16px;
+  }
+  
+  .databases-grid,
+  .connections-view,
+  .performance-view,
+  .queries-view {
+    padding: 12px 16px;
+  }
+  
+  .database-card {
+    padding: 12px;
+  }
+  
+  .monitor-title {
+    font-size: 1.2rem;
+  }
+  
+  .health-stat {
+    padding: 6px 8px;
+    min-width: 50px;
+  }
+  
+  .emergency-db-banner {
+    padding: 8px 16px;
+  }
+  
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .database-monitor {
+    border-color: #fff;
+  }
+  
+  .database-card,
+  .connection-group,
+  .performance-card {
+    border-color: #fff;
+  }
+  
+  .view-select,
+  .sort-select,
+  .refresh-select,
+  .action-btn,
+  .card-action-btn {
+    border-color: #fff;
+  }
+}

@@ -1,0 +1,533 @@
+/* src/components/shared/ErrorBoundary.css */
+/* Enterprise Error Boundary Styling */
+
+/* Base Error Fallback */
+.error-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #991b1b;
+  min-height: 200px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Size Variants */
+.error-fallback.size-small {
+  padding: 16px;
+  min-height: 120px;
+  font-size: 0.875rem;
+}
+
+.error-fallback.size-medium {
+  padding: 24px;
+  min-height: 200px;
+  font-size: 1rem;
+}
+
+.error-fallback.size-large {
+  padding: 32px;
+  min-height: 300px;
+  font-size: 1.125rem;
+}
+
+/* Variant Styles */
+.error-fallback.variant-card {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background: white;
+  border: 2px solid #fecaca;
+}
+
+.error-fallback.variant-detailed {
+  text-align: left;
+  align-items: flex-start;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Minimal Variant */
+.error-fallback.minimal {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 8px 12px;
+  min-height: auto;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.error-fallback.minimal .error-icon {
+  font-size: 1rem;
+  color: #dc2626;
+}
+
+.error-fallback.minimal .error-message {
+  flex: 1;
+  text-align: left;
+  margin: 0;
+}
+
+.error-fallback.minimal .retry-button {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  min-width: auto;
+  border-radius: 4px;
+}
+
+/* Inline Variant */
+.error-fallback.inline {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  min-height: auto;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.error-fallback.inline .error-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.error-fallback.inline .error-icon {
+  font-size: 1.125rem;
+  color: #dc2626;
+}
+
+.error-fallback.inline .error-text {
+  flex: 1;
+  text-align: left;
+  margin: 0;
+}
+
+.error-fallback.inline .retry-button {
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Error Icon Container */
+.error-icon-container {
+  margin-bottom: 16px;
+}
+
+.error-icon {
+  font-size: 3rem;
+  color: #dc2626;
+  opacity: 0.8;
+}
+
+.error-fallback.size-small .error-icon {
+  font-size: 2rem;
+}
+
+.error-fallback.size-large .error-icon {
+  font-size: 4rem;
+}
+
+/* Error Content */
+.error-content {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.error-title {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin: 0;
+  color: #991b1b;
+}
+
+.error-message {
+  font-size: 1em;
+  margin: 0;
+  color: #7f1d1d;
+  line-height: 1.5;
+}
+
+/* Error Metadata */
+.error-id,
+.retry-count {
+  color: #a16207;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+/* Action Buttons */
+.error-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.error-fallback.variant-detailed .error-actions {
+  justify-content: flex-start;
+}
+
+.retry-button,
+.reset-button,
+.details-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  min-width: 100px;
+  justify-content: center;
+}
+
+.retry-button {
+  background: #dc2626;
+  color: white;
+}
+
+.retry-button:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.retry-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.reset-button {
+  background: #64748b;
+  color: white;
+}
+
+.reset-button:hover {
+  background: #475569;
+}
+
+.details-button {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.details-button:hover {
+  background: #e5e7eb;
+}
+
+/* Error Details */
+.error-details {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.details-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.details-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: #374151;
+}
+
+.copy-error-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #6b7280;
+}
+
+.copy-error-button:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.copy-error-button.copied {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #bbf7d0;
+}
+
+/* Error Info Sections */
+.error-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.error-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.error-section h5 {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.error-text,
+.error-stack,
+.component-stack {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 12px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: #475569;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+  margin: 0;
+}
+
+.error-stack {
+  max-height: 300px;
+  color: #dc2626;
+}
+
+.component-stack {
+  color: #059669;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .error-fallback {
+    padding: 16px;
+    min-height: 150px;
+  }
+  
+  .error-fallback.size-large {
+    padding: 20px;
+    min-height: 200px;
+    font-size: 1rem;
+  }
+  
+  .error-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .retry-button,
+  .reset-button,
+  .details-button {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .error-details {
+    padding: 12px;
+    font-size: 0.8rem;
+  }
+  
+  .error-text,
+  .error-stack,
+  .component-stack {
+    font-size: 0.7rem;
+    padding: 8px;
+    max-height: 150px;
+  }
+  
+  .details-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .copy-error-button {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .error-fallback.inline {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .error-fallback.inline .error-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .error-fallback.inline .retry-button {
+    width: 100%;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .error-fallback {
+    background: #1f2937;
+    border-color: #374151;
+    color: #f87171;
+  }
+  
+  .error-fallback.variant-card {
+    background: #111827;
+    border-color: #374151;
+  }
+  
+  .error-title {
+    color: #f87171;
+  }
+  
+  .error-message {
+    color: #fca5a5;
+  }
+  
+  .error-details {
+    background: #111827;
+    border-color: #374151;
+  }
+  
+  .details-header h4 {
+    color: #f3f4f6;
+  }
+  
+  .error-section h5 {
+    color: #e5e7eb;
+  }
+  
+  .error-text,
+  .error-stack,
+  .component-stack {
+    background: #1f2937;
+    border-color: #374151;
+    color: #d1d5db;
+  }
+  
+  .error-stack {
+    color: #f87171;
+  }
+  
+  .component-stack {
+    color: #34d399;
+  }
+  
+  .copy-error-button {
+    background: #374151;
+    border-color: #4b5563;
+    color: #d1d5db;
+  }
+  
+  .copy-error-button:hover {
+    background: #4b5563;
+    color: #f3f4f6;
+  }
+  
+  .copy-error-button.copied {
+    background: #064e3b;
+    color: #6ee7b7;
+    border-color: #047857;
+  }
+  
+  .details-button {
+    background: #374151;
+    color: #d1d5db;
+    border-color: #4b5563;
+  }
+  
+  .details-button:hover {
+    background: #4b5563;
+  }
+}
+
+/* High Contrast Support */
+@media (prefers-contrast: high) {
+  .error-fallback {
+    border-width: 2px;
+    border-color: #dc2626;
+  }
+  
+  .error-icon {
+    color: #dc2626;
+    opacity: 1;
+  }
+  
+  .error-title,
+  .error-message {
+    color: #000;
+  }
+  
+  .retry-button,
+  .reset-button {
+    border: 2px solid currentColor;
+  }
+  
+  .error-text,
+  .error-stack,
+  .component-stack {
+    border-width: 2px;
+    border-color: #000;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .error-fallback {
+    background: white;
+    border: 2px solid #000;
+    color: #000;
+  }
+  
+  .error-actions {
+    display: none;
+  }
+  
+  .error-details {
+    background: white;
+    border: 1px solid #000;
+  }
+  
+  .copy-error-button {
+    display: none;
+  }
+}
