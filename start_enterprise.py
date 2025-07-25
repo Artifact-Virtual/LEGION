@@ -1,20 +1,24 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python4
 """
-Unified Enterprise Startup Script
+Legion Enterprise System - Single Step Startup Script
 - Ensures proper virtual environment setup
-- Installs all dependencies (Python and Node)
-- Initializes databases and config
-- Starts backend_api.py and server.py
-- Starts the React dashboard (npm start)
+- Installs all dependencies (Python and Node.js)
+- Initializes databases and configuration
+- Starts backend API server
+- Installs and starts the React dashboard from root directory
 """
 
 import sys
 import subprocess
 import os
+import time
+import shutil
 from pathlib import Path
 
 ENTERPRISE_DIR = Path(__file__).parent.resolve()
 VENV_DIR = ENTERPRISE_DIR / "venv"
+PACKAGE_JSON = ENTERPRISE_DIR / "package.json"
+NODE_MODULES = ENTERPRISE_DIR / "node_modules"
 
 def is_venv_active():
     """Check if we're currently running inside a virtual environment"""
@@ -65,8 +69,145 @@ def activate_venv_and_restart():
     # Exit the original process
     sys.exit(0)
 
+
+def check_node_installed():
+    """Check if Node.js is installed"""
+    try:
+        result = subprocess.run(['node', '--version'], 
+                              capture_output=True, text=True)
+        if result.returncode == 0:
+            print(f"✅ Node.js found: {result.stdout.strip()}")
+            return True
+    except FileNotFoundError:
+        pass
+    
+    print("❌ Node.js not found. Please install Node.js first:")
+    print("   https://nodejs.org/")
+    return False
+
+
+def check_npm_installed():
+    """Check if npm is installed"""
+    try:
+        result = subprocess.run(['npm', '--version'], 
+                              capture_output=True, text=True)
+        if result.returncode == 0:
+            print(f"✅ npm found: {result.stdout.strip()}")
+            return True
+    except FileNotFoundError:
+        pass
+    
+    print("❌ npm not found. Please install npm.")
+    return False
+
+
+def install_python_dependencies():
+    """Install Python dependencies"""
+    requirements_file = ENTERPRISE_DIR / "requirements.txt"
+    if requirements_file.exists():
+        print("📦 Installing Python dependencies...")
+        try:
+            subprocess.check_call([
+                sys.executable, "-m", "pip", "install", "-r", 
+                str(requirements_file)
+            ])
+            print("✅ Python dependencies installed")
+            return True
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Failed to install Python dependencies: {e}")
+            return False
+    else:
+        print("⚠️ No requirements.txt found, skipping Python deps")
+        return True
+
+
+def install_node_dependencies():
+    """Install Node.js dependencies if package.json exists"""
+    if not PACKAGE_JSON.exists():
+        print("❌ package.json not found in root directory")
+        return False
+    
+    print("📦 Installing Node.js dependencies...")
+    try:
+        # Remove node_modules if it exists to ensure clean install
+        if NODE_MODULES.exists():
+            print("🧹 Cleaning existing node_modules...")
+            shutil.rmtree(NODE_MODULES)
+        
+        subprocess.check_call(['npm', 'install'], cwd=ENTERPRISE_DIR)
+        print("✅ Node.js dependencies installed")
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Failed to install Node.js dependencies: {e}")
+        return False
+
+
+def kill_existing_processes():
+    """Kill processes on ports 3000 and 5001"""
+    print("🔪 Cleaning up existing processes...")
+    for port in ["3000", "5001"]:
+        try:
+            subprocess.run([
+                "fuser", "-k", f"{port}/tcp"
+            ], check=False, capture_output=True)
+            print(f"   Cleaned port {port}")
+        except (subprocess.SubprocessError, OSError):
+            pass
+    print("✅ Process cleanup completed")
+
+
+def start_backend():
+    """Start the backend API server"""
+    backend_api = ENTERPRISE_DIR / "backend_api.py"
+    if not backend_api.exists():
+        print("❌ backend_api.py not found")
+        return False
+    
+    print("🌐 Starting backend API server on port 5001...")
+    try:
+        # Start backend in background
+        process = subprocess.Popen([
+            sys.executable, str(backend_api)
+        ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
+        # Give backend a moment to start
+        time.sleep(3)
+        
+        # Check if process is still running
+        if process.poll() is None:
+            print("✅ Backend API server started successfully")
+            return True
+        else:
+            stdout, stderr = process.communicate()
+            print(f"❌ Backend failed to start: {stderr.decode()}")
+            return False
+    except Exception as e:
+        print(f"❌ Failed to start backend: {e}")
+        return False
+
+
+def start_dashboard():
+    """Start the React dashboard"""
+    if not PACKAGE_JSON.exists():
+        print("❌ package.json not found, cannot start dashboard")
+        return False
+    
+    print("🖥️ Starting Legion Enterprise Dashboard...")
+    try:
+        # Start React development server
+        subprocess.Popen(['npm', 'start'], cwd=ENTERPRISE_DIR)
+        print("✅ Dashboard startup initiated")
+        print("🌐 Dashboard will be available at: http://localhost:3000")
+        return True
+    except Exception as e:
+        print(f"❌ Failed to start dashboard: {e}")
+        return False
+
+
 if __name__ == "__main__":
-    print("\n=== ENTERPRISE SYSTEM STARTUP ===\n")
+    print("\n" + "="*50)
+    print("🚀 LEGION ENTERPRISE SYSTEM STARTUP")
+    print("="*50 + "\n")
     
     # Check if we're already in the correct venv
     venv_active = is_venv_active()
@@ -75,7 +216,7 @@ if __name__ == "__main__":
     if not in_enterprise_venv:
         if venv_active:
             print("⚠️ Already running in a virtual environment!")
-            print("   Please deactivate the current venv and run this script again.")
+            print("   Please deactivate and run this script again.")
             print("   Command: deactivate")
             sys.exit(1)
         else:
@@ -84,68 +225,50 @@ if __name__ == "__main__":
             activate_venv_and_restart()
     
     print("✅ Running in Enterprise virtual environment")
-    print("✅ Running in Enterprise virtual environment")
     
-    # Kill processes on ports 5001 and 3000 before starting
-    print("🔪 Killing processes on ports 5001 and 3000...")
-    for port in ["5001", "3000"]:
-        try:
-            print(f"   Killing processes on port {port}...")
-            subprocess.run([
-                "fuser", "-k", f"{port}/tcp"
-            ], check=False, capture_output=True)
-        except (subprocess.SubprocessError, OSError):
-            pass  # Silently continue if port is not in use
-    print("✅ Port cleanup completed\n")
+    # Step 1: Clean up existing processes
+    kill_existing_processes()
     
-    # 1. Run install.py (handles all dependency installation and dashboard setup)
-    install_py = ENTERPRISE_DIR / "install.py"
-    if install_py.exists():
-        print("🛠️ Running install.py for full environment and dashboard setup...")
-        try:
-            # Use the current Python executable (which is now the venv Python)
-            subprocess.check_call([
-                sys.executable, str(install_py)
-            ])
-        except subprocess.CalledProcessError as e:
-            print(f"❌ install.py failed: {e}")
+    # Step 2: Check system requirements
+    print("\n📋 Checking system requirements...")
+    if not check_node_installed() or not check_npm_installed():
+        sys.exit(1)
+    
+    # Step 3: Install Python dependencies
+    print("\n🐍 Setting up Python environment...")
+    if not install_python_dependencies():
+        print("❌ Failed to install Python dependencies")
+        sys.exit(1)
+    
+    # Step 4: Install Node.js dependencies (check if needed)
+    print("\n📦 Setting up Node.js environment...")
+    if not NODE_MODULES.exists() or not (NODE_MODULES / ".bin").exists():
+        print("� Node modules not found or incomplete, installing...")
+        if not install_node_dependencies():
+            print("❌ Failed to install Node.js dependencies")
             sys.exit(1)
     else:
-        print("❌ install.py not found. Cannot continue startup.")
+        print("✅ Node.js dependencies already installed")
+    
+    # Step 5: Start backend API
+    print("\n🌐 Starting backend services...")
+    if not start_backend():
+        print("❌ Failed to start backend services")
         sys.exit(1)
-
-    # 2. Start backend_api.py
-    backend_api = ENTERPRISE_DIR / "backend_api.py"
-    if backend_api.exists():
-        print("🌐 Starting backend_api.py on port 5001...")
-        subprocess.Popen([sys.executable, str(backend_api)])
-    else:
-        print("⚠️ backend_api.py not found, skipping API backend")
-
-    # 3. Start server.py
-    server_py = ENTERPRISE_DIR / "server.py"
-    if server_py.exists():
-        print("🚀 Starting server.py...")
-        subprocess.Popen([sys.executable, str(server_py)])
-    else:
-        print("⚠️ server.py not found, skipping server")
-
-    # 4. Start social media automation service (optional)
-    social_service = (
-        ENTERPRISE_DIR / "communication" / "social_media_service.py"
-    )
-    if social_service.exists():
-        print("📱 Starting Social Media Automation Service...")
-        subprocess.Popen([sys.executable, str(social_service)])
-    else:
-        print(
-            "⚠️ social_media_service.py not found in communication/, "
-            "skipping social media automation"
-        )
-
-    # 5. Start dashboard (npm start in reporting/dashboards)
-    dashboards_dir = ENTERPRISE_DIR / "reporting" / "dashboards"
-    print(f"🖥️ Starting React dashboard (npm start in {dashboards_dir})...")
-    subprocess.Popen(["npm", "start"], cwd=dashboards_dir)
-
-    print("\n✅ All systems started. See logs and dashboard for status.\n")
+    
+    # Step 6: Start dashboard
+    print("\n🖥️ Starting dashboard...")
+    if not start_dashboard():
+        print("❌ Failed to start dashboard")
+        sys.exit(1)
+    
+    print("\n" + "="*50)
+    print("✅ LEGION ENTERPRISE SYSTEM STARTED SUCCESSFULLY")
+    print("="*50)
+    print("\n🌐 Services:")
+    print("   • Backend API: http://localhost:5001")
+    print("   • Dashboard:   http://localhost:3000")
+    print("\n🔧 To stop all services, run: ./kill_enterprise.sh")
+    print("📊 Dashboard should open automatically in your browser")
+    print("\n⏳ Please wait for dashboard compilation to complete...")
+    print("="*50 + "\n")
