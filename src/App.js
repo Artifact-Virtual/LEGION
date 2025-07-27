@@ -1,8 +1,8 @@
 // src/App.js
 // LEGION Enterprise Dashboard - Main Application
 
-import React, { useState } from 'react';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import './GlobalTheme.css'; // Import unified theme
 
 // Import Dashboard Components
 import CommandDashboard from './components/CommandDashboard.jsx';
@@ -25,7 +25,16 @@ const DASHBOARD_TABS = [
 ];
 
 function App() {
-  const [activeTab, setActiveTab] = useState('command');
+  // Get initial tab from localStorage or default to 'command'
+  const [activeTab, setActiveTab] = useState(() => {
+    const savedTab = localStorage.getItem('legion-enterprise-active-tab');
+    return savedTab && DASHBOARD_TABS.find(tab => tab.id === savedTab) ? savedTab : 'command';
+  });
+  
+  // Persist active tab to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('legion-enterprise-active-tab', activeTab);
+  }, [activeTab]);
   
   const ActiveComponent = DASHBOARD_TABS.find(tab => tab.id === activeTab)?.component || CommandDashboard;
 
@@ -34,7 +43,7 @@ function App() {
       {/* Header */}
       <header className="app-header">
         <div className="brand-container">
-          <img src="/av-white-logo.png" alt="Artifact Virtual" className="brand-logo" />
+          <img src="/av-black-logo.png" alt="Artifact Virtual" className="brand-logo" />
           <div className="brand-text">
             <h1>LEGION ENTERPRISE</h1>
             <span>AI-Powered Enterprise Management Platform</span>

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './AgentHealthMatrix.css';
 
 /**
  * AgentHealthMatrix - Visual matrix of all enterprise agents and their health status

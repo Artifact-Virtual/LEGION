@@ -1,6 +1,5 @@
 // src/components/shared/LiveDataFeed.jsx
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import './LiveDataFeed.css';
 
 const LiveDataFeed = ({
   data = [],

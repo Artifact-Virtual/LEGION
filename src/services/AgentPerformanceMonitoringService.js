@@ -945,6 +945,63 @@ class SLAComplianceMonitor {
             (business.quality_score || 0) >= this.slaTargets.quality_score
         );
     }
+
+    /**
+     * Get current state from backend API
+     * This method fetches real-time performance data from the enterprise backend
+     */
+    async getCurrentState() {
+        try {
+            const response = await fetch('http://localhost:5001/api/enterprise/system-status');
+            if (!response.ok) {
+                throw new Error(`Backend API error: ${response.status}`);
+            }
+            
+            const backendData = await response.json();
+            
+            // Transform backend data to expected performance format
+            return {
+                performance: {
+                    overall_health: backendData.overall_health || 'unknown',
+                    active_agents: backendData.active_agents || 0,
+                    active_workflows: backendData.active_workflows || 0,
+                    system_load: backendData.system_load || 0,
+                    avg_response_time: backendData.avg_response_time || '0ms',
+                    total_requests: backendData.total_requests || 0,
+                    error_rate: backendData.error_rate || 0,
+                    uptime: backendData.uptime || '0m'
+                },
+                alerts: [],
+                timestamp: new Date().toISOString()
+            };
+            
+        } catch (error) {
+            console.error('❌ Failed to fetch performance data from backend:', error);
+            
+            // Return fallback data with error indication
+            return {
+                performance: {
+                    overall_health: 'error',
+                    active_agents: 0,
+                    active_workflows: 0,
+                    system_load: 0,
+                    avg_response_time: 'N/A',
+                    total_requests: 0,
+                    error_rate: 100,
+                    uptime: '0m'
+                },
+                alerts: [{
+                    id: `performance_error_${Date.now()}`,
+                    type: 'error',
+                    message: `Failed to connect to performance API: ${error.message}`,
+                    timestamp: new Date().toISOString(),
+                    severity: 'critical'
+                }],
+                timestamp: new Date().toISOString(),
+                error: error.message
+            };
+        }
+    }
 }
 
 // Export the service

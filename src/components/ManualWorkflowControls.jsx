@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './ManualWorkflowControls.css';
 
 const ManualWorkflowControls = () => {
   const [workflows, setWorkflows] = useState([]);
@@ -201,7 +200,7 @@ const ManualWorkflowControls = () => {
             'Generating output...',
             'Workflow execution completed'
           ],
-          errorMessage: Math.random() > 0.8 ? 'Sample error message' : null
+          errorMessage: workflow.error_message || null
         });
       }
     }

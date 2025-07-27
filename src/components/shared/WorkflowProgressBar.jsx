@@ -1,6 +1,5 @@
 // src/components/shared/WorkflowProgressBar.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import './WorkflowProgressBar.css';
 
 const WorkflowProgressBar = ({
   steps = [],

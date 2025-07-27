@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './CompetitiveIntelligenceDashboard.css';
 
 const CompetitiveIntelligenceDashboard = ({ onComponentUpdate }) => {
   const [loading, setLoading] = useState(false);

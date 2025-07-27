@@ -31,13 +31,35 @@ def create_venv():
     if not VENV_DIR.exists():
         print(f"📦 Creating virtual environment at {VENV_DIR}...")
         try:
+            # Create venv with system site packages to avoid pip issues
             subprocess.check_call([
-                sys.executable, "-m", "venv", str(VENV_DIR)
+                sys.executable, "-m", "venv", str(VENV_DIR), "--clear"
             ])
             print("✅ Virtual environment created successfully")
+            
+            # Immediately upgrade pip in the new venv
+            venv_python = get_venv_python()
+            if venv_python.exists():
+                print("🔧 Upgrading pip in virtual environment...")
+                subprocess.check_call([
+                    str(venv_python), "-m", "ensurepip", "--upgrade"
+                ])
+                subprocess.check_call([
+                    str(venv_python), "-m", "pip", "install", "--upgrade", "pip", "setuptools", "wheel"
+                ])
+                print("✅ pip upgraded in virtual environment")
         except subprocess.CalledProcessError as e:
             print(f"❌ Failed to create virtual environment: {e}")
-            sys.exit(1)
+            # Fallback: try with system site packages
+            try:
+                print("🔄 Trying fallback method with system site packages...")
+                subprocess.check_call([
+                    sys.executable, "-m", "venv", str(VENV_DIR), "--system-site-packages", "--clear"
+                ])
+                print("✅ Virtual environment created with fallback method")
+            except subprocess.CalledProcessError as e2:
+                print(f"❌ Fallback method also failed: {e2}")
+                sys.exit(1)
     else:
         print("✅ Virtual environment already exists")
 
@@ -107,6 +129,13 @@ def install_python_dependencies():
     if requirements_file.exists():
         print("📦 Installing Python dependencies...")
         try:
+            # First upgrade pip to ensure it's working
+            subprocess.check_call([
+                sys.executable, "-m", "pip", "install", "--upgrade", "pip"
+            ])
+            print("✅ pip upgraded successfully")
+            
+            # Then install requirements
             subprocess.check_call([
                 sys.executable, "-m", "pip", "install", "-r", 
                 str(requirements_file)
@@ -115,7 +144,21 @@ def install_python_dependencies():
             return True
         except subprocess.CalledProcessError as e:
             print(f"❌ Failed to install Python dependencies: {e}")
-            return False
+            # Try alternative installation method
+            print("🔄 Trying alternative installation method...")
+            try:
+                subprocess.check_call([
+                    sys.executable, "-m", "ensurepip", "--upgrade"
+                ])
+                subprocess.check_call([
+                    sys.executable, "-m", "pip", "install", "-r", 
+                    str(requirements_file)
+                ])
+                print("✅ Python dependencies installed with alternative method")
+                return True
+            except subprocess.CalledProcessError as e2:
+                print(f"❌ Alternative method also failed: {e2}")
+                return False
     else:
         print("⚠️ No requirements.txt found, skipping Python deps")
         return True
@@ -143,8 +186,10 @@ def install_node_dependencies():
 
 
 def kill_existing_processes():
-    """Kill processes on ports 3000 and 5001"""
+    """Kill processes on ports 3000 and 5001, and any existing Legion processes"""
     print("🔪 Cleaning up existing processes...")
+    
+    # Kill processes on specific ports
     for port in ["3000", "5001"]:
         try:
             subprocess.run([
@@ -153,60 +198,138 @@ def kill_existing_processes():
             print(f"   Cleaned port {port}")
         except (subprocess.SubprocessError, OSError):
             pass
+    
+    # Kill any existing Legion orchestrator processes
+    try:
+        subprocess.run([
+            "pkill", "-f", "start_legion.py"
+        ], check=False, capture_output=True)
+        print("   Cleaned Legion orchestrator processes")
+    except (subprocess.SubprocessError, OSError):
+        pass
+    
+    # Kill any existing backend_api processes
+    try:
+        subprocess.run([
+            "pkill", "-f", "backend_api.py"
+        ], check=False, capture_output=True)
+        print("   Cleaned backend API processes")
+    except (subprocess.SubprocessError, OSError):
+        pass
+        
     print("✅ Process cleanup completed")
 
 
 def start_backend():
-    """Start the backend API server"""
+    """Start the backend API server and Legion orchestrator"""
     backend_api = ENTERPRISE_DIR / "backend_api.py"
+    legion_start = ENTERPRISE_DIR / "legion" / "start_legion.py"
+    
     if not backend_api.exists():
         print("❌ backend_api.py not found")
         return False
     
     print("🌐 Starting backend API server on port 5001...")
     try:
-        # Start backend in background
-        process = subprocess.Popen([
+        # Start backend API in background
+        backend_process = subprocess.Popen([
             sys.executable, str(backend_api)
         ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
         # Give backend a moment to start
-        time.sleep(3)
+        time.sleep(2)
         
-        # Check if process is still running
-        if process.poll() is None:
+        # Check if backend process is still running
+        if backend_process.poll() is None:
             print("✅ Backend API server started successfully")
-            return True
         else:
-            stdout, stderr = process.communicate()
+            stdout, stderr = backend_process.communicate()
             print(f"❌ Backend failed to start: {stderr.decode()}")
             return False
+            
     except Exception as e:
         print(f"❌ Failed to start backend: {e}")
         return False
+    
+    # Start Legion orchestrator if it exists
+    if legion_start.exists():
+        print("🤖 Starting Legion Enterprise Orchestrator...")
+        try:
+            legion_process = subprocess.Popen([
+                sys.executable, str(legion_start)
+            ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, 
+            cwd=str(ENTERPRISE_DIR / "legion"))
+            
+            # Give Legion a moment to start
+            time.sleep(3)
+            
+            # Check if Legion process is still running
+            if legion_process.poll() is None:
+                print("✅ Legion Enterprise Orchestrator started successfully")
+                print("🤖 AI agents are now operational")
+            else:
+                stdout, stderr = legion_process.communicate()
+                print(f"⚠️ Legion failed to start: {stderr.decode()}")
+                print("⚠️ Continuing without Legion orchestrator")
+                
+        except Exception as e:
+            print(f"⚠️ Failed to start Legion orchestrator: {e}")
+            print("⚠️ Continuing without Legion orchestrator")
+    else:
+        print("⚠️ Legion orchestrator not found, starting without agents")
+    
+    return True
 
 
 def start_dashboard():
-    """Start the React dashboard"""
+    """Start the React dashboard in production mode"""
     if not PACKAGE_JSON.exists():
         print("❌ package.json not found, cannot start dashboard")
         return False
     
-    print("🖥️ Starting Legion Enterprise Dashboard...")
+    print("🖥️ Starting Legion Enterprise Dashboard (Production)...")
+    
+    # Always build fresh production version to ensure latest changes
+    print("🔨 Building fresh production version...")
     try:
-        # Start React development server
-        subprocess.Popen(['npm', 'start'], cwd=ENTERPRISE_DIR)
-        print("✅ Dashboard startup initiated")
-        print("🌐 Dashboard will be available at: http://localhost:3000")
+        # Clean any existing build
+        build_dir = ENTERPRISE_DIR / "build"
+        if build_dir.exists():
+            shutil.rmtree(build_dir)
+            print("🧹 Cleaned existing build")
+        
+        # Build production version
+        subprocess.check_call(['npm', 'run', 'build'], cwd=ENTERPRISE_DIR)
+        print("✅ Production build completed")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Failed to build production version: {e}")
+        return False
+    
+    try:
+        # Install serve if not available
+        print("📦 Ensuring serve is available...")
+        subprocess.check_call(
+            ['npm', 'install', '-g', 'serve'],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
+        
+        # Start production server with serve
+        print("🚀 Starting production server on port 3000...")
+        subprocess.Popen(
+            ['npx', 'serve', '-s', 'build', '-l', '3000'],
+            cwd=ENTERPRISE_DIR
+        )
+        print("✅ Production dashboard started")
+        print("🌐 Dashboard available at: http://localhost:3000")
         return True
     except Exception as e:
-        print(f"❌ Failed to start dashboard: {e}")
+        print(f"❌ Failed to start production dashboard: {e}")
         return False
 
 
 if __name__ == "__main__":
     print("\n" + "="*50)
-    print("🚀 LEGION ENTERPRISE SYSTEM STARTUP")
+    print(" LEGION ENTERPRISE SYSTEM STARTUP")
     print("="*50 + "\n")
     
     # Check if we're already in the correct venv

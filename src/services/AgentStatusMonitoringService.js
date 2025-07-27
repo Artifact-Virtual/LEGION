@@ -526,6 +526,91 @@ class AgentStatusMonitoringService {
     }
 
     /**
+     * Get current state from backend API
+     * This method fetches real-time agent data from the enterprise backend
+     */
+    async getCurrentState() {
+        try {
+            const response = await fetch('http://localhost:5001/api/enterprise/agent-health');
+            if (!response.ok) {
+                throw new Error(`Backend API error: ${response.status}`);
+            }
+            
+            const backendData = await response.json();
+            
+            // Transform backend data to expected format
+            const agentMetrics = {};
+            const alerts = [];
+            
+            if (backendData.agents) {
+                Object.entries(backendData.agents).forEach(([agentId, agentData]) => {
+                    agentMetrics[agentId] = {
+                        id: agentId,
+                        name: agentData.name || agentId,
+                        status: agentData.status || 'unknown',
+                        health_score: agentData.health_score || 0,
+                        last_seen: agentData.last_activity || new Date().toISOString(),
+                        department: agentData.department || 'unknown',
+                        avg_response_time: agentData.avg_response_time || '0ms',
+                        error_rate: agentData.error_rate || 0,
+                        tasks_completed: agentData.tasks_completed || 0,
+                        uptime: agentData.uptime || '0m'
+                    };
+                    
+                    // Generate alerts for unhealthy agents
+                    if (agentData.health_score < 70) {
+                        alerts.push({
+                            id: `health_${agentId}_${Date.now()}`,
+                            type: 'warning',
+                            message: `Agent ${agentData.name || agentId} health score low: ${agentData.health_score}%`,
+                            agent_id: agentId,
+                            timestamp: new Date().toISOString(),
+                            severity: agentData.health_score < 50 ? 'critical' : 'warning'
+                        });
+                    }
+                });
+            }
+            
+            return {
+                agents: agentMetrics,
+                alerts: alerts,
+                summary: {
+                    total_agents: Object.keys(agentMetrics).length,
+                    healthy_agents: Object.values(agentMetrics).filter(a => a.health_score >= 70).length,
+                    warning_agents: Object.values(agentMetrics).filter(a => a.health_score < 70 && a.health_score >= 50).length,
+                    critical_agents: Object.values(agentMetrics).filter(a => a.health_score < 50).length,
+                    avg_health_score: Object.values(agentMetrics).reduce((sum, a) => sum + a.health_score, 0) / Object.keys(agentMetrics).length || 0
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+        } catch (error) {
+            console.error('❌ Failed to fetch agent status from backend:', error);
+            
+            // Return fallback data with error indication
+            return {
+                agents: {},
+                alerts: [{
+                    id: `backend_error_${Date.now()}`,
+                    type: 'error',
+                    message: `Failed to connect to backend API: ${error.message}`,
+                    timestamp: new Date().toISOString(),
+                    severity: 'critical'
+                }],
+                summary: {
+                    total_agents: 0,
+                    healthy_agents: 0,
+                    warning_agents: 0,
+                    critical_agents: 0,
+                    avg_health_score: 0
+                },
+                timestamp: new Date().toISOString(),
+                error: error.message
+            };
+        }
+    }
+
+    /**
      * Cleanup resources
      */
     cleanup() {
@@ -536,12 +621,5 @@ class AgentStatusMonitoringService {
     }
 }
 
-// Create singleton instance
-const agentStatusMonitoringService = new AgentStatusMonitoringService();
-
-// Cleanup on page unload
-window.addEventListener('beforeunload', () => {
-    agentStatusMonitoringService.cleanup();
-});
-
-export default agentStatusMonitoringService;
+// Export the class directly for instantiation
+export default AgentStatusMonitoringService;

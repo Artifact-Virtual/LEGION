@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './DatabaseMonitor.css';
 
 /**
  * DatabaseMonitor - Real-time database connection status and health monitoring

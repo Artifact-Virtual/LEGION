@@ -1,24 +1,190 @@
 #!/usr/bin/env python3
 """
-Agent Status Monitoring Utilities
+Agent Status Monitoring Utilities - Production Configuration
 Real-time monitoring, health checking, and status tracking for Enterprise Legion agents
+Enhanced with performance monitoring and alerting
 """
 
 import asyncio
 import json
 import sqlite3
 import time
+import os
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass, asdict
-from pathlib import Path
 import logging
-import aiohttp
-import websockets
+import psutil
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+# Configure production logging
+log_level = os.getenv('LOG_LEVEL', 'INFO').upper()
+logging.basicConfig(
+    level=getattr(logging, log_level),
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('logs/agent_monitoring.log'),
+        logging.StreamHandler()
+    ]
+)
 logger = logging.getLogger("AgentStatusMonitor")
+
+# Performance monitoring configuration
+PERFORMANCE_MONITORING_ENABLED = (
+    os.getenv('PERFORMANCE_MONITORING', 'true').lower() == 'true'
+)
+METRICS_COLLECTION_INTERVAL = int(
+    os.getenv('METRICS_COLLECTION_INTERVAL', '30')
+)  # seconds
+ALERT_THRESHOLD_CPU = float(os.getenv('ALERT_THRESHOLD_CPU', '80.0'))
+ALERT_THRESHOLD_MEMORY = float(os.getenv('ALERT_THRESHOLD_MEMORY', '85.0'))
+ALERT_THRESHOLD_RESPONSE_TIME = float(
+    os.getenv('ALERT_THRESHOLD_RESPONSE_TIME', '5000.0')
+)  # ms
+
+
+@dataclass
+class SystemPerformanceMetrics:
+    """System-wide performance metrics"""
+    timestamp: datetime
+    cpu_usage_percent: float
+    memory_usage_percent: float
+    disk_usage_percent: float
+    network_io_bytes: Tuple[int, int]  # (bytes_sent, bytes_received)
+    active_agents: int
+    total_requests: int
+    error_rate: float
+    average_response_time: float
+    
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "timestamp": self.timestamp.isoformat(),
+            "cpu_usage_percent": self.cpu_usage_percent,
+            "memory_usage_percent": self.memory_usage_percent,
+            "disk_usage_percent": self.disk_usage_percent,
+            "network_bytes_sent": self.network_io_bytes[0],
+            "network_bytes_received": self.network_io_bytes[1],
+            "active_agents": self.active_agents,
+            "total_requests": self.total_requests,
+            "error_rate": self.error_rate,
+            "average_response_time": self.average_response_time
+        }
+
+
+class PerformanceMonitor:
+    """System performance monitoring and alerting"""
+    
+    def __init__(self):
+        self.enabled = PERFORMANCE_MONITORING_ENABLED
+        self.metrics_history = []
+        self.alert_callbacks = []
+        self.last_network_io = None
+        
+    def collect_system_metrics(self) -> SystemPerformanceMetrics:
+        """Collect current system performance metrics"""
+        cpu_percent = psutil.cpu_percent(interval=1)
+        memory = psutil.virtual_memory()
+        disk = psutil.disk_usage('/')
+        
+        # Network I/O
+        network_io = psutil.net_io_counters()
+        network_bytes = (network_io.bytes_sent, network_io.bytes_recv)
+        
+        return SystemPerformanceMetrics(
+            timestamp=datetime.now(),
+            cpu_usage_percent=cpu_percent,
+            memory_usage_percent=memory.percent,
+            disk_usage_percent=disk.percent,
+            network_io_bytes=network_bytes,
+            active_agents=0,  # Will be updated by agent monitor
+            total_requests=0,  # Will be updated by API monitor
+            error_rate=0.0,  # Will be updated by error monitor
+            average_response_time=0.0  # Will be updated by response monitor
+        )
+    
+    def check_performance_alerts(self, metrics: SystemPerformanceMetrics):
+        """Check for performance threshold violations and trigger alerts"""
+        alerts = []
+        
+        if metrics.cpu_usage_percent > ALERT_THRESHOLD_CPU:
+            alerts.append({
+                'type': 'cpu_high',
+                'severity': 'warning',
+                'message': f'CPU usage high: {metrics.cpu_usage_percent:.1f}%',
+                'threshold': ALERT_THRESHOLD_CPU,
+                'current': metrics.cpu_usage_percent
+            })
+        
+        if metrics.memory_usage_percent > ALERT_THRESHOLD_MEMORY:
+            alerts.append({
+                'type': 'memory_high',
+                'severity': 'warning',
+                'message': (f'Memory usage high: '
+                           f'{metrics.memory_usage_percent:.1f}%'),
+                'threshold': ALERT_THRESHOLD_MEMORY,
+                'current': metrics.memory_usage_percent
+            })
+        
+        if metrics.average_response_time > ALERT_THRESHOLD_RESPONSE_TIME:
+            alerts.append({
+                'type': 'response_time_high',
+                'severity': 'warning',
+                'message': (f'Response time high: '
+                           f'{metrics.average_response_time:.1f}ms'),
+                'threshold': ALERT_THRESHOLD_RESPONSE_TIME,
+                'current': metrics.average_response_time
+            })
+        
+        # Trigger alert callbacks
+        for alert in alerts:
+            self._trigger_alert(alert)
+            
+        return alerts
+    
+    def _trigger_alert(self, alert: Dict[str, Any]):
+        """Trigger alert notifications"""
+        logger.warning(f"PERFORMANCE ALERT: {alert['message']}")
+        
+        # Call registered alert callbacks
+        for callback in self.alert_callbacks:
+            try:
+                callback(alert)
+            except Exception as e:
+                logger.error(f"Alert callback failed: {e}")
+    
+    def start_monitoring(self):
+        """Start continuous performance monitoring"""
+        if not self.enabled:
+            logger.info("Performance monitoring disabled")
+            return
+        
+        async def monitor_loop():
+            while self.enabled:
+                try:
+                    metrics = self.collect_system_metrics()
+                    self.metrics_history.append(metrics)
+                    
+                    # Keep only last 1000 metrics (for memory management)
+                    if len(self.metrics_history) > 1000:
+                        self.metrics_history.pop(0)
+                    
+                    # Check for alerts
+                    self.check_performance_alerts(metrics)
+                    
+                    await asyncio.sleep(METRICS_COLLECTION_INTERVAL)
+                    
+                except Exception as e:
+                    logger.error(f"Performance monitoring error: {e}")
+                    await asyncio.sleep(60)  # Wait longer on error
+        
+        # Start monitoring in background
+        asyncio.create_task(monitor_loop())
+        interval_msg = f"Performance monitoring started (interval: {METRICS_COLLECTION_INTERVAL}s)"
+        logger.info(interval_msg)
+
+
+# Global performance monitor instance
+performance_monitor = PerformanceMonitor()
+
 
 @dataclass
 class AgentStatus:
@@ -84,6 +250,12 @@ class AgentStatusMonitor:
         self.health_check_interval = 60  # seconds
         self.websocket_clients = set()
         
+        # Performance monitoring integration
+        self.performance_monitor = performance_monitor
+        self.total_requests = 0
+        self.error_count = 0
+        self.response_times = []
+        
         # Initialize database tables
         self._init_monitoring_tables()
         
@@ -126,6 +298,23 @@ class AgentStatusMonitor:
                 )
             ''')
             
+            # System performance metrics table
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS system_performance_metrics (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    cpu_usage_percent REAL,
+                    memory_usage_percent REAL,
+                    disk_usage_percent REAL,
+                    network_bytes_sent INTEGER,
+                    network_bytes_received INTEGER,
+                    active_agents INTEGER,
+                    total_requests INTEGER,
+                    error_rate REAL,
+                    average_response_time REAL,
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+            
             conn.commit()
             conn.close()
             logger.info("Monitoring database tables initialized")
@@ -133,10 +322,113 @@ class AgentStatusMonitor:
         except Exception as e:
             logger.error(f"Failed to initialize monitoring tables: {e}")
     
+    def update_performance_metrics(self, request_time: float = None, 
+                                 error_occurred: bool = False):
+        """Update performance metrics from agent operations"""
+        self.total_requests += 1
+        
+        if error_occurred:
+            self.error_count += 1
+            
+        if request_time is not None:
+            self.response_times.append(request_time)
+            # Keep only last 1000 response times for memory management
+            if len(self.response_times) > 1000:
+                self.response_times.pop(0)
+        
+        # Update performance monitor with latest metrics
+        if hasattr(self.performance_monitor, 'metrics_history') and \
+           self.performance_monitor.metrics_history:
+            latest_metrics = self.performance_monitor.metrics_history[-1]
+            latest_metrics.active_agents = len([
+                status for status in self.agent_statuses.values() 
+                if status.status == 'active'
+            ])
+            latest_metrics.total_requests = self.total_requests
+            latest_metrics.error_rate = (
+                (self.error_count / self.total_requests * 100) 
+                if self.total_requests > 0 else 0.0
+            )
+            latest_metrics.average_response_time = (
+                sum(self.response_times) / len(self.response_times) 
+                if self.response_times else 0.0
+            )
+    
+    def save_performance_metrics(self, metrics: SystemPerformanceMetrics):
+        """Save performance metrics to database"""
+        try:
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            cursor.execute('''
+                INSERT INTO system_performance_metrics (
+                    cpu_usage_percent, memory_usage_percent, disk_usage_percent,
+                    network_bytes_sent, network_bytes_received, active_agents,
+                    total_requests, error_rate, average_response_time
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                metrics.cpu_usage_percent,
+                metrics.memory_usage_percent,
+                metrics.disk_usage_percent,
+                metrics.network_io_bytes[0],
+                metrics.network_io_bytes[1],
+                metrics.active_agents,
+                metrics.total_requests,
+                metrics.error_rate,
+                metrics.average_response_time
+            ))
+            
+            conn.commit()
+            conn.close()
+            
+        except Exception as e:
+            logger.error(f"Failed to save performance metrics: {e}")
+    
+    def get_performance_history(self, hours: int = 24) -> List[Dict]:
+        """Get performance metrics history"""
+        try:
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            since_time = datetime.now() - timedelta(hours=hours)
+            
+            cursor.execute('''
+                SELECT * FROM system_performance_metrics
+                WHERE timestamp > ?
+                ORDER BY timestamp DESC
+            ''', (since_time.isoformat(),))
+            
+            metrics = []
+            for row in cursor.fetchall():
+                metrics.append({
+                    "id": row[0],
+                    "cpu_usage_percent": row[1],
+                    "memory_usage_percent": row[2],
+                    "disk_usage_percent": row[3],
+                    "network_bytes_sent": row[4],
+                    "network_bytes_received": row[5],
+                    "active_agents": row[6],
+                    "total_requests": row[7],
+                    "error_rate": row[8],
+                    "average_response_time": row[9],
+                    "timestamp": row[10]
+                })
+            
+            conn.close()
+            return metrics
+            
+        except Exception as e:
+            logger.error(f"Failed to get performance history: {e}")
+            return []
+    
     async def start_monitoring(self):
         """Start the agent monitoring system"""
         self.monitoring_active = True
         logger.info("Starting agent status monitoring system...")
+        
+        # Start performance monitoring
+        if self.performance_monitor.enabled:
+            self.performance_monitor.start_monitoring()
         
         # Start monitoring tasks
         tasks = [

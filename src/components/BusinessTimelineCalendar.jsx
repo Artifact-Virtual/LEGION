@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './BusinessTimelineCalendar.css';
 
 const BusinessTimelineCalendar = ({ timelineData, onEventUpdate }) => {
   const [loading, setLoading] = useState(false);

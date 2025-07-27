@@ -1,7 +1,6 @@
 // src/components/shared/ConfigurationPanel.jsx
 
 import React, { useState, useEffect } from 'react';
-import './ConfigurationPanel.css';
 
 const ConfigurationPanel = ({
   // Panel configuration

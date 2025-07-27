@@ -1,7 +1,6 @@
 // components/SelfImprovementMetrics.jsx
 
 import React, { useState, useEffect } from 'react';
-import './SelfImprovementMetrics.css';
 
 const SelfImprovementMetrics = () => {
   const [metricsData, setMetricsData] = useState(null);

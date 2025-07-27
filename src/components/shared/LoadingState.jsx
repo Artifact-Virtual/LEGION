@@ -2,7 +2,6 @@
 // Enterprise Loading State Component
 
 import React from 'react';
-import './LoadingState.css';
 
 const LoadingState = ({
   // Loading configuration

@@ -1,7 +1,6 @@
 // src/components/shared/SystemAlert.jsx
 
 import React, { useState, useEffect } from 'react';
-import './SystemAlert.css';
 
 const SystemAlert = ({
   // Alert content

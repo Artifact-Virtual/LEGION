@@ -1,7 +1,6 @@
 // src/components/shared/PerformanceChart.jsx
 
 import React, { useState, useEffect, useRef } from 'react';
-import './PerformanceChart.css';
 
 const PerformanceChart = ({
   // Data configuration

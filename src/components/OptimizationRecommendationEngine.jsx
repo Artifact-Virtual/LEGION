@@ -1,7 +1,6 @@
 // components/OptimizationRecommendationEngine.jsx
 
 import React, { useState, useEffect } from 'react';
-import './OptimizationRecommendationEngine.css';
 
 const OptimizationRecommendationEngine = () => {
   const [recommendationData, setRecommendationData] = useState(null);

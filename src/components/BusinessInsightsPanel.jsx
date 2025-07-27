@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './BusinessInsightsPanel.css';
 
 const BusinessInsightsPanel = () => {
   const [activeView, setActiveView] = useState('insights');

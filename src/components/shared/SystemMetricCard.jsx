@@ -1,6 +1,5 @@
 // src/components/shared/SystemMetricCard.jsx
 import React, { useState, useEffect } from 'react';
-import './SystemMetricCard.css';
 
 const SystemMetricCard = ({ 
   title, 

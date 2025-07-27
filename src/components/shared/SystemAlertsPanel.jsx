@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './SystemAlertsPanel.css';
 
 /**
  * SystemAlertsPanel - Real-time system alerts and notifications management

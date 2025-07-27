@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './MarketAnalysisPanel.css';
 
 const MarketAnalysisPanel = ({ onComponentUpdate }) => {
   const [loading, setLoading] = useState(false);

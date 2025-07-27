@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './SystemStatusPanel.css';
 
 /**
  * SystemStatusPanel - Core system status overview

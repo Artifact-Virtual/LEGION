@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './ActiveWorkflowDisplay.css';
 
 const ActiveWorkflowDisplay = () => {
   const [activeWorkflows, setActiveWorkflows] = useState([]);

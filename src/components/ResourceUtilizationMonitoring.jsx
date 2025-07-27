@@ -1,7 +1,6 @@
 // components/ResourceUtilizationMonitoring.jsx
 
 import React, { useState, useEffect } from 'react';
-import './ResourceUtilizationMonitoring.css';
 
 const ResourceUtilizationMonitoring = () => {
   const [resourceData, setResourceData] = useState(null);

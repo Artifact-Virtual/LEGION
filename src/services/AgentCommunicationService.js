@@ -3,29 +3,42 @@
 // Comprehensive agent monitoring, communication, and coordination service
 
 /**
- * Agent Communication Service
+ * Agent Communication Service - Production Configuration
  * Provides comprehensive agent monitoring, communication tracking, and coordination
  * for the LEGION Enterprise Dashboard system
  */
 class AgentCommunicationService {
   constructor() {
-    this.baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
-    this.wsUrl = process.env.REACT_APP_WS_URL || 'ws://localhost:8000';
+    // Production environment configuration
+    this.baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+    this.wsUrl = process.env.REACT_APP_WS_URL || 'ws://localhost:5002';
     this.cache = new Map();
     this.subscribers = new Map();
     this.wsConnections = new Map();
     this.agentRegistry = new Map();
     this.communicationHistory = [];
-    this.retryAttempts = 3;
-    this.retryDelay = 1000;
-    this.cacheTimeout = 60000; // 1 minute for agent data
-    this.heartbeatInterval = 30000; // 30 seconds
-    this.isOnline = navigator.onLine;
     
-    // Initialize agent monitoring
+    // Production settings
+    this.retryAttempts = parseInt(process.env.REACT_APP_MAX_RETRIES || '5');
+    this.retryDelay = 2000; // Increased for production stability
+    this.cacheTimeout = 300000; // 5 minutes for production
+    this.heartbeatInterval = 30000; // 30 seconds
+    this.connectionTimeout = 10000; // 10 seconds connection timeout
+    this.isOnline = navigator.onLine;
+    this.productionMode = process.env.NODE_ENV === 'production';
+    
+    // Performance monitoring
+    this.performanceMetrics = {
+      requestCount: 0,
+      errorCount: 0,
+      averageResponseTime: 0,
+      lastHealthCheck: null
+    };
+    
+    // Initialize agent monitoring with production settings
     this.initializeAgentMonitoring();
     
-    console.log('AgentCommunicationService initialized');
+    console.log(`AgentCommunicationService initialized in ${this.productionMode ? 'PRODUCTION' : 'DEVELOPMENT'} mode`);
   }
 
   /**

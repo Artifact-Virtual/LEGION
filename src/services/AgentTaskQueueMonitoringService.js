@@ -1017,6 +1017,57 @@ class QueueHealthMonitor {
         
         return alerts;
     }
+
+    /**
+     * Get current state from backend API
+     * This method fetches real-time queue data from the enterprise backend
+     */
+    async getCurrentState() {
+        try {
+            const response = await fetch('http://localhost:5001/api/enterprise/workflows');
+            if (!response.ok) {
+                throw new Error(`Backend API error: ${response.status}`);
+            }
+            
+            const backendData = await response.json();
+            
+            // Transform backend data to expected queue format
+            return {
+                queues: backendData.active_workflows || {},
+                summary: {
+                    total_queues: Object.keys(backendData.active_workflows || {}).length,
+                    total_tasks: Object.values(backendData.active_workflows || {}).reduce((sum, workflow) => sum + (workflow.tasks || 0), 0),
+                    pending_tasks: Object.values(backendData.active_workflows || {}).reduce((sum, workflow) => sum + (workflow.pending || 0), 0),
+                    completed_tasks: Object.values(backendData.active_workflows || {}).reduce((sum, workflow) => sum + (workflow.completed || 0), 0)
+                },
+                alerts: [],
+                timestamp: new Date().toISOString()
+            };
+            
+        } catch (error) {
+            console.error('❌ Failed to fetch queue data from backend:', error);
+            
+            // Return fallback data with error indication
+            return {
+                queues: {},
+                summary: {
+                    total_queues: 0,
+                    total_tasks: 0,
+                    pending_tasks: 0,
+                    completed_tasks: 0
+                },
+                alerts: [{
+                    id: `queue_error_${Date.now()}`,
+                    type: 'error',
+                    message: `Failed to connect to queue API: ${error.message}`,
+                    timestamp: new Date().toISOString(),
+                    severity: 'critical'
+                }],
+                timestamp: new Date().toISOString(),
+                error: error.message
+            };
+        }
+    }
 }
 
 // Export the service

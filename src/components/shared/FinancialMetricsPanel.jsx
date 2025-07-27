@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './FinancialMetricsPanel.css';
 
 /**
  * FinancialMetricsPanel - Financial KPIs and Metrics Display

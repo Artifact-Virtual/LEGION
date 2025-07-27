@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './WorkflowPerformanceAnalytics.css';
 
 const WorkflowPerformanceAnalytics = () => {
   const [analytics, setAnalytics] = useState(null);

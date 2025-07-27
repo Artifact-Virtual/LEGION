@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './AgentWorkloadDistribution.css';
 
 const AgentWorkloadDistribution = () => {
   const [activeView, setActiveView] = useState('distribution');

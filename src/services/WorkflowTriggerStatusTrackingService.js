@@ -866,6 +866,57 @@ class TriggerBusinessAnalyzer {
 
         return distribution;
     }
+
+    /**
+     * Get current state from backend API
+     * This method fetches real-time workflow data from the enterprise backend
+     */
+    async getCurrentState() {
+        try {
+            const response = await fetch('http://localhost:5001/api/enterprise/workflows');
+            if (!response.ok) {
+                throw new Error(`Backend API error: ${response.status}`);
+            }
+            
+            const backendData = await response.json();
+            
+            // Transform backend data to expected workflow format
+            return {
+                workflows: backendData.active_workflows || {},
+                summary: {
+                    total_workflows: Object.keys(backendData.active_workflows || {}).length,
+                    active_triggers: Object.values(backendData.active_workflows || {}).filter(w => w.status === 'active').length,
+                    pending_workflows: Object.values(backendData.active_workflows || {}).filter(w => w.status === 'pending').length,
+                    completed_workflows: Object.values(backendData.active_workflows || {}).filter(w => w.status === 'completed').length
+                },
+                alerts: [],
+                timestamp: new Date().toISOString()
+            };
+            
+        } catch (error) {
+            console.error('❌ Failed to fetch workflow data from backend:', error);
+            
+            // Return fallback data with error indication
+            return {
+                workflows: {},
+                summary: {
+                    total_workflows: 0,
+                    active_triggers: 0,
+                    pending_workflows: 0,
+                    completed_workflows: 0
+                },
+                alerts: [{
+                    id: `workflow_error_${Date.now()}`,
+                    type: 'error',
+                    message: `Failed to connect to workflow API: ${error.message}`,
+                    timestamp: new Date().toISOString(),
+                    severity: 'critical'
+                }],
+                timestamp: new Date().toISOString(),
+                error: error.message
+            };
+        }
+    }
 }
 
 // Export the service

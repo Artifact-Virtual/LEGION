@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './BusinessTimelinePanel.css';
 
 /**
  * BusinessTimelinePanel - Business Timeline and Milestone Tracker

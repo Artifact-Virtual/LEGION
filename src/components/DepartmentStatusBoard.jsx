@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './DepartmentStatusBoard.css';
 
 const DepartmentStatusBoard = ({ departments, onDepartmentClick }) => {
   const [loading, setLoading] = useState(false);

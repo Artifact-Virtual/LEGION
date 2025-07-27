@@ -1,7 +1,6 @@
 // components/ApiConnectionManagement.jsx
 
 import React, { useState, useEffect } from 'react';
-import './ApiConnectionManagement.css';
 
 const ApiConnectionManagement = () => {
   const [connectionData, setConnectionData] = useState(null);

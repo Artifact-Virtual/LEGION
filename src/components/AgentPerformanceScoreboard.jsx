@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './AgentPerformanceScoreboard.css';
 
 const AgentPerformanceScoreboard = () => {
   const [activeView, setActiveView] = useState('scoreboard');

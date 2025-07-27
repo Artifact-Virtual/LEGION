@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './WorkflowExecutionStatus.css';
 
 /**
  * WorkflowExecutionStatus - Real-time workflow monitoring and execution tracking

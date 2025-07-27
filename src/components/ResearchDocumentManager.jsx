@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './ResearchDocumentManager.css';
 
 const ResearchDocumentManager = () => {
   const [activeView, setActiveView] = useState('documents');

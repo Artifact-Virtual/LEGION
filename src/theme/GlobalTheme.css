@@ -1,0 +1,376 @@
+/**
+ * Global Theme Styles
+ * Centralized CSS using theme variables for consistent styling
+ */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* CSS Custom Properties from Theme */
+:root {
+  /* Colors */
+  --color-primary-main: #2563eb;
+  --color-primary-light: #3b82f6;
+  --color-primary-dark: #1d4ed8;
+  --color-primary-contrast: #ffffff;
+  
+  --color-secondary-main: #64748b;
+  --color-secondary-light: #94a3b8;
+  --color-secondary-dark: #475569;
+  --color-secondary-contrast: #ffffff;
+  
+  --color-success-main: #10b981;
+  --color-success-light: #34d399;
+  --color-success-dark: #059669;
+  --color-success-contrast: #ffffff;
+  
+  --color-warning-main: #f59e0b;
+  --color-warning-light: #fbbf24;
+  --color-warning-dark: #d97706;
+  --color-warning-contrast: #ffffff;
+  
+  --color-error-main: #ef4444;
+  --color-error-light: #f87171;
+  --color-error-dark: #dc2626;
+  --color-error-contrast: #ffffff;
+  
+  --color-info-main: #06b6d4;
+  --color-info-light: #22d3ee;
+  --color-info-dark: #0891b2;
+  --color-info-contrast: #ffffff;
+  
+  --color-background-default: #f8fafc;
+  --color-background-paper: #ffffff;
+  --color-background-dark: #1e293b;
+  --color-background-darker: #0f172a;
+  
+  --color-text-primary: #1e293b;
+  --color-text-secondary: #64748b;
+  --color-text-disabled: #94a3b8;
+  --color-text-light: #ffffff;
+  
+  --color-border-light: #e2e8f0;
+  --color-border-medium: #cbd5e1;
+  --color-border-dark: #64748b;
+  
+  /* Typography */
+  --font-family: "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+  
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+  --spacing-4xl: 6rem;
+  
+  /* Border Radius */
+  --border-radius-none: 0;
+  --border-radius-sm: 0.125rem;
+  --border-radius-md: 0.25rem;
+  --border-radius-lg: 0.5rem;
+  --border-radius-xl: 0.75rem;
+  --border-radius-2xl: 1rem;
+  --border-radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-none: none;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  
+  /* Animation */
+  --animation-duration-fast: 150ms;
+  --animation-duration-normal: 300ms;
+  --animation-duration-slow: 500ms;
+  
+  --animation-easing-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --animation-easing-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --animation-easing-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Layout */
+  --layout-sidebar-width: 280px;
+  --layout-sidebar-collapsed-width: 64px;
+  --layout-header-height: 64px;
+}
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Base Styles */
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  background-color: var(--color-background-default);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Global Component Classes */
+
+/* Cards */
+.theme-card {
+  background-color: var(--color-background-paper);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border-light);
+  padding: var(--spacing-lg);
+  transition: all var(--animation-duration-normal) var(--animation-easing-ease-in-out);
+}
+
+.theme-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+/* Buttons */
+.theme-button-primary {
+  background-color: var(--color-primary-main);
+  color: var(--color-primary-contrast);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  font-weight: var(--font-weight-medium);
+  border: none;
+  cursor: pointer;
+  transition: all var(--animation-duration-normal) var(--animation-easing-ease-in-out);
+  font-size: var(--font-size-sm);
+}
+
+.theme-button-primary:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.theme-button-secondary {
+  background-color: transparent;
+  color: var(--color-primary-main);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  font-weight: var(--font-weight-medium);
+  border: 1px solid var(--color-primary-main);
+  cursor: pointer;
+  transition: all var(--animation-duration-normal) var(--animation-easing-ease-in-out);
+  font-size: var(--font-size-sm);
+}
+
+.theme-button-secondary:hover {
+  background-color: var(--color-primary-main);
+  color: var(--color-primary-contrast);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Metrics Cards */
+.theme-metric-card {
+  background-color: var(--color-background-paper);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border-light);
+  transition: all var(--animation-duration-normal) var(--animation-easing-ease-in-out);
+}
+
+.theme-metric-card:hover {
+  border-color: var(--color-border-medium);
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-metric-value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.theme-metric-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Tables */
+.theme-table {
+  background-color: var(--color-background-paper);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.theme-table-header {
+  background-color: var(--color-background-default);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.theme-table th,
+.theme-table td {
+  padding: var(--spacing-md);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.theme-table tbody tr:hover {
+  background-color: var(--color-background-default);
+}
+
+/* Alerts */
+.theme-alert {
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  font-weight: var(--font-weight-medium);
+}
+
+.theme-alert-success {
+  background-color: #f0fdf4;
+  color: var(--color-success-dark);
+  border: 1px solid var(--color-success-light);
+}
+
+.theme-alert-warning {
+  background-color: #fffbeb;
+  color: var(--color-warning-dark);
+  border: 1px solid var(--color-warning-light);
+}
+
+.theme-alert-error {
+  background-color: #fef2f2;
+  color: var(--color-error-dark);
+  border: 1px solid var(--color-error-light);
+}
+
+.theme-alert-info {
+  background-color: #f0f9ff;
+  color: var(--color-info-dark);
+  border: 1px solid var(--color-info-light);
+}
+
+/* Status Indicators */
+.theme-status-operational {
+  color: var(--color-success-main);
+  font-weight: var(--font-weight-semibold);
+}
+
+.theme-status-warning {
+  color: var(--color-warning-main);
+  font-weight: var(--font-weight-semibold);
+}
+
+.theme-status-error {
+  color: var(--color-error-main);
+  font-weight: var(--font-weight-semibold);
+}
+
+.theme-status-maintenance {
+  color: var(--color-info-main);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Loading States */
+.theme-loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--color-border-light);
+  border-radius: var(--border-radius-full);
+  border-top-color: var(--color-primary-main);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Dashboard Layout */
+.theme-dashboard-container {
+  min-height: 100vh;
+  background-color: var(--color-background-default);
+}
+
+.theme-dashboard-header {
+  background-color: var(--color-background-paper);
+  border-bottom: 1px solid var(--color-border-light);
+  height: var(--layout-header-height);
+  padding: 0 var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.theme-dashboard-content {
+  padding: var(--spacing-lg);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Grid System */
+.theme-grid {
+  display: grid;
+  gap: var(--spacing-lg);
+}
+
+.theme-grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.theme-grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.theme-grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.theme-grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .theme-grid-cols-2,
+  .theme-grid-cols-3,
+  .theme-grid-cols-4 {
+    grid-template-columns: 1fr;
+  }
+  
+  .theme-dashboard-content {
+    padding: var(--spacing-md);
+  }
+}
+
+/* Utility Classes */
+.theme-text-center { text-align: center; }
+.theme-text-right { text-align: right; }
+.theme-text-bold { font-weight: var(--font-weight-bold); }
+.theme-text-semibold { font-weight: var(--font-weight-semibold); }
+.theme-text-primary { color: var(--color-text-primary); }
+.theme-text-secondary { color: var(--color-text-secondary); }
+
+.theme-mb-sm { margin-bottom: var(--spacing-sm); }
+.theme-mb-md { margin-bottom: var(--spacing-md); }
+.theme-mb-lg { margin-bottom: var(--spacing-lg); }
+
+.theme-mt-sm { margin-top: var(--spacing-sm); }
+.theme-mt-md { margin-top: var(--spacing-md); }
+.theme-mt-lg { margin-top: var(--spacing-lg); }
+
+.theme-p-sm { padding: var(--spacing-sm); }
+.theme-p-md { padding: var(--spacing-md); }
+.theme-p-lg { padding: var(--spacing-lg); }

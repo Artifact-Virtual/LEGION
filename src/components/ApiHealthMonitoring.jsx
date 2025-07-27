@@ -1,7 +1,6 @@
 // components/ApiHealthMonitoring.jsx
 
 import React, { useState, useEffect } from 'react';
-import './ApiHealthMonitoring.css';
 
 const ApiHealthMonitoring = () => {
   const [healthData, setHealthData] = useState(null);

@@ -1,7 +1,6 @@
 // components/EfficiencyOptimizationDisplay.jsx
 
 import React, { useState, useEffect } from 'react';
-import './EfficiencyOptimizationDisplay.css';
 
 const EfficiencyOptimizationDisplay = () => {
   const [efficiencyData, setEfficiencyData] = useState(null);

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './RevenueVisualizationPanel.css';
 
 const RevenueVisualizationPanel = ({ revenueData, onTargetUpdate }) => {
   const [timeRange, setTimeRange] = useState('quarter');

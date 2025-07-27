@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './WorkflowTemplateLibrary.css';
 
 const WorkflowTemplateLibrary = () => {
   const [templates, setTemplates] = useState([]);

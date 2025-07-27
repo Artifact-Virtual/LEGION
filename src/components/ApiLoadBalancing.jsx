@@ -1,7 +1,6 @@
 // components/ApiLoadBalancing.jsx
 
 import React, { useState, useEffect } from 'react';
-import './ApiLoadBalancing.css';
 
 const ApiLoadBalancing = () => {
   const [loadBalancingData, setLoadBalancingData] = useState(null);

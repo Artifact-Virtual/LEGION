@@ -2,7 +2,6 @@
 // Enterprise Data Synchronization Indicator Component
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import './DataSyncIndicator.css';
 
 const DataSyncIndicator = ({
   // Sync status

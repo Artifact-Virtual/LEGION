@@ -2,7 +2,6 @@
 // Enterprise Manual Refresh Control Component
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import './RefreshControl.css';
 
 const RefreshControl = ({
   // Refresh functionality

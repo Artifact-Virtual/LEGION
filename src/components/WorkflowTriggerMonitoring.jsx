@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './WorkflowTriggerMonitoring.css';
 
 const WorkflowTriggerMonitoring = () => {
   const [triggers, setTriggers] = useState([]);

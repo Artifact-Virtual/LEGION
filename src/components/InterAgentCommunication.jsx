@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './InterAgentCommunication.css';
 
 const InterAgentCommunication = () => {
   const [communications, setCommunications] = useState([]);

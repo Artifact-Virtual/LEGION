@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './TaskDelegationTracking.css';
 
 const TaskDelegationTracking = () => {
   const [activeView, setActiveView] = useState('overview');

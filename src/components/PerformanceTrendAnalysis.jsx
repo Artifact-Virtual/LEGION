@@ -1,7 +1,6 @@
 // components/PerformanceTrendAnalysis.jsx
 
 import React, { useState, useEffect } from 'react';
-import './PerformanceTrendAnalysis.css';
 
 const PerformanceTrendAnalysis = () => {
   const [performanceData, setPerformanceData] = useState(null);

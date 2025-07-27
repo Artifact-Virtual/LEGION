@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './AutomationScheduleManager.css';
 
 const AutomationScheduleManager = () => {
   const [schedules, setSchedules] = useState([]);

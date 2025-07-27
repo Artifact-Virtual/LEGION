@@ -1,524 +1,344 @@
-import React, { useState, useEffect } from 'react';
-import './OperationsDashboard.css';
-
-// Import Phase 2 Enterprise Backend Services
-import EnterpriseDatabase from '../services/EnterpriseDatabase';
-import RevenueTrackingService from '../services/RevenueTrackingService';
-import DepartmentActivitiesMonitoringService from '../services/DepartmentActivitiesMonitoringService';
-import WorkflowExecutionHistoryService from '../services/WorkflowExecutionHistoryService';
-import AgentPerformanceMonitoringService from '../services/AgentPerformanceMonitoringService';
-
-// Import shared components
-import BusinessObjectivesPanel from './BusinessObjectivesPanel.jsx';
-import RevenueTrackingPanel from './RevenueVisualizationPanel.jsx';
-import DepartmentStatusBoard from './DepartmentStatusBoard.jsx';
-import LeadPipelinePanel from './LeadPipelinePanel.jsx';
-import ProjectStatusPanel from './ProjectStatusTracking.jsx';
-import FinancialMetricsPanel from './FinancialMetricsDashboard.jsx';
-import BusinessTimelinePanel from './BusinessTimelineCalendar.jsx';
+import React, { useState, useEffect, useCallback } from 'react';
+import RealTimeAPIService from '../services/RealTimeAPIService';
 
 /**
- * OPERATIONS Dashboard - Business Operations Center
+ * OPERATIONS Dashboard - Workflow & Task Management Center
  * 
- * Comprehensive business operations interface providing real-time visibility into:
- * - Business objectives progress and milestones
- * - Revenue tracking and financial KPIs
- * - Department activities and performance
- * - Lead pipeline and conversion tracking
- * - Project status and deliverables
- * - Financial metrics and forecasting
- * - Business timeline and milestone calendar
+ * Primary interface for workflow monitoring, task management, and operational oversight.
+ * Focuses on active workflows, task execution, and operational metrics.
  */
 const OperationsDashboard = () => {
-  // Core business data state
-  const [businessObjectives, setBusinessObjectives] = useState([]);
-  const [revenueData, setRevenueData] = useState(null);
-  const [departmentActivities, setDepartmentActivities] = useState([]);
-  const [leadPipeline, setLeadPipeline] = useState(null);
-  const [projectStatus, setProjectStatus] = useState([]);
-  const [financialMetrics, setFinancialMetrics] = useState(null);
-  const [businessTimeline, setBusinessTimeline] = useState([]);
-  
-  // System state
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [refreshInterval, setRefreshInterval] = useState(30000); // 30 seconds
+  const [workflowData, setWorkflowData] = useState(null);
+  const [taskData, setTaskData] = useState(null);
+  const [performanceData, setPerformanceData] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState('connecting');
   const [lastUpdate, setLastUpdate] = useState(null);
-  
-  // Service instances
-  const [services, setServices] = useState({
-    database: null,
-    revenue: null,
-    departments: null,
-    workflows: null,
-    performance: null
-  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [alerts, setAlerts] = useState([]);
 
-  // Performance metrics
-  const [dashboardMetrics, setDashboardMetrics] = useState({
-    totalObjectives: 0,
-    completedObjectives: 0,
-    currentRevenue: 0,
-    revenueTarget: 0,
-    activeDepartments: 0,
-    activeProjects: 0,
-    overallProgress: 0
-  });
-
-  // Initialize enterprise services
+  // Initialize real-time data connection
   useEffect(() => {
-    const initializeServices = async () => {
+    let unsubscribe = null;
+
+    const initializeRealTimeData = async () => {
+      console.log('🚀 Initializing Operations Dashboard with real-time data...');
+      
       try {
-        console.log('🚀 Initializing OPERATIONS dashboard services...');
+        // Attempt to connect to backend
+        const connected = await RealTimeAPIService.connect();
         
-        const databaseService = new EnterpriseDatabase();
-        const revenueService = new RevenueTrackingService();
-        const departmentsService = new DepartmentActivitiesMonitoringService();
-        const workflowsService = new WorkflowExecutionHistoryService();
-        const performanceService = new AgentPerformanceMonitoringService();
-
-        // Start monitoring services
-        await Promise.all([
-          revenueService.startMonitoring(),
-          departmentsService.startMonitoring(),
-          workflowsService.startMonitoring(),
-          performanceService.startMonitoring()
-        ]);
-
-        setServices({
-          database: databaseService,
-          revenue: revenueService,
-          departments: departmentsService,
-          workflows: workflowsService,
-          performance: performanceService
-        });
-
-        console.log('✅ All OPERATIONS services initialized successfully');
+        if (connected) {
+          setConnectionStatus('connected');
+          
+          // Subscribe to real-time updates
+          unsubscribe = RealTimeAPIService.subscribe((data) => {
+            console.log('📊 Received workflow update:', data);
+            
+            if (data.workflowStatus?.status === 'success') {
+              setWorkflowData(data.workflowStatus.data);
+            }
+            
+            if (data.performanceMetrics?.status === 'success') {
+              setPerformanceData(data.performanceMetrics.data);
+            }
+            
+            setLastUpdate(new Date().toISOString());
+            setIsLoading(false);
+          });
+          
+          // Start real-time polling  
+          RealTimeAPIService.startPolling(1000); // Update every 1 second for operations
+          
+          // Initial data fetch - workflow and performance focused
+          const initialData = await Promise.allSettled([
+            RealTimeAPIService.makeRequest('/api/enterprise/workflow-status'),
+            RealTimeAPIService.makeRequest('/api/enterprise/performance-metrics'),
+            RealTimeAPIService.makeRequest('/api/enterprise/agent-performance')
+          ]);
+          
+          if (initialData[0].value) {
+            setWorkflowData(initialData[0].value);
+          }
+          if (initialData[1].value) {
+            setPerformanceData(initialData[1].value);
+          }
+          if (initialData[2].value) {
+            setTaskData(initialData[2].value);
+          }
+          
+        } else {
+          setConnectionStatus('disconnected');
+          setAlerts([{
+            id: 'connection-failed',
+            type: 'error',
+            message: 'Failed to connect to backend services. Displaying offline mode.',
+            timestamp: new Date().toISOString()
+          }]);
+        }
+        
+        setIsLoading(false);
+        
       } catch (error) {
-        console.error('❌ Failed to initialize OPERATIONS services:', error);
-        setError(`Service initialization failed: ${error.message}`);
+        console.error('❌ Failed to initialize operations data:', error);
+        setConnectionStatus('error');
+        setIsLoading(false);
+        setAlerts([{
+          id: 'init-error',
+          type: 'error',
+          message: `Operations initialization failed: ${error.message}`,
+          timestamp: new Date().toISOString()
+        }]);
       }
     };
 
-    initializeServices();
+    initializeRealTimeData();
 
     // Cleanup on unmount
     return () => {
-      Object.values(services).forEach(service => {
-        if (service && typeof service.stopMonitoring === 'function') {
-          service.stopMonitoring();
-        }
-      });
+      if (unsubscribe) {
+        unsubscribe();
+      }
+      RealTimeAPIService.stopPolling();
     };
   }, []);
 
-  // Real-time data fetching
-  useEffect(() => {
-    if (!services.database) return;
+  // Manual refresh function
+  const handleRefresh = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const [workflows, performance, tasks] = await Promise.allSettled([
+        RealTimeAPIService.makeRequest('/api/enterprise/workflow-status'),
+        RealTimeAPIService.makeRequest('/api/enterprise/performance-metrics'),
+        RealTimeAPIService.makeRequest('/api/enterprise/agent-performance')
+      ]);
+      
+      if (workflows.value) setWorkflowData(workflows.value);
+      if (performance.value) setPerformanceData(performance.value);
+      if (tasks.value) setTaskData(tasks.value);
+      
+      setLastUpdate(new Date().toISOString());
+    } catch (error) {
+      console.error('Refresh failed:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-    const fetchOperationsData = async () => {
-      try {
-        setLoading(true);
-        console.log('📊 Fetching comprehensive business operations data...');
-
-        // Fetch core business data in parallel
-        const [
-          objectivesData,
-          revenueInfo,
-          departmentInfo,
-          workflowData,
-          performanceData
-        ] = await Promise.all([
-          services.database.getBusinessObjectives(),
-          services.revenue.getCurrentState(),
-          services.departments.getCurrentState(),
-          services.workflows.getCurrentState(),
-          services.performance.getCurrentState()
-        ]);
-
-        // Process and set business objectives
-        setBusinessObjectives(objectivesData || []);
-
-        // Process revenue data
-        const processedRevenueData = {
-          current: revenueInfo?.currentRevenue || 0,
-          target: revenueInfo?.targetRevenue || 50000,
-          monthly: revenueInfo?.monthlyData || [],
-          projections: revenueInfo?.projections || [],
-          trends: revenueInfo?.trends || {}
-        };
-        setRevenueData(processedRevenueData);
-
-        // Process department activities
-        setDepartmentActivities(departmentInfo?.activities || []);
-
-        // Generate lead pipeline data (from business objectives and revenue data)
-        const leadPipelineData = generateLeadPipelineData(objectivesData, revenueInfo);
-        setLeadPipeline(leadPipelineData);
-
-        // Generate project status data (from objectives and workflows)
-        const projectData = generateProjectStatusData(objectivesData, workflowData);
-        setProjectStatus(projectData);
-
-        // Process financial metrics
-        const financialData = generateFinancialMetrics(revenueInfo, objectivesData);
-        setFinancialMetrics(financialData);
-
-        // Generate business timeline
-        const timelineData = generateBusinessTimeline(objectivesData, departmentInfo, workflowData);
-        setBusinessTimeline(timelineData);
-
-        // Update dashboard metrics
-        updateDashboardMetrics(objectivesData, processedRevenueData, departmentInfo, projectData);
-
-        setLastUpdate(new Date().toISOString());
-        setLoading(false);
-        setError(null);
-
-        console.log('✅ Business operations data updated successfully');
-
-      } catch (error) {
-        console.error('❌ Failed to fetch operations data:', error);
-        setError(`Data fetch failed: ${error.message}`);
-        setLoading(false);
-      }
-    };
-
-    // Initial fetch
-    fetchOperationsData();
-
-    // Set up real-time updates
-    const interval = setInterval(fetchOperationsData, refreshInterval);
-    return () => clearInterval(interval);
-
-  }, [services, refreshInterval]);
-
-  // Generate lead pipeline data from business objectives and revenue
-  const generateLeadPipelineData = (objectives, revenueData) => {
-    const leadObjective = objectives?.find(obj => 
-      obj.title?.toLowerCase().includes('lead') || 
-      obj.description?.toLowerCase().includes('pipeline')
-    );
-
-    return {
-      totalLeads: 245,
-      qualifiedLeads: 89,
-      convertedLeads: 23,
-      pipelineValue: leadObjective?.target_value || 80000,
-      conversionRate: 12.5,
-      averageDealSize: revenueData?.averageDealSize || 2500,
-      stageDistribution: {
-        prospecting: 45,
-        qualification: 32,
-        proposal: 15,
-        negotiation: 8,
-        closed_won: 23,
-        closed_lost: 12
-      },
-      monthlyTargets: [
-        { month: 'Jul 2025', target: 50, actual: 42 },
-        { month: 'Aug 2025', target: 60, actual: 0 },
-        { month: 'Sep 2025', target: 70, actual: 0 },
-        { month: 'Oct 2025', target: 80, actual: 0 }
-      ]
-    };
-  };
-
-  // Generate project status data from objectives and workflows
-  const generateProjectStatusData = (objectives, workflowData) => {
-    return objectives?.map((objective, index) => ({
-      id: objective.id || `project_${index}`,
-      name: objective.title || `Project ${index + 1}`,
-      description: objective.description || 'Business objective project',
-      status: objective.status === 'completed' ? 'completed' : 
-              objective.progress_percentage > 80 ? 'near_completion' :
-              objective.progress_percentage > 50 ? 'in_progress' : 'planning',
-      progress: objective.progress_percentage || 0,
-      priority: objective.priority || 'high',
-      department: objective.department || 'strategy',
-      dueDate: objective.deadline || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-      assignedAgents: [`${objective.department}_agent`],
-      milestones: [
-        { name: 'Planning', completed: objective.progress_percentage > 25 },
-        { name: 'Development', completed: objective.progress_percentage > 50 },
-        { name: 'Testing', completed: objective.progress_percentage > 75 },
-        { name: 'Deployment', completed: objective.progress_percentage >= 100 }
-      ],
-      budget: objective.target_value || 10000,
-      spent: (objective.progress_percentage || 0) * (objective.target_value || 10000) / 100,
-      estimatedCompletion: calculateEstimatedCompletion(objective.progress_percentage, objective.deadline)
-    })) || [];
-  };
-
-  // Generate financial metrics from revenue and objectives data
-  const generateFinancialMetrics = (revenueData, objectives) => {
-    const totalBudget = objectives?.reduce((sum, obj) => sum + (obj.target_value || 0), 0) || 0;
-    const currentRevenue = revenueData?.currentRevenue || 0;
-    const targetRevenue = revenueData?.targetRevenue || 50000;
-
-    return {
-      revenue: {
-        current: currentRevenue,
-        target: targetRevenue,
-        variance: currentRevenue - targetRevenue,
-        growthRate: 15.2,
-        forecast: targetRevenue * 1.2
-      },
-      expenses: {
-        operational: totalBudget * 0.6,
-        marketing: totalBudget * 0.25,
-        development: totalBudget * 0.15,
-        total: totalBudget
-      },
-      profitability: {
-        grossMargin: 65.8,
-        netMargin: 22.4,
-        ebitda: currentRevenue * 0.3,
-        breakEven: targetRevenue * 0.7
-      },
-      kpis: {
-        customerAcquisitionCost: 450,
-        lifetimeValue: 2800,
-        monthlyRecurringRevenue: currentRevenue / 12,
-        churnRate: 3.2,
-        revenuePerEmployee: currentRevenue / 16 // 16 agents
-      },
-      forecasting: {
-        nextQuarter: targetRevenue * 1.1,
-        nextYear: targetRevenue * 2.2,
-        confidenceLevel: 78
-      }
-    };
-  };
-
-  // Generate business timeline from all data sources
-  const generateBusinessTimeline = (objectives, departments, workflows) => {
-    const events = [];
-
-    // Add objective milestones
-    objectives?.forEach(obj => {
-      events.push({
-        id: `obj_${obj.id}`,
-        type: 'objective',
-        title: obj.title,
-        description: `${obj.description} - ${obj.progress_percentage}% complete`,
-        date: obj.deadline,
-        status: obj.status,
-        priority: obj.priority,
-        department: obj.department
-      });
-    });
-
-    // Add department activities
-    departments?.activities?.forEach((activity, index) => {
-      events.push({
-        id: `dept_${index}`,
-        type: 'activity',
-        title: activity.title || `Department Activity ${index + 1}`,
-        description: activity.description || 'Department activity',
-        date: activity.due_date || new Date().toISOString(),
-        status: activity.status || 'active',
-        priority: activity.priority || 'medium',
-        department: activity.department
-      });
-    });
-
-    // Add workflow executions
-    workflows?.recentExecutions?.forEach((workflow, index) => {
-      events.push({
-        id: `workflow_${index}`,
-        type: 'workflow',
-        title: `Workflow: ${workflow.name || 'Automated Process'}`,
-        description: `Status: ${workflow.status}, Duration: ${workflow.duration}ms`,
-        date: workflow.timestamp,
-        status: workflow.status,
-        priority: 'medium',
-        department: 'automation'
-      });
-    });
-
-    // Sort by date and return recent events
-    return events
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
-      .slice(0, 20);
-  };
-
-  // Calculate estimated completion date
-  const calculateEstimatedCompletion = (progress, deadline) => {
-    if (progress >= 100) return 'Completed';
-    if (!deadline || progress <= 0) return 'Unknown';
-
-    const dueDate = new Date(deadline);
-    const now = new Date();
-    const totalDays = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
-    const remainingProgress = 100 - progress;
-    const estimatedDays = Math.ceil((remainingProgress / progress) * totalDays);
-    
-    const estimatedCompletion = new Date(now.getTime() + estimatedDays * 24 * 60 * 60 * 1000);
-    return estimatedCompletion.toLocaleDateString();
-  };
-
-  // Update dashboard metrics
-  const updateDashboardMetrics = (objectives, revenue, departments, projects) => {
-    const completedObjectives = objectives?.filter(obj => obj.status === 'completed').length || 0;
-    const totalObjectives = objectives?.length || 0;
-    const overallProgress = totalObjectives > 0 ? 
-      (objectives.reduce((sum, obj) => sum + (obj.progress_percentage || 0), 0) / totalObjectives) : 0;
-
-    setDashboardMetrics({
-      totalObjectives,
-      completedObjectives,
-      currentRevenue: revenue?.current || 0,
-      revenueTarget: revenue?.target || 0,
-      activeDepartments: departments?.activeDepartments || 6,
-      activeProjects: projects?.filter(p => p.status !== 'completed').length || 0,
-      overallProgress: Math.round(overallProgress)
-    });
-  };
-
-  // Handle manual refresh
-  const handleRefresh = () => {
-    setRefreshInterval(prev => prev); // Trigger useEffect
-  };
-
-  // Handle time range changes
-  const handleTimeRangeChange = (range) => {
-    console.log(`📅 Time range changed to: ${range}`);
-    // Implementation for time range filtering
-  };
-
-  if (loading && !businessObjectives.length) {
+  // Render loading state
+  if (isLoading) {
     return (
-      <div className="operations-dashboard loading">
-        <div className="loading-spinner">
-          <div className="spinner"></div>
-          <p>Loading business operations data...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="operations-dashboard error">
-        <div className="error-message">
-          <h2>⚠️ Operations Dashboard Error</h2>
-          <p>{error}</p>
-          <button onClick={handleRefresh} className="retry-button">
-            🔄 Retry
-          </button>
+      <div className="theme-dashboard-container">
+        <div className="theme-dashboard-content">
+          <div className="theme-card theme-text-center">
+            <div className="theme-loading" style={{ margin: '0 auto 16px' }}></div>
+            <h2>Loading Operations Dashboard...</h2>
+            <p className="theme-text-secondary">Connecting to backend services...</p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="operations-dashboard">
-      <div className="dashboard-header">
-        <div className="header-content">
-          <h1>📊 OPERATIONS - Business Operations Center</h1>
-          <div className="header-metrics">
-            <div className="metric-card">
-              <span className="metric-value">{dashboardMetrics.totalObjectives}</span>
-              <span className="metric-label">Objectives</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-value">{dashboardMetrics.overallProgress}%</span>
-              <span className="metric-label">Progress</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-value">${(dashboardMetrics.currentRevenue).toLocaleString()}</span>
-              <span className="metric-label">Revenue</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-value">{dashboardMetrics.activeProjects}</span>
-              <span className="metric-label">Active Projects</span>
-            </div>
-          </div>
+    <div className="theme-dashboard-container">
+      {/* Dashboard Header */}
+      <div className="theme-dashboard-header">
+        <div>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: '600', margin: 0 }}>
+            ⚙️ Operations Center
+          </h1>
+          <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', margin: 0 }}>
+            Workflow execution, task management, and operational metrics
+          </p>
         </div>
-        <div className="header-controls">
-          <button onClick={handleRefresh} className="refresh-button">
-            🔄 Refresh
-          </button>
-          <select 
-            onChange={(e) => handleTimeRangeChange(e.target.value)}
-            className="time-range-selector"
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span className={`theme-status-${connectionStatus === 'connected' ? 'operational' : 'error'}`}>
+            ● {connectionStatus === 'connected' ? 'Live' : 'Offline'}
+          </span>
+          <button 
+            onClick={handleRefresh} 
+            className="theme-button-secondary"
+            disabled={isLoading}
           >
-            <option value="7d">Last 7 Days</option>
-            <option value="30d">Last 30 Days</option>
-            <option value="90d">Last 90 Days</option>
-            <option value="1y">Last Year</option>
-          </select>
-          <div className="last-update">
-            Last Update: {lastUpdate ? new Date(lastUpdate).toLocaleTimeString() : 'Never'}
-          </div>
+            {isLoading ? 'Refreshing...' : '🔄 Refresh'}
+          </button>
+          {lastUpdate && (
+            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
+              Last: {new Date(lastUpdate).toLocaleTimeString()}
+            </span>
+          )}
         </div>
       </div>
 
-      <div className="dashboard-grid">
-        <div className="dashboard-row">
-          <div className="panel-container large">
-            <BusinessObjectivesPanel 
-              objectives={businessObjectives}
-              onObjectiveUpdate={(id, updates) => console.log('Objective update:', id, updates)}
-            />
+      <div className="theme-dashboard-content">
+        {/* Operations Alerts */}
+        {alerts.length > 0 && (
+          <div className="theme-mb-lg">
+            {alerts.map(alert => (
+              <div key={alert.id} className={`theme-alert-${alert.type}`}>
+                <strong>{alert.type.toUpperCase()}:</strong> {alert.message}
+                <span style={{ float: 'right', fontSize: '0.75rem' }}>
+                  {new Date(alert.timestamp).toLocaleTimeString()}
+                </span>
+              </div>
+            ))}
           </div>
-          <div className="panel-container medium">
-            <RevenueTrackingPanel 
-              revenueData={revenueData}
-              onTargetUpdate={(newTarget) => console.log('Revenue target update:', newTarget)}
-            />
+        )}
+
+        {/* Operations Overview Grid */}
+        <div className="theme-grid theme-grid-cols-4 theme-mb-lg">
+          <div className="theme-metric-card">
+            <div className="theme-metric-value theme-status-operational">
+              {workflowData?.length || 0}
+            </div>
+            <div className="theme-metric-label">Active Workflows</div>
+          </div>
+          
+          <div className="theme-metric-card">
+            <div className="theme-metric-value">
+              {performanceData?.agents?.active_count || 0}
+            </div>
+            <div className="theme-metric-label">Active Agents</div>
+          </div>
+          
+          <div className="theme-metric-card">
+            <div className="theme-metric-value">
+              {taskData?.queue_size || 0}
+            </div>
+            <div className="theme-metric-label">Tasks in Queue</div>
           </div>
         </div>
 
-        <div className="dashboard-row">
-          <div className="panel-container medium">
-            <DepartmentStatusBoard 
-              departments={departmentActivities}
-              onDepartmentClick={(dept) => console.log('Department clicked:', dept)}
-            />
+        {/* Workflow Status */}
+        <div className="theme-card theme-mb-lg">
+          <h3 className="theme-mb-md">� Active Workflows</h3>
+          {workflowData?.length > 0 ? (
+            <div className="theme-grid theme-grid-cols-3">
+              {workflowData.slice(0, 9).map((workflow, index) => (
+                <div key={workflow.id || index} className="theme-metric-card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: '500' }}>
+                      {workflow.name || `Workflow ${index + 1}`}
+                    </span>
+                    <span className={`theme-status-${workflow.status === 'running' ? 'operational' : 
+                      workflow.status === 'pending' ? 'warning' : 'error'}`}>
+                      ● {workflow.status || 'unknown'}
+                    </span>
+                  </div>
+                  {workflow.progress && (
+                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
+                      Progress: {workflow.progress}%
+                    </div>
+                  )}
+                  {workflow.last_updated && (
+                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
+                      Updated: {new Date(workflow.last_updated).toLocaleTimeString()}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="theme-text-secondary">No workflow data available</div>
+          )}
+        </div>
+
+        {/* Task Performance */}
+        <div className="theme-card theme-mb-lg">
+          <h3 className="theme-mb-md">⚡ Task Performance</h3>
+          {taskData?.length > 0 ? (
+            <div className="theme-grid theme-grid-cols-4">
+              {taskData.slice(0, 12).map((task, index) => (
+                <div key={task.id || index} className="theme-metric-card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>
+                      {task.name || task.type || `Task ${index + 1}`}
+                    </span>
+                    <span className={`theme-status-${task.status === 'completed' ? 'operational' : 
+                      task.status === 'running' ? 'warning' : 'error'}`}>
+                      ●
+                    </span>
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
+                    {task.agent || 'Unknown Agent'} • Duration: {task.duration || 'N/A'}
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
+                    Priority: {task.priority || 'Normal'} • {task.completion_time || 'In Progress'}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="theme-text-secondary">No task data available</div>
+          )}
+        </div>
+
+        {/* Performance Metrics */}
+        <div className="theme-grid theme-grid-cols-2">
+          <div className="theme-card">
+            <h3 className="theme-mb-md">📊 System Performance</h3>
+            <div className="theme-grid theme-grid-cols-2">
+              <div className="theme-metric-card">
+                <div className="theme-metric-value">{performanceData?.cpu_usage || 0}%</div>
+                <div className="theme-metric-label">CPU</div>
+              </div>
+              <div className="theme-metric-card">
+                <div className="theme-metric-value">{performanceData?.memory_usage || 0}%</div>
+                <div className="theme-metric-label">Memory</div>
+              </div>
+              <div className="theme-metric-card">
+                <div className="theme-metric-value">{performanceData?.disk_usage || 0}%</div>
+                <div className="theme-metric-label">Disk</div>
+              </div>
+              <div className="theme-metric-card">
+                <div className="theme-metric-value" style={{ fontSize: '1rem' }}>
+                  {performanceData?.network_throughput || '0 MB/s'}
+                </div>
+                <div className="theme-metric-label">Network</div>
+              </div>
+            </div>
           </div>
-          <div className="panel-container medium">
-            <LeadPipelinePanel 
-              pipelineData={leadPipeline}
-              onStageUpdate={(stage, data) => console.log('Pipeline stage update:', stage, data)}
-            />
+
+          <div className="theme-card">
+            <h3 className="theme-mb-md">� Operations Metrics</h3>
+            <div className="theme-grid theme-grid-cols-2">
+              <div className="theme-metric-card">
+                <div className="theme-metric-value">
+                  {performanceData?.throughput || 0}
+                </div>
+                <div className="theme-metric-label">Tasks/Hour</div>
+              </div>
+              <div className="theme-metric-card">
+                <div className="theme-metric-value">{performanceData?.success_rate || 0}%</div>
+                <div className="theme-metric-label">Success Rate</div>
+              </div>
+              <div className="theme-metric-card">
+                <div className="theme-metric-value">{performanceData?.avg_response_time || 0}ms</div>
+                <div className="theme-metric-label">Avg Response</div>
+              </div>
+              <div className="theme-metric-card">
+                <div className="theme-metric-value">{performanceData?.error_count || 0}</div>
+                <div className="theme-metric-label">Errors</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="dashboard-row">
-          <div className="panel-container large">
-            <ProjectStatusPanel 
-              projects={projectStatus}
-              onProjectClick={(project) => console.log('Project clicked:', project)}
-              onStatusUpdate={(id, status) => console.log('Project status update:', id, status)}
-            />
+        {/* Debug Info (only in development) */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="theme-card theme-mt-lg">
+            <h4>🔧 Debug Information</h4>
+            <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
+              <div>Connection: {RealTimeAPIService.getConnectionInfo().status}</div>
+              <div>Polling: {RealTimeAPIService.getConnectionInfo().isPolling ? 'Active' : 'Inactive'}</div>
+              <div>Subscribers: {RealTimeAPIService.getConnectionInfo().subscriberCount}</div>
+              <div>API URL: {RealTimeAPIService.getConnectionInfo().baseURL}</div>
+              {RealTimeAPIService.getConnectionInfo().lastError && (
+                <div>Last Error: {RealTimeAPIService.getConnectionInfo().lastError}</div>
+              )}
+            </div>
           </div>
-          <div className="panel-container small">
-            <FinancialMetricsPanel 
-              metrics={financialMetrics}
-              onMetricDrillDown={(metric) => console.log('Financial metric drill-down:', metric)}
-            />
-          </div>
-        </div>
-
-        <div className="dashboard-row">
-          <div className="panel-container full-width">
-            <BusinessTimelinePanel 
-              timelineEvents={businessTimeline}
-              onEventClick={(event) => console.log('Timeline event clicked:', event)}
-              onTimelineFilter={(filter) => console.log('Timeline filter:', filter)}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="dashboard-footer">
-        <div className="footer-info">
-          <span>🔄 Auto-refresh: {refreshInterval / 1000}s</span>
-          <span>📡 Services: {Object.values(services).filter(s => s).length}/5 active</span>
-          <span>⚡ Performance: {loading ? 'Loading...' : 'Optimal'}</span>
-        </div>
+        )}
       </div>
     </div>
   );

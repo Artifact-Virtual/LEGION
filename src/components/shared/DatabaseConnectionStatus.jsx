@@ -1,5 +1,4 @@
 import React from 'react';
-import './DatabaseConnectionStatus.css';
 
 const DatabaseConnectionStatus = ({ status = 'connected', latency = 45, lastUpdate = new Date() }) => {
   const getStatusColor = () => {

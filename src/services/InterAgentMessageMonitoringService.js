@@ -802,6 +802,58 @@ class CommunicationSecurityMonitor {
         
         return Math.round(weightedSum / total);
     }
+
+    /**
+     * Get current state from backend API
+     * This method fetches real-time messaging data from the enterprise backend
+     */
+    async getCurrentState() {
+        try {
+            // For now, return basic messaging state from system status
+            const response = await fetch('http://localhost:5001/api/enterprise/system-status');
+            if (!response.ok) {
+                throw new Error(`Backend API error: ${response.status}`);
+            }
+            
+            const backendData = await response.json();
+            
+            // Transform backend data to expected messaging format
+            return {
+                messaging: {
+                    total_messages: backendData.total_requests || 0,
+                    active_channels: Math.ceil((backendData.active_agents || 0) / 2), // Estimate based on agents
+                    message_rate: `${Math.round((backendData.total_requests || 0) / 60)}/min`,
+                    avg_latency: backendData.avg_response_time || '0ms',
+                    error_rate: backendData.error_rate || 0
+                },
+                alerts: [],
+                timestamp: new Date().toISOString()
+            };
+            
+        } catch (error) {
+            console.error('❌ Failed to fetch messaging data from backend:', error);
+            
+            // Return fallback data with error indication
+            return {
+                messaging: {
+                    total_messages: 0,
+                    active_channels: 0,
+                    message_rate: '0/min',
+                    avg_latency: 'N/A',
+                    error_rate: 100
+                },
+                alerts: [{
+                    id: `messaging_error_${Date.now()}`,
+                    type: 'error',
+                    message: `Failed to connect to messaging API: ${error.message}`,
+                    timestamp: new Date().toISOString(),
+                    severity: 'critical'
+                }],
+                timestamp: new Date().toISOString(),
+                error: error.message
+            };
+        }
+    }
 }
 
 // Export the service

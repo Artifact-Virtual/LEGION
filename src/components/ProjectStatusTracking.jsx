@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './ProjectStatusTracking.css';
 
 const ProjectStatusTracking = ({ projectData, onProjectUpdate, onMilestoneUpdate }) => {
   const [loading, setLoading] = useState(false);

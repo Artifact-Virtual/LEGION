@@ -1,7 +1,6 @@
 // components/ConfigurationOptimizationTools.jsx
 
 import React, { useState, useEffect } from 'react';
-import './ConfigurationOptimizationTools.css';
 
 const ConfigurationOptimizationTools = () => {
   const [configData, setConfigData] = useState(null);

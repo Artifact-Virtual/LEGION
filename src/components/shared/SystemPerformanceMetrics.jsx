@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './SystemPerformanceMetrics.css';
 
 /**
  * SystemPerformanceMetrics - Real-time system performance monitoring and metrics display

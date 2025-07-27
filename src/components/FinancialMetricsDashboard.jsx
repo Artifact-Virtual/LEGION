@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './FinancialMetricsDashboard.css';
 
 const FinancialMetricsDashboard = ({ financialData, onMetricUpdate }) => {
   const [loading, setLoading] = useState(false);

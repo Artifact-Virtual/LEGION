@@ -444,12 +444,10 @@ class RevenueTrackingService {
   }
 }
 
-// Main Enterprise Database instance
-const enterpriseDB = new EnterpriseDatabase();
+// Export the class directly for instantiation
+export default EnterpriseDatabase;
 
-// Service instances
-export const businessObjectivesService = new BusinessObjectivesService(enterpriseDB);
-export const departmentActivitiesService = new DepartmentActivitiesService(enterpriseDB);
-export const revenueTrackingService = new RevenueTrackingService(enterpriseDB);
-
-export default enterpriseDB;
+// Service instances can be created when needed
+// export const businessObjectivesService = new BusinessObjectivesService(enterpriseDB);
+// export const departmentActivitiesService = new DepartmentActivitiesService(enterpriseDB);
+// export const revenueTrackingService = new RevenueTrackingService(enterpriseDB);

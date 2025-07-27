@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './ProcessOptimizationTracking.css';
 
 const ProcessOptimizationTracking = () => {
   const [optimizations, setOptimizations] = useState([]);

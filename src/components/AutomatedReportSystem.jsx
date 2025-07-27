@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './AutomatedReportSystem.css';
 
 const AutomatedReportSystem = ({ onComponentUpdate }) => {
   const [loading, setLoading] = useState(false);

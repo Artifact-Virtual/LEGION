@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './EmergencyControls.css';
 
 /**
  * EmergencyControls - Critical system override and emergency management interface

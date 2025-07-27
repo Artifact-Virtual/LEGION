@@ -1,7 +1,6 @@
 // components/BottleneckIdentificationSystem.jsx
 
 import React, { useState, useEffect } from 'react';
-import './BottleneckIdentificationSystem.css';
 
 const BottleneckIdentificationSystem = () => {
   const [bottleneckData, setBottleneckData] = useState(null);

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './LeadPipelinePanel.css';
 
 const LeadPipelinePanel = ({ pipelineData, onStageUpdate }) => {
   const [loading, setLoading] = useState(false);

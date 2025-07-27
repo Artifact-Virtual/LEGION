@@ -1,7 +1,6 @@
 // components/ApiPerformanceMetrics.jsx
 
 import React, { useState, useEffect } from 'react';
-import './ApiPerformanceMetrics.css';
 
 const ApiPerformanceMetrics = () => {
   const [performanceData, setPerformanceData] = useState(null);

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './BusinessObjectivesPanel.css';
 
 const BusinessObjectivesPanel = () => {
   const [objectives, setObjectives] = useState([]);

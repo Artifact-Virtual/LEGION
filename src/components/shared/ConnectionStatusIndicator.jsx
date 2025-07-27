@@ -2,7 +2,6 @@
 // Enterprise Connection Status Indicator Component
 
 import React, { useState, useEffect } from 'react';
-import './ConnectionStatusIndicator.css';
 
 const ConnectionStatusIndicator = ({
   // Connection data

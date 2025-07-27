@@ -1,350 +1,368 @@
-import React, { useState, useEffect } from 'react';
-import './CommandDashboard.css';
-
-// Import Phase 2 Enterprise Backend Services
-import AgentStatusMonitoringService from '../services/AgentStatusMonitoringService';
-import AgentPerformanceMonitoringService from '../services/AgentPerformanceMonitoringService';
-import AgentTaskQueueMonitoringService from '../services/AgentTaskQueueMonitoringService';
-import InterAgentMessageMonitoringService from '../services/InterAgentMessageMonitoringService';
-import WorkflowTriggerStatusTrackingService from '../services/WorkflowTriggerStatusTrackingService';
-import EnterpriseDatabase from '../services/EnterpriseDatabase';
-
-// Import shared components
-import SystemStatusPanel from './shared/SystemStatusPanel.jsx';
-import AgentHealthMatrix from './shared/AgentHealthMatrix.jsx';
-import WorkflowExecutionStatus from './shared/WorkflowExecutionStatus.jsx';
-import SystemAlertsPanel from './shared/SystemAlertsPanel.jsx';
-import DatabaseConnectionStatus from './shared/DatabaseConnectionStatus.jsx';
-import SystemPerformanceMetrics from './shared/SystemPerformanceMetrics.jsx';
-import EmergencyControls from './shared/EmergencyControls.jsx';
+import React, { useState, useEffect, useCallback } from 'react';
+import RealTimeAPIService from '../services/RealTimeAPIService';
 
 /**
- * COMMAND Dashboard - System Command Center
+ * COMMAND Dashboard - System Command Center with Real Live Data
  * 
  * Primary interface for system oversight, agent coordination, and real-time monitoring.
- * Integrated with Phase 2 Enterprise Backend Services for comprehensive system visibility.
+ * Now connects to actual backend APIs for live metrics.
  */
 const CommandDashboard = () => {
-  const [systemStatus, setSystemStatus] = useState('loading');
-  const [activeAlerts, setActiveAlerts] = useState([]);
-  const [agentMetrics, setAgentMetrics] = useState({});
-  const [systemMetrics, setSystemMetrics] = useState({});
-  const [refreshInterval, setRefreshInterval] = useState(5000); // 5 second default
-  const [isEmergencyMode, setIsEmergencyMode] = useState(false);
+  const [systemData, setSystemData] = useState(null);
+  const [agentData, setAgentData] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState('connecting');
+  const [lastUpdate, setLastUpdate] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [alerts, setAlerts] = useState([]);
 
-  // Enterprise service instances
-  const [services, setServices] = useState({
-    agentStatus: null,
-    agentPerformance: null,
-    taskQueue: null,
-    messaging: null,
-    workflowTriggers: null,
-    database: null
-  });
-
-  // Initialize enterprise services
+  // Initialize real-time data connection
   useEffect(() => {
-    const initializeServices = async () => {
+    let unsubscribe = null;
+
+    const initializeRealTimeData = async () => {
+      console.log('🚀 Initializing Command Dashboard with real-time data...');
+      
       try {
-        const agentStatusService = new AgentStatusMonitoringService();
-        const agentPerformanceService = new AgentPerformanceMonitoringService();
-        const taskQueueService = new AgentTaskQueueMonitoringService();
-        const messagingService = new InterAgentMessageMonitoringService();
-        const workflowService = new WorkflowTriggerStatusTrackingService();
-        const databaseService = new EnterpriseDatabase();
-
-        // Start all monitoring services
-        await Promise.all([
-          agentStatusService.startMonitoring(),
-          agentPerformanceService.startMonitoring(),
-          taskQueueService.startMonitoring(),
-          messagingService.startMonitoring(),
-          workflowService.startMonitoring()
-        ]);
-
-        setServices({
-          agentStatus: agentStatusService,
-          agentPerformance: agentPerformanceService,
-          taskQueue: taskQueueService,
-          messaging: messagingService,
-          workflowTriggers: workflowService,
-          database: databaseService
-        });
-
-        console.log('✅ All enterprise services initialized successfully');
+        // Attempt to connect to backend
+        const connected = await RealTimeAPIService.connect();
+        
+        if (connected) {
+          setConnectionStatus('connected');
+          
+          // Subscribe to real-time updates
+          unsubscribe = RealTimeAPIService.subscribe((data) => {
+            console.log('📊 Received real-time update:', data);
+            
+            if (data.systemStatus?.status === 'success') {
+              setSystemData(data.systemStatus.data);
+            }
+            
+            if (data.agentHealth?.status === 'success') {
+              setAgentData(data.agentHealth.data);
+            }
+            
+            // Update alerts from various sources
+            const newAlerts = [];
+            if (data.systemStatus?.data?.alerts) {
+              newAlerts.push(...data.systemStatus.data.alerts);
+            }
+            if (data.systemStatus?.status === 'error') {
+              newAlerts.push({
+                id: 'system-error',
+                type: 'error',
+                message: `System status error: ${data.systemStatus.error}`,
+                timestamp: new Date().toISOString()
+              });
+            }
+            if (data.agentHealth?.status === 'error') {
+              newAlerts.push({
+                id: 'agent-error',
+                type: 'warning',
+                message: `Agent health monitoring error: ${data.agentHealth.error}`,
+                timestamp: new Date().toISOString()
+              });
+            }
+            
+            setAlerts(newAlerts);
+            setLastUpdate(new Date().toISOString());
+            setIsLoading(false);
+          });
+          
+          // Start real-time polling with 1 second updates for live metrics
+          RealTimeAPIService.startPolling(1000); // Update every 1 second
+          
+          // Initial data fetch
+          const initialData = await Promise.allSettled([
+            RealTimeAPIService.getSystemStatus(),
+            RealTimeAPIService.getAgentHealth()
+          ]);
+          
+          if (initialData[0].value?.status === 'success') {
+            setSystemData(initialData[0].value.data);
+          }
+          if (initialData[1].value?.status === 'success') {
+            setAgentData(initialData[1].value.data);
+          }
+          
+        } else {
+          setConnectionStatus('disconnected');
+          setAlerts([{
+            id: 'connection-failed',
+            type: 'error',
+            message: 'Failed to connect to backend services. Displaying offline mode.',
+            timestamp: new Date().toISOString()
+          }]);
+        }
+        
+        setIsLoading(false);
+        
       } catch (error) {
-        console.error('❌ Failed to initialize enterprise services:', error);
-        setSystemStatus('error');
+        console.error('❌ Failed to initialize real-time data:', error);
+        setConnectionStatus('error');
+        setIsLoading(false);
+        setAlerts([{
+          id: 'init-error',
+          type: 'error',
+          message: `Initialization failed: ${error.message}`,
+          timestamp: new Date().toISOString()
+        }]);
       }
     };
 
-    initializeServices();
+    initializeRealTimeData();
 
     // Cleanup on unmount
     return () => {
-      Object.values(services).forEach(service => {
-        if (service && typeof service.stopMonitoring === 'function') {
-          service.stopMonitoring();
-        }
-      });
+      if (unsubscribe) {
+        unsubscribe();
+      }
+      RealTimeAPIService.stopPolling();
     };
   }, []);
 
-  // Real-time data fetching using Phase 2 backend services
-  useEffect(() => {
-    if (!services.agentStatus) return;
-
-    const fetchSystemData = async () => {
-      try {
-        // Fetch comprehensive system status from enterprise services
-        const [
-          agentStatusData,
-          performanceData,
-          queueData,
-          messagingData,
-          workflowData
-        ] = await Promise.all([
-          services.agentStatus.getCurrentState(),
-          services.agentPerformance.getCurrentState(),
-          services.taskQueue.getCurrentState(),
-          services.messaging.getCurrentState(),
-          services.workflowTriggers.getCurrentState()
-        ]);
-
-        // Update system status based on enterprise data
-        setSystemStatus(calculateSystemStatus(agentStatusData, performanceData));
-        setAgentMetrics(agentStatusData);
-        setSystemMetrics({
-          performance: performanceData,
-          queues: queueData,
-          messaging: messagingData,
-          workflows: workflowData
-        });
-
-        // Extract alerts from all services
-        const allAlerts = [
-          ...(agentStatusData.alerts || []),
-          ...(performanceData.alerts || []),
-          ...(queueData.alerts || []),
-          ...(messagingData.alerts || []),
-          ...(workflowData.alerts || [])
-        ];
-        setActiveAlerts(allAlerts);
-
-      } catch (error) {
-        console.error('❌ Failed to fetch enterprise system data:', error);
-        setSystemStatus('error');
+  // Manual refresh function
+  const handleRefresh = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const [systemStatus, agentHealth] = await Promise.allSettled([
+        RealTimeAPIService.getSystemStatus(),
+        RealTimeAPIService.getAgentHealth()
+      ]);
+      
+      if (systemStatus.value?.status === 'success') {
+        setSystemData(systemStatus.value.data);
       }
-    };
-
-    // Initial fetch
-    fetchSystemData();
-
-    // Set up real-time updates
-    const interval = setInterval(fetchSystemData, refreshInterval);
-    return () => clearInterval(interval);
-  }, [services, refreshInterval]);
-
-  // Calculate system status based on enterprise data
-  const calculateSystemStatus = (agentData, performanceData) => {
-    if (!agentData || !performanceData) return 'loading';
-    
-    const agentHealth = agentData.overallHealth || 0;
-    const performanceScore = performanceData.systemOverview?.averagePerformanceScore || 0;
-    
-    if (agentHealth > 90 && performanceScore > 90) return 'excellent';
-    if (agentHealth > 80 && performanceScore > 80) return 'good';
-    if (agentHealth > 70 && performanceScore > 70) return 'warning';
-    return 'critical';
-  };
-
-  // Emergency mode handler
-  const handleEmergencyToggle = (enabled) => {
-    setIsEmergencyMode(enabled);
-    if (enabled) {
-      setRefreshInterval(1000); // 1 second updates in emergency mode
-    } else {
-      setRefreshInterval(5000); // Return to normal 5 second updates
+      if (agentHealth.value?.status === 'success') {
+        setAgentData(agentHealth.value.data);
+      }
+      
+      setLastUpdate(new Date().toISOString());
+    } catch (error) {
+      console.error('Refresh failed:', error);
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, []);
 
-  // System health calculation
-  const getOverallSystemHealth = () => {
-    if (systemStatus === 'loading' || systemStatus === 'error') {
-      return systemStatus;
-    }
-
-    const criticalAlerts = activeAlerts.filter(alert => alert.severity === 'critical').length;
-    const agentHealth = agentMetrics.overallHealth || 0;
-    const systemPerformance = systemMetrics.overallScore || 0;
-
-    if (criticalAlerts > 0) return 'critical';
-    if (agentHealth < 70 || systemPerformance < 70) return 'warning';
-    if (agentHealth > 90 && systemPerformance > 90) return 'excellent';
-    return 'healthy';
-  };
+  // Render loading state
+  if (isLoading && !systemData) {
+    return (
+      <div className="theme-dashboard-container">
+        <div className="theme-dashboard-content">
+          <div className="theme-card theme-text-center">
+            <div className="theme-loading" style={{ margin: '0 auto 16px' }}></div>
+            <h2>Loading Command Dashboard...</h2>
+            <p className="theme-text-secondary">Connecting to backend services...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className={`command-dashboard ${isEmergencyMode ? 'emergency-mode' : ''}`}>
-      {/* Command Header */}
-      <div className="command-header">
-        <div className="header-left">
-          <h1 className="dashboard-title">
-            <span className="title-icon">⚡</span>
-            COMMAND CENTER
+    <div className="theme-dashboard-container">
+      {/* Dashboard Header */}
+      <div className="theme-dashboard-header">
+        <div>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: '600', margin: 0 }}>
+            🎯 Command Center
           </h1>
-          <div className={`system-status-indicator ${getOverallSystemHealth()}`}>
-            <span className="status-dot"></span>
-            <span className="status-text">
-              System Status: {getOverallSystemHealth().toUpperCase()}
-            </span>
-          </div>
+          <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', margin: 0 }}>
+            Real-time system monitoring and control
+          </p>
         </div>
-        
-        <div className="header-right">
-          <div className="refresh-control">
-            <label>Update Interval:</label>
-            <select 
-              value={refreshInterval} 
-              onChange={(e) => setRefreshInterval(Number(e.target.value))}
-              disabled={isEmergencyMode}
-            >
-              <option value={1000}>1 second</option>
-              <option value={5000}>5 seconds</option>
-              <option value={10000}>10 seconds</option>
-              <option value={30000}>30 seconds</option>
-            </select>
-          </div>
-          
-          <div className="last-update">
-            Last Update: {new Date().toLocaleTimeString()}
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span className={`theme-status-${connectionStatus === 'connected' ? 'operational' : 'error'}`}>
+            ● {connectionStatus === 'connected' ? 'Live' : 'Offline'}
+          </span>
+          <button 
+            onClick={handleRefresh} 
+            className="theme-button-secondary"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Refreshing...' : '🔄 Refresh'}
+          </button>
+          {lastUpdate && (
+            <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
+              Last: {new Date(lastUpdate).toLocaleTimeString()}
+            </span>
+          )}
         </div>
       </div>
 
-      {/* Main Command Grid */}
-      <div className="command-grid">
-        {/* Row 1: Critical Status Overview */}
-        <div className="grid-row critical-overview">
-          <div className="grid-section system-status">
-            <SystemStatusPanel 
-              status={systemStatus}
-              metrics={systemMetrics}
-              emergencyMode={isEmergencyMode}
-            />
+      <div className="theme-dashboard-content">
+        {/* System Alerts */}
+        {alerts.length > 0 && (
+          <div className="theme-mb-lg">
+            {alerts.map(alert => (
+              <div key={alert.id} className={`theme-alert-${alert.type}`}>
+                <strong>{alert.type.toUpperCase()}:</strong> {alert.message}
+                <span style={{ float: 'right', fontSize: '0.75rem' }}>
+                  {new Date(alert.timestamp).toLocaleTimeString()}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* System Overview Grid */}
+        <div className="theme-grid theme-grid-cols-4 theme-mb-lg">
+          <div className="theme-metric-card">
+            <div className="theme-metric-value theme-status-operational">
+              {systemData?.overall_health || 'Unknown'}
+            </div>
+            <div className="theme-metric-label">System Status</div>
           </div>
           
-          <div className="grid-section alerts-panel">
-            <SystemAlertsPanel 
-              alerts={activeAlerts}
-              emergencyMode={isEmergencyMode}
-              onAlertAction={(alert, action) => console.log('Alert action:', alert, action)}
-            />
+          <div className="theme-metric-card">
+            <div className="theme-metric-value">
+              {systemData?.performance?.cpu_usage || 0}%
+            </div>
+            <div className="theme-metric-label">CPU Usage</div>
           </div>
           
-          <div className="grid-section emergency-controls">
-            <EmergencyControls 
-              emergencyMode={isEmergencyMode}
-              onEmergencyToggle={handleEmergencyToggle}
-              systemHealth={getOverallSystemHealth()}
-            />
+          <div className="theme-metric-card">
+            <div className="theme-metric-value">
+              {systemData?.performance?.memory_usage || 0}%
+            </div>
+            <div className="theme-metric-label">Memory Usage</div>
+          </div>
+          
+          <div className="theme-metric-card">
+            <div className="theme-metric-value">
+              {agentData?.agents?.length || 0}
+            </div>
+            <div className="theme-metric-label">Active Agents</div>
           </div>
         </div>
 
-        {/* Row 2: Agent & Workflow Monitoring */}
-        <div className="grid-row operational-overview">
-          <div className="grid-section agent-matrix">
-            <AgentHealthMatrix 
-              agents={agentMetrics.agents || []}
-              overallHealth={agentMetrics.overallHealth}
-              emergencyMode={isEmergencyMode}
-            />
-          </div>
-          
-          <div className="grid-section workflow-status">
-            <WorkflowExecutionStatus 
-              workflows={systemMetrics.activeWorkflows || []}
-              executionHistory={systemMetrics.workflowHistory || []}
-              emergencyMode={isEmergencyMode}
-            />
+        {/* Service Status */}
+        <div className="theme-card theme-mb-lg">
+          <h3 className="theme-mb-md">🛠️ Service Status</h3>
+          <div className="theme-grid theme-grid-cols-3">
+            {systemData?.services ? Object.entries(systemData.services).map(([serviceName, service]) => (
+              <div key={serviceName} className="theme-metric-card">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontWeight: '500' }}>
+                    {serviceName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </span>
+                  <span className={`theme-status-${service.status === 'operational' ? 'operational' : 'error'}`}>
+                    ● {service.status}
+                  </span>
+                </div>
+                {service.response_time && (
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
+                    Response: {service.response_time}
+                  </div>
+                )}
+                {service.uptime && (
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
+                    Uptime: {service.uptime}
+                  </div>
+                )}
+              </div>
+            )) : (
+              <div className="theme-text-secondary">No service data available</div>
+            )}
           </div>
         </div>
 
-        {/* Row 3: Infrastructure & Performance */}
-        <div className="grid-row infrastructure-overview">
-          <div className="grid-section database-status">
-            <DatabaseConnectionStatus 
-              connections={systemMetrics.databaseConnections || []}
-              queryPerformance={systemMetrics.queryMetrics || {}}
-              emergencyMode={isEmergencyMode}
-            />
-          </div>
-          
-          <div className="grid-section performance-metrics">
-            <SystemPerformanceMetrics 
-              metrics={systemMetrics}
-              historicalData={systemMetrics.performanceHistory || []}
-              emergencyMode={isEmergencyMode}
-            />
-          </div>
+        {/* Agent Health Matrix */}
+        <div className="theme-card theme-mb-lg">
+          <h3 className="theme-mb-md">👥 Agent Health Matrix</h3>
+          {agentData?.agents?.length > 0 ? (
+            <div className="theme-grid theme-grid-cols-4">
+              {agentData.agents.slice(0, 12).map(agent => (
+                <div key={agent.id} className="theme-metric-card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>
+                      {agent.name || agent.id}
+                    </span>
+                    <span className={`theme-status-${agent.status === 'operational' ? 'operational' : 
+                      agent.status === 'warning' ? 'warning' : 'error'}`}>
+                      ●
+                    </span>
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
+                    {agent.department} • Health: {agent.health_score || 0}%
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
+                    Tasks: {agent.tasks_completed || 0} • {agent.avg_response_time || 'N/A'}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="theme-text-secondary">No agent data available</div>
+          )}
         </div>
-      </div>
 
-      {/* Emergency Mode Banner */}
-      {isEmergencyMode && (
-        <div className="emergency-banner">
-          <div className="emergency-content">
-            <span className="emergency-icon">🚨</span>
-            <span className="emergency-text">
-              EMERGENCY MODE ACTIVE - Enhanced monitoring and controls enabled
-            </span>
-            <span className="emergency-icon">🚨</span>
+        {/* Performance Metrics */}
+        <div className="theme-grid theme-grid-cols-2">
+          <div className="theme-card">
+            <h3 className="theme-mb-md">📊 System Performance</h3>
+            <div className="theme-grid theme-grid-cols-2">
+              <div className="theme-metric-card">
+                <div className="theme-metric-value">{systemData?.performance?.cpu || 0}%</div>
+                <div className="theme-metric-label">CPU</div>
+              </div>
+              <div className="theme-metric-card">
+                <div className="theme-metric-value">{systemData?.performance?.memory || 0}%</div>
+                <div className="theme-metric-label">Memory</div>
+              </div>
+              <div className="theme-metric-card">
+                <div className="theme-metric-value">{systemData?.performance?.disk || 0}%</div>
+                <div className="theme-metric-label">Disk</div>
+              </div>
+              <div className="theme-metric-card">
+                <div className="theme-metric-value" style={{ fontSize: '1rem' }}>
+                  {systemData?.performance?.network || '0 MB/s'}
+                </div>
+                <div className="theme-metric-label">Network</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="theme-card">
+            <h3 className="theme-mb-md">🔒 Security Status</h3>
+            <div className="theme-grid theme-grid-cols-2">
+              <div className="theme-metric-card">
+                <div className="theme-metric-value theme-status-operational">
+                  {systemData?.security?.threat_level || 'Unknown'}
+                </div>
+                <div className="theme-metric-label">Threat Level</div>
+              </div>
+              <div className="theme-metric-card">
+                <div className="theme-metric-value">{systemData?.security?.active_sessions || 0}</div>
+                <div className="theme-metric-label">Active Sessions</div>
+              </div>
+              <div className="theme-metric-card">
+                <div className="theme-metric-value">{systemData?.security?.failed_auth_attempts || 0}</div>
+                <div className="theme-metric-label">Failed Auth</div>
+              </div>
+              <div className="theme-metric-card">
+                <div className="theme-metric-value">{systemData?.security?.firewall_blocks || 0}</div>
+                <div className="theme-metric-label">Firewall Blocks</div>
+              </div>
+            </div>
           </div>
         </div>
-      )}
 
-      {/* Command Footer - Quick Actions */}
-      <div className="command-footer">
-        <div className="quick-actions">
-          <button 
-            className="action-btn system-restart"
-            onClick={() => console.log('System restart initiated')}
-            disabled={!isEmergencyMode}
-          >
-            🔄 System Restart
-          </button>
-          
-          <button 
-            className="action-btn agent-restart"
-            onClick={() => console.log('All agents restart initiated')}
-          >
-            🤖 Restart All Agents
-          </button>
-          
-          <button 
-            className="action-btn database-maintenance"
-            onClick={() => console.log('Database maintenance mode')}
-          >
-            🗄️ Database Maintenance
-          </button>
-          
-          <button 
-            className="action-btn export-logs"
-            onClick={() => console.log('System logs export')}
-          >
-            📋 Export System Logs
-          </button>
-        </div>
-        
-        <div className="system-info">
-          <span>Active Agents: {agentMetrics.activeCount || 0}/{agentMetrics.totalCount || 0}</span>
-          <span>•</span>
-          <span>Active Workflows: {systemMetrics.activeWorkflows?.length || 0}</span>
-          <span>•</span>
-          <span>System Uptime: {systemMetrics.uptime || 'Unknown'}</span>
-          <span>•</span>
-          <span>Memory Usage: {systemMetrics.memoryUsage || 'Unknown'}</span>
-        </div>
+        {/* Debug Info (only in development) */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="theme-card theme-mt-lg">
+            <h4>🔧 Debug Information</h4>
+            <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
+              <div>Connection: {RealTimeAPIService.getConnectionInfo().status}</div>
+              <div>Polling: {RealTimeAPIService.getConnectionInfo().isPolling ? 'Active' : 'Inactive'}</div>
+              <div>Subscribers: {RealTimeAPIService.getConnectionInfo().subscriberCount}</div>
+              <div>API URL: {RealTimeAPIService.getConnectionInfo().baseURL}</div>
+              {RealTimeAPIService.getConnectionInfo().lastError && (
+                <div>Last Error: {RealTimeAPIService.getConnectionInfo().lastError}</div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

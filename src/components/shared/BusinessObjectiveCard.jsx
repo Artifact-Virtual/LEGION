@@ -1,6 +1,5 @@
 // src/components/shared/BusinessObjectiveCard.jsx
 import React, { useState, useEffect } from 'react';
-import './BusinessObjectiveCard.css';
 
 const BusinessObjectiveCard = ({
   objective = {},

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './ResearchQueryManagement.css';
 
 const ResearchQueryManagement = () => {
   const [activeView, setActiveView] = useState('queries');

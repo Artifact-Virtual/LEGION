@@ -1,22 +1,25 @@
 #!/usr/bin/env python3
 """
-Enterprise Database Service
+Enterprise Database Service - Production Configuration
 Provides database connection and query utilities for the Legion Enterprise system.
-Enhanced with Phase 6 Database Schema Extensions.
+Enhanced with Phase 6 Database Schema Extensions and Production Backup/Recovery.
 """
 
 import sqlite3
 import json
 import uuid
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from typing import List, Dict, Any, Optional
 import os
+import shutil
+import gzip
+import threading
 
 class EnterpriseDatabase:
-    """Database service for Legion Enterprise operations with extended schema support."""
+    """Database service for Legion Enterprise operations with backup and recovery support."""
     
     def __init__(self, db_path: str = None):
-        """Initialize database connection."""
+        """Initialize database connection with backup configuration."""
         if db_path is None:
             # Default to the enterprise operations database
             current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -24,6 +27,144 @@ class EnterpriseDatabase:
         
         self.db_path = db_path
         self.connection = None
+        
+        # Backup configuration
+        self.backup_enabled = os.getenv('BACKUP_ENABLED', 'true').lower() == 'true'
+        self.backup_interval = int(os.getenv('BACKUP_INTERVAL', '3600')) # 1 hour default
+        self.backup_retention_days = int(os.getenv('BACKUP_RETENTION_DAYS', '30'))
+        self.backup_location = os.getenv('BACKUP_LOCATION', '/home/adam/repos/enterprise/backups')
+        
+        # Initialize backup system
+        if self.backup_enabled:
+            self.initialize_backup_system()
+    
+    def initialize_backup_system(self):
+        """Initialize automated backup system."""
+        os.makedirs(self.backup_location, exist_ok=True)
+        
+        # Start backup thread
+        backup_thread = threading.Thread(target=self._backup_scheduler, daemon=True)
+        backup_thread.start()
+        
+        print(f"Backup system initialized - interval: {self.backup_interval}s, retention: {self.backup_retention_days} days")
+    
+    def _backup_scheduler(self):
+        """Automated backup scheduler."""
+        while self.backup_enabled:
+            try:
+                self.create_backup()
+                self.cleanup_old_backups()
+                threading.Event().wait(self.backup_interval)
+            except Exception as e:
+                print(f"Backup scheduler error: {e}")
+                threading.Event().wait(60)  # Wait 1 minute on error
+    
+    def create_backup(self):
+        """Create compressed database backup."""
+        if not os.path.exists(self.db_path):
+            return False
+        
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        backup_filename = f"enterprise_db_backup_{timestamp}.db.gz"
+        backup_path = os.path.join(self.backup_location, backup_filename)
+        
+        try:
+            # Create compressed backup
+            with open(self.db_path, 'rb') as source:
+                with gzip.open(backup_path, 'wb') as backup:
+                    shutil.copyfileobj(source, backup)
+            
+            print(f"Database backup created: {backup_filename}")
+            return True
+            
+        except Exception as e:
+            print(f"Backup creation failed: {e}")
+            return False
+    
+    def restore_backup(self, backup_filename: str):
+        """Restore database from backup."""
+        backup_path = os.path.join(self.backup_location, backup_filename)
+        
+        if not os.path.exists(backup_path):
+            print(f"Backup file not found: {backup_filename}")
+            return False
+        
+        try:
+            # Close current connection
+            if self.connection:
+                self.disconnect()
+            
+            # Create backup of current database
+            current_backup = f"pre_restore_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.db"
+            shutil.copy2(self.db_path, os.path.join(self.backup_location, current_backup))
+            
+            # Restore from backup
+            with gzip.open(backup_path, 'rb') as backup:
+                with open(self.db_path, 'wb') as target:
+                    shutil.copyfileobj(backup, target)
+            
+            print(f"Database restored from: {backup_filename}")
+            return True
+            
+        except Exception as e:
+            print(f"Restore failed: {e}")
+            return False
+    
+    def cleanup_old_backups(self):
+        """Remove old backup files based on retention policy."""
+        if not os.path.exists(self.backup_location):
+            return
+        
+        cutoff_date = datetime.now() - timedelta(days=self.backup_retention_days)
+        removed_count = 0
+        
+        for filename in os.listdir(self.backup_location):
+            if filename.startswith('enterprise_db_backup_') and filename.endswith('.db.gz'):
+                file_path = os.path.join(self.backup_location, filename)
+                file_time = datetime.fromtimestamp(os.path.getctime(file_path))
+                
+                if file_time < cutoff_date:
+                    try:
+                        os.remove(file_path)
+                        removed_count += 1
+                    except Exception as e:
+                        print(f"Failed to remove old backup {filename}: {e}")
+        
+        if removed_count > 0:
+            print(f"Cleaned up {removed_count} old backup files")
+    
+    def get_backup_status(self):
+        """Get backup system status and statistics."""
+        if not os.path.exists(self.backup_location):
+            return {'status': 'disabled', 'backups': []}
+        
+        backups = []
+        total_size = 0
+        
+        for filename in os.listdir(self.backup_location):
+            if filename.startswith('enterprise_db_backup_') and filename.endswith('.db.gz'):
+                file_path = os.path.join(self.backup_location, filename)
+                file_stat = os.stat(file_path)
+                
+                backups.append({
+                    'filename': filename,
+                    'size': file_stat.st_size,
+                    'created': datetime.fromtimestamp(file_stat.st_ctime).isoformat(),
+                    'age_days': (datetime.now() - datetime.fromtimestamp(file_stat.st_ctime)).days
+                })
+                total_size += file_stat.st_size
+        
+        backups.sort(key=lambda x: x['created'], reverse=True)
+        
+        return {
+            'status': 'enabled' if self.backup_enabled else 'disabled',
+            'backup_count': len(backups),
+            'total_size_mb': round(total_size / (1024 * 1024), 2),
+            'latest_backup': backups[0]['created'] if backups else None,
+            'retention_days': self.backup_retention_days,
+            'interval_hours': self.backup_interval / 3600,
+            'backups': backups[:10]  # Return latest 10 backups
+        }
     
     def connect(self):
         """Establish database connection."""
