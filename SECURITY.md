@@ -1,6 +1,6 @@
 # Security Configuration Guide
 
-## 🔐 API Keys and Secrets Management
+## API Keys and Secrets Management
 
 ### Environment Variables Required
 
@@ -45,7 +45,7 @@ export API_VIEWER_TOKEN="generate_strong_random_token_here"
 
 ### GitGuardian Secret Leak Fix
 
-✅ **COMPLETED**: Removed hardcoded API keys from:
+**COMPLETED**: Removed hardcoded API keys from:
 - `/reporting/dashboards/.env` - Replaced with placeholder values
 - Removed default token values from `backend_api.py`
 
@@ -87,4 +87,5 @@ If you discover a security issue:
 
 ---
 **Last Updated**: July 22, 2025  
-**Status**: ✅ All high entropy secrets removed from codebase
+**Status**: All high entropy secrets removed from codebase
+
