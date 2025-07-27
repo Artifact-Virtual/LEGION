@@ -31,6 +31,7 @@ wheels/
 MANIFEST
 /enterprise/reporting/executive/*
 enterprise/reporting/executive/*
+/home/adam/repos/enterprise/reporting/executive/*
 
 # Node.js dependencies
 node_modules/
