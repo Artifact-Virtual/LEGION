@@ -456,3 +456,89 @@ h6 { font-size: var(--font-size-base); font-weight: var(--font-weight-normal); }
 .theme-p-sm { padding: var(--spacing-sm); }
 .theme-p-md { padding: var(--spacing-md); }
 .theme-p-lg { padding: var(--spacing-lg); }
+
+/* Logo and Brand Styles - Small Logo Fix */
+.brand-logo {
+  height: 20px !important;
+  width: auto !important;
+  max-width: 80px !important;
+  object-fit: contain !important;
+  margin-right: 8px !important;
+  vertical-align: middle !important;
+  display: inline-block !important;
+}
+
+.brand-container {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.brand-text h1 {
+  font-size: 16px !important;
+  font-weight: 200 !important;
+  margin: 0 !important;
+  color: #ffffff !important;
+  letter-spacing: 0.5px !important;
+}
+
+.brand-text span {
+  font-size: 10px !important;
+  font-weight: 200 !important;
+  color: #cccccc !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+}
+
+/* App Layout Styles */
+.app {
+  min-height: 100vh !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+  font-family: "Inter", sans-serif !important;
+}
+
+.app-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 8px 16px !important;
+  background: #000000 !important;
+  border-bottom: 1px solid #333333 !important;
+  height: 48px !important;
+}
+
+.main-navigation {
+  display: flex !important;
+  gap: 0 !important;
+}
+
+.nav-tab {
+  background: transparent !important;
+  border: none !important;
+  color: #cccccc !important;
+  padding: 8px 12px !important;
+  font-size: 10px !important;
+  font-weight: 200 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  cursor: pointer !important;
+  border-bottom: 2px solid transparent !important;
+  transition: all 0.2s ease !important;
+}
+
+.nav-tab:hover {
+  color: #ffffff !important;
+  background: #1a1a1a !important;
+}
+
+.nav-tab.active {
+  color: #ffffff !important;
+  border-bottom-color: #ffffff !important;
+  background: #1a1a1a !important;
+}
+
+.nav-tab i {
+  margin-right: 4px !important;
+  font-size: 0.9em !important;
+}

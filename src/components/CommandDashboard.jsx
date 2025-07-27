@@ -206,16 +206,6 @@ const CommandDashboard = () => {
           </div>
         )}
 
-        {/* Active Agents Counter */}
-        <div className="theme-grid theme-grid-cols-1 theme-mb-lg">
-          <div className="theme-metric-card">
-            <div className="theme-metric-value">
-              {agentData?.length || 0}
-            </div>
-            <div className="theme-metric-label">Active Agents</div>
-          </div>
-        </div>
-
         {/* Service Status */}
         <div className="theme-card theme-mb-lg">
           <h3 className="theme-mb-md" style={{ fontSize: '1rem', fontWeight: '300' }}>
