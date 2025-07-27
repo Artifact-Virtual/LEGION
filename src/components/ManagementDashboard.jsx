@@ -91,10 +91,10 @@ const ManagementDashboard = () => {
     <div className="theme-dashboard-container">
       <div className="theme-dashboard-header">
         <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: '600', margin: 0 }}>
-            🏢 Management Center
+          <h1 style={{ fontSize: '1.25rem', fontWeight: '300', margin: 0 }}>
+            <i className="fas fa-building theme-icon-lg"></i> Management Center
           </h1>
-          <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', margin: 0 }}>
+          <p style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', margin: 0, fontWeight: '200' }}>
             Enterprise oversight, resource management, and strategic control
           </p>
         </div>

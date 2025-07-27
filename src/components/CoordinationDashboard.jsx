@@ -107,10 +107,10 @@ const CoordinationDashboard = () => {
     <div className="theme-dashboard-container">
       <div className="theme-dashboard-header">
         <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: '600', margin: 0 }}>
-            🤝 Coordination Dashboard
+          <h1 style={{ fontSize: '1.25rem', fontWeight: '300', margin: 0 }}>
+            <i className="fas fa-handshake theme-icon-lg"></i> Coordination Dashboard
           </h1>
-          <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', margin: 0 }}>
+          <p style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', margin: 0, fontWeight: '200' }}>
             Agent coordination, task distribution, and team workflows
           </p>
         </div>
@@ -122,8 +122,9 @@ const CoordinationDashboard = () => {
             onClick={handleRefresh} 
             className="theme-button-secondary"
             disabled={isLoading}
+            style={{ fontSize: '0.75rem', padding: '0.375rem 0.75rem' }}
           >
-            {isLoading ? 'Refreshing...' : '🔄 Refresh'}
+            <i className="fas fa-sync-alt theme-icon-sm"></i> {isLoading ? 'Refreshing...' : 'Refresh'}
           </button>
           {lastUpdate && (
             <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>

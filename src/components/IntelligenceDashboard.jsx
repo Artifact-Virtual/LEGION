@@ -107,13 +107,12 @@ const IntelligenceDashboard = () => {
     <div className="theme-dashboard-container">
       <div className="theme-dashboard-header">
         <div>
-          <h1 className="theme-dashboard-title">
-            <i className="fas fa-brain"></i>
-            INTELLIGENCE DASHBOARD
+          <h1 style={{ fontSize: '1.25rem', fontWeight: '300', margin: 0 }}>
+            <i className="fas fa-brain theme-icon-lg"></i> Intelligence Dashboard
           </h1>
-          <p className="theme-dashboard-subtitle">
+          <p style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', margin: 0, fontWeight: '200' }}>
             Business Intelligence & Analytics Overview
-            {lastUpdate && <span className="theme-text-secondary"> • Last update: {new Date(lastUpdate).toLocaleTimeString()}</span>}
+            {lastUpdate && <span className="theme-text-muted"> • Last update: {new Date(lastUpdate).toLocaleTimeString()}</span>}
           </p>
         </div>
         <div className="theme-dashboard-actions">

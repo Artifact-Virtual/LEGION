@@ -164,10 +164,10 @@ const CommandDashboard = () => {
       {/* Dashboard Header */}
       <div className="theme-dashboard-header">
         <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: '600', margin: 0 }}>
-            🎯 Command Center
+          <h1 style={{ fontSize: '1.25rem', fontWeight: '300', margin: 0 }}>
+            <i className="fas fa-terminal theme-icon-lg"></i> Command Center
           </h1>
-          <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', margin: 0 }}>
+          <p style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', margin: 0, fontWeight: '200' }}>
             Real-time system monitoring and control
           </p>
         </div>
@@ -179,8 +179,9 @@ const CommandDashboard = () => {
             onClick={handleRefresh} 
             className="theme-button-secondary"
             disabled={isLoading}
+            style={{ fontSize: '0.75rem', padding: '0.375rem 0.75rem' }}
           >
-            {isLoading ? 'Refreshing...' : '🔄 Refresh'}
+            <i className="fas fa-sync-alt theme-icon-sm"></i> {isLoading ? 'Refreshing...' : 'Refresh'}
           </button>
           {lastUpdate && (
             <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
@@ -205,9 +206,21 @@ const CommandDashboard = () => {
           </div>
         )}
 
+        {/* Active Agents Counter */}
+        <div className="theme-grid theme-grid-cols-1 theme-mb-lg">
+          <div className="theme-metric-card">
+            <div className="theme-metric-value">
+              {agentData?.length || 0}
+            </div>
+            <div className="theme-metric-label">Active Agents</div>
+          </div>
+        </div>
+
         {/* Service Status */}
         <div className="theme-card theme-mb-lg">
-          <h3 className="theme-mb-md">🛠️ Service Status</h3>
+          <h3 className="theme-mb-md" style={{ fontSize: '1rem', fontWeight: '300' }}>
+            <i className="fas fa-cogs theme-icon-md"></i> Service Status
+          </h3>
           <div className="theme-grid theme-grid-cols-3">
             {systemData?.services ? Object.entries(systemData.services).map(([serviceName, service]) => (
               <div key={serviceName} className="theme-metric-card">
@@ -238,7 +251,9 @@ const CommandDashboard = () => {
 
         {/* Agent Health Matrix */}
         <div className="theme-card theme-mb-lg">
-          <h3 className="theme-mb-md">👥 Agent Health Matrix</h3>
+          <h3 className="theme-mb-md" style={{ fontSize: '1rem', fontWeight: '300' }}>
+            <i className="fas fa-users theme-icon-md"></i> Agent Health Matrix
+          </h3>
           {agentData?.agents?.length > 0 ? (
             <div className="theme-grid theme-grid-cols-4">
               {agentData.agents.slice(0, 12).map(agent => (
@@ -269,7 +284,9 @@ const CommandDashboard = () => {
         {/* Performance Metrics */}
         <div className="theme-grid theme-grid-cols-2">
           <div className="theme-card">
-            <h3 className="theme-mb-md">📊 System Performance</h3>
+            <h3 className="theme-mb-md" style={{ fontSize: '1rem', fontWeight: '300' }}>
+              <i className="fas fa-chart-line theme-icon-md"></i> System Performance
+            </h3>
             <div className="theme-grid theme-grid-cols-2">
               <div className="theme-metric-card">
                 <div className="theme-metric-value">{systemData?.performance?.cpu || 0}%</div>
@@ -293,7 +310,9 @@ const CommandDashboard = () => {
           </div>
 
           <div className="theme-card">
-            <h3 className="theme-mb-md">🔒 Security Status</h3>
+            <h3 className="theme-mb-md" style={{ fontSize: '1rem', fontWeight: '300' }}>
+              <i className="fas fa-shield-alt theme-icon-md"></i> Security Status
+            </h3>
             <div className="theme-grid theme-grid-cols-2">
               <div className="theme-metric-card">
                 <div className="theme-metric-value theme-status-operational">
@@ -320,7 +339,9 @@ const CommandDashboard = () => {
         {/* Debug Info (only in development) */}
         {process.env.NODE_ENV === 'development' && (
           <div className="theme-card theme-mt-lg">
-            <h4>🔧 Debug Information</h4>
+            <h4 style={{ fontSize: '0.875rem', fontWeight: '300' }}>
+              <i className="fas fa-bug theme-icon-sm"></i> Debug Information
+            </h4>
             <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
               <div>Connection: {RealTimeAPIService.getConnectionInfo().status}</div>
               <div>Polling: {RealTimeAPIService.getConnectionInfo().isPolling ? 'Active' : 'Inactive'}</div>
