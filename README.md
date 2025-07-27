@@ -1,4 +1,4 @@
-# LEGION: ENTERPRISE
+# ENTERPRISE
 
 [![LEGENDARY](https://img.shields.io/badge/LEGENDARY-gold?style=for-the-badge&logo=zap&logoColor=black)](https://github.com/artifact-virtual/legion-enterprise)
 
