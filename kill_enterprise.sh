@@ -14,4 +14,10 @@ for port in 3000 5000 5001 8000 8080 9000 27017 6379 3306 5432; do
   
 done
 
+# Deactivate any active virtual environments
+if [[ "$VIRTUAL_ENV" != "" ]]; then
+  echo "Deactivating virtual environment: $VIRTUAL_ENV"
+  deactivate
+fi
+
 echo "Done."

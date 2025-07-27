@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import RealTimeAPIService from '../services/RealTimeAPIService';
 
 /**
@@ -10,41 +10,53 @@ const ManagementDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [connectionStatus, setConnectionStatus] = useState('connecting');
   const [lastUpdate, setLastUpdate] = useState(null);
+  const [error, setError] = useState(null);
+
+  const fetchManagementData = useCallback(async () => {
+    try {
+      setError(null);
+      if (!managementData) {
+        setIsLoading(true);
+      }
+      
+      const [systemStatus, performanceMetrics, agentHealth] = await Promise.allSettled([
+        RealTimeAPIService.makeRequest('/api/enterprise/system-status'),
+        RealTimeAPIService.makeRequest('/api/enterprise/performance-metrics'),
+        RealTimeAPIService.makeRequest('/api/enterprise/agent-health')
+      ]);
+
+      const data = {
+        system: systemStatus.status === 'fulfilled' ? systemStatus.value : null,
+        performance: performanceMetrics.status === 'fulfilled' ? performanceMetrics.value : null,
+        agents: agentHealth.status === 'fulfilled' ? agentHealth.value : []
+      };
+
+      setManagementData(data);
+      setConnectionStatus('connected');
+      setLastUpdate(new Date().toISOString());
+    } catch (error) {
+      console.error('Failed to fetch management data:', error);
+      setConnectionStatus('error');
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [managementData]);
 
   useEffect(() => {
-    const fetchManagementData = async () => {
-      try {
-        setIsLoading(true);
-        const [systemStatus, performanceMetrics, agentHealth] = await Promise.allSettled([
-          RealTimeAPIService.makeRequest('/api/enterprise/system-status'),
-          RealTimeAPIService.makeRequest('/api/enterprise/performance-metrics'),
-          RealTimeAPIService.makeRequest('/api/enterprise/agent-health')
-        ]);
-
-        const data = {
-          system: systemStatus.value || null,
-          performance: performanceMetrics.value || null,
-          agents: agentHealth.value || null
-        };
-
-        setManagementData(data);
-        setConnectionStatus('connected');
-        setLastUpdate(new Date().toISOString());
-      } catch (error) {
-        console.error('Failed to fetch management data:', error);
-        setConnectionStatus('error');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchManagementData();
-    const interval = setInterval(fetchManagementData, 5000); // Update every 5 seconds
+    const interval = setInterval(fetchManagementData, 12000); // Update every 12 seconds instead of 5
     
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchManagementData]);
 
-  if (isLoading) {
+  const handleRefresh = async () => {
+    setIsLoading(true);
+    setError(null);
+    await fetchManagementData();
+  };
+
+  if (isLoading && !managementData) {
     return (
       <div className="theme-dashboard-container">
         <div className="theme-dashboard-content">
@@ -52,6 +64,23 @@ const ManagementDashboard = () => {
             <div className="theme-loading"></div>
             <h2>Loading Management Dashboard...</h2>
             <p className="theme-text-secondary">Connecting to backend services...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error && !managementData) {
+    return (
+      <div className="theme-dashboard-container">
+        <div className="theme-dashboard-content">
+          <div className="theme-card theme-text-center">
+            <i className="fas fa-exclamation-triangle theme-text-warning" style={{fontSize: '3rem', marginBottom: '1rem'}}></i>
+            <h2>Connection Error</h2>
+            <p className="theme-text-secondary">Failed to load management data: {error}</p>
+            <button className="theme-btn theme-btn-primary" onClick={handleRefresh}>
+              <i className="fas fa-retry"></i> Retry
+            </button>
           </div>
         </div>
       </div>
@@ -145,9 +174,9 @@ const ManagementDashboard = () => {
         {/* Agent Performance */}
         <div className="theme-card theme-mb-lg">
           <h3 className="theme-mb-md">👥 Agent Performance</h3>
-          {managementData?.agents?.agents?.length > 0 ? (
+          {Array.isArray(managementData?.agents) && managementData.agents.length > 0 ? (
             <div className="theme-grid theme-grid-cols-4">
-              {managementData.agents.agents.slice(0, 8).map((agent, index) => (
+              {managementData.agents.slice(0, 8).map((agent, index) => (
                 <div key={agent.id || index} className="theme-metric-card">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>

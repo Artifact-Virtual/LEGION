@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import RealTimeAPIService from '../services/RealTimeAPIService';
 
 /**
@@ -10,43 +10,15 @@ const CoordinationDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [connectionStatus, setConnectionStatus] = useState('connecting');
   const [lastUpdate, setLastUpdate] = useState(null);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchCoordinationData = async () => {
-      try {
-        setIsLoading(true);
-        const [agentHealth, workflowStatus, systemStatus] = await Promise.allSettled([
-          RealTimeAPIService.makeRequest('/api/enterprise/agent-health'),
-          RealTimeAPIService.makeRequest('/api/enterprise/workflow-status'),
-          RealTimeAPIService.makeRequest('/api/enterprise/system-status')
-        ]);
-
-        const data = {
-          agents: agentHealth.value || null,
-          workflows: workflowStatus.value || null,
-          system: systemStatus.value || null
-        };
-
-        setCoordinationData(data);
-        setConnectionStatus('connected');
-        setLastUpdate(new Date().toISOString());
-      } catch (error) {
-        console.error('Failed to fetch coordination data:', error);
-        setConnectionStatus('error');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCoordinationData();
-    const interval = setInterval(fetchCoordinationData, 3000); // Update every 3 seconds
-    
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleRefresh = async () => {
-    setIsLoading(true);
+  const fetchCoordinationData = useCallback(async () => {
     try {
+      setError(null);
+      if (!coordinationData) {
+        setIsLoading(true);
+      }
+      
       const [agentHealth, workflowStatus, systemStatus] = await Promise.allSettled([
         RealTimeAPIService.makeRequest('/api/enterprise/agent-health'),
         RealTimeAPIService.makeRequest('/api/enterprise/workflow-status'),
@@ -54,21 +26,37 @@ const CoordinationDashboard = () => {
       ]);
 
       const data = {
-        agents: agentHealth.value || null,
-        workflows: workflowStatus.value || null,
-        system: systemStatus.value || null
+        agents: agentHealth.status === 'fulfilled' ? agentHealth.value : [],
+        workflows: workflowStatus.status === 'fulfilled' ? workflowStatus.value : [],
+        system: systemStatus.status === 'fulfilled' ? systemStatus.value : null
       };
 
       setCoordinationData(data);
+      setConnectionStatus('connected');
       setLastUpdate(new Date().toISOString());
     } catch (error) {
-      console.error('Refresh failed:', error);
+      console.error('Failed to fetch coordination data:', error);
+      setConnectionStatus('error');
+      setError(error.message);
     } finally {
       setIsLoading(false);
     }
+  }, [coordinationData]);
+
+  useEffect(() => {
+    fetchCoordinationData();
+    const interval = setInterval(fetchCoordinationData, 10000); // Update every 10 seconds instead of 3
+    
+    return () => clearInterval(interval);
+  }, [fetchCoordinationData]);
+
+  const handleRefresh = async () => {
+    setIsLoading(true);
+    setError(null);
+    await fetchCoordinationData();
   };
 
-  if (isLoading) {
+  if (isLoading && !coordinationData) {
     return (
       <div className="theme-dashboard-container">
         <div className="theme-dashboard-content">
@@ -82,17 +70,38 @@ const CoordinationDashboard = () => {
     );
   }
 
+  if (error && !coordinationData) {
+    return (
+      <div className="theme-dashboard-container">
+        <div className="theme-dashboard-content">
+          <div className="theme-card theme-text-center">
+            <i className="fas fa-exclamation-triangle theme-text-warning" style={{fontSize: '3rem', marginBottom: '1rem'}}></i>
+            <h2>Connection Error</h2>
+            <p className="theme-text-secondary">Failed to load coordination data: {error}</p>
+            <button className="theme-btn theme-btn-primary" onClick={handleRefresh}>
+              <i className="fas fa-retry"></i> Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Safely access agents data
+  const agents = Array.isArray(coordinationData?.agents) ? coordinationData.agents : [];
+  const workflows = Array.isArray(coordinationData?.workflows) ? coordinationData.workflows : [];
+  
   // Group agents by department
-  const agentsByDepartment = coordinationData?.agents?.agents?.reduce((acc, agent) => {
+  const agentsByDepartment = agents.reduce((acc, agent) => {
     const dept = agent.department || 'unknown';
     if (!acc[dept]) acc[dept] = [];
     acc[dept].push(agent);
     return acc;
-  }, {}) || {};
+  }, {});
 
-  const activeWorkflows = coordinationData?.workflows?.filter(w => w.status === 'running') || [];
-  const totalAgents = coordinationData?.agents?.agents?.length || 0;
-  const operationalAgents = coordinationData?.agents?.agents?.filter(a => a.status === 'operational').length || 0;
+  const activeWorkflows = workflows.filter(w => w.status === 'running');
+  const totalAgents = agents.length;
+  const operationalAgents = agents.filter(a => a.status === 'operational').length;
 
   return (
     <div className="theme-dashboard-container">

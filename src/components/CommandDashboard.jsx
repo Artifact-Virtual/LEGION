@@ -205,37 +205,6 @@ const CommandDashboard = () => {
           </div>
         )}
 
-        {/* System Overview Grid */}
-        <div className="theme-grid theme-grid-cols-4 theme-mb-lg">
-          <div className="theme-metric-card">
-            <div className="theme-metric-value theme-status-operational">
-              {systemData?.overall_health || 'Unknown'}
-            </div>
-            <div className="theme-metric-label">System Status</div>
-          </div>
-          
-          <div className="theme-metric-card">
-            <div className="theme-metric-value">
-              {systemData?.performance?.cpu_usage || 0}%
-            </div>
-            <div className="theme-metric-label">CPU Usage</div>
-          </div>
-          
-          <div className="theme-metric-card">
-            <div className="theme-metric-value">
-              {systemData?.performance?.memory_usage || 0}%
-            </div>
-            <div className="theme-metric-label">Memory Usage</div>
-          </div>
-          
-          <div className="theme-metric-card">
-            <div className="theme-metric-value">
-              {agentData?.agents?.length || 0}
-            </div>
-            <div className="theme-metric-label">Active Agents</div>
-          </div>
-        </div>
-
         {/* Service Status */}
         <div className="theme-card theme-mb-lg">
           <h3 className="theme-mb-md">🛠️ Service Status</h3>
