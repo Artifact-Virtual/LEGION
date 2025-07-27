@@ -2,7 +2,7 @@
 // LEGION Enterprise Dashboard - Main Application
 
 import React, { useState, useEffect } from 'react';
-import './GlobalTheme.css'; // Import unified theme
+import './theme/GlobalTheme.css'; // Import unified theme
 
 // Import Dashboard Components
 import CommandDashboard from './components/CommandDashboard.jsx';
